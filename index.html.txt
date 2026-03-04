@@ -1,6 +1,0 @@
-<html>
-<head></head>
-<body>
-<p>Movie/TV Show Tracker</p>
-</body>
-</html>
