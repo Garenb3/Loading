@@ -26,7 +26,7 @@ function App() {
         </p>
       </div>
       <p className="read-the-docs">
-        Hello Tailwind
+        If you see this then it worked!
       </p>
     </>
   )
