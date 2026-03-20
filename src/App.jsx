@@ -1,22 +1,33 @@
-import Register from "./pages/Register";
 import { useEffect } from "react";
-import { loadTheme } from "./theme";
-import { darkTheme } from "./themes";
-import { setTheme } from "./theme";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 
+import { loadTheme, setTheme } from "./theme";
+import { darkTheme } from "./themes";
+
 function App() {
-
   useEffect(() => {
-    loadTheme(); // load saved theme
+    loadTheme();
 
-    // if no theme saved → set default dark
     if (!localStorage.getItem("theme")) {
       setTheme(darkTheme);
     }
   }, []);
 
-  return <Dashboard />;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
