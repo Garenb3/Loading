@@ -1,0 +1,6 @@
+export const tvShows = [
+  { id: 1, title: "Breaking Bad", rating: "9.5", description: "A chemistry teacher turned meth producer navigates crime and danger.", seasons: [{ season: 1, episodes: 7 }, { season: 2, episodes: 13 }, { season: 3, episodes: 13 }], image: "/images/breaking_bad.jpg" },
+  { id: 2, title: "Stranger Things", rating: "8.7", description: "Kids uncover supernatural mysteries in their small town.", seasons: [{ season: 1, episodes: 8 }, { season: 2, episodes: 9 }, { season: 3, episodes: 8 }], image: "/images/stranger_things.jpg" },
+  { id: 3, title: "Game of Thrones", rating: "9.2", description: "Noble families fight for control of the Iron Throne.", seasons: [{ season: 1, episodes: 10 }, { season: 2, episodes: 10 }, { season: 3, episodes: 10 }], image: "/images/got.jpg" },
+  { id: 4, title: "The Office", rating: "8.9", description: "A mockumentary on a group of office workers.", seasons: [{ season: 1, episodes: 6 }, { season: 2, episodes: 22 }, { season: 3, episodes: 25 }], image: "/images/the_office.jpg" }
+];

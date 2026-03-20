@@ -1,11 +1,19 @@
-import { setTheme } from "../utils/theme"
-import { darkTheme, lightTheme } from "../utils/themes"
+import { setTheme } from "../utils/theme";
+import { darkTheme, lightTheme } from "../utils/themes";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
-  const handleThemeChange = (e) => {
-    if (e.target.value === "dark") setTheme(darkTheme)
-    if (e.target.value === "light") setTheme(lightTheme)
-  }
+  const [isDark, setIsDark] = useState(true);
+
+  const toggleTheme = () => {
+    if (isDark) {
+      setTheme(lightTheme);
+    } else {
+      setTheme(darkTheme);
+    }
+    setIsDark(!isDark);
+  };
 
   return (
     <nav
@@ -15,22 +23,21 @@ export default function Navbar() {
       <h1 className="text-xl font-bold">MovieTracker</h1>
 
       <div className="flex flex-wrap gap-4 justify-center md:justify-end">
-        <a href="/" className="hover:opacity-70">Home</a>
-        <a href="/browse" className="hover:opacity-70">Browse</a>
-        <a href="/watchlist" className="hover:opacity-70">Watchlist</a>
-        <a href="/login" className="hover:opacity-70">Login</a>
-        <a href="/Register" className="hover:opacity-70">Register</a>
-        <a href="/Dashboard" className="hover:opacity-70">Dashboard</a>
+        <Link to="/" className="hover:opacity-70">Home</Link>
+        <Link to="/browse" className="hover:opacity-70">Browse</Link>
+        <Link to="/watchlist" className="hover:opacity-70">Watchlist</Link>
+        <Link to="/login" className="hover:opacity-70">Login</Link>
+        <Link to="/Register" className="hover:opacity-70">Register</Link>
+        <Link to="/Dashboard" className="hover:opacity-70">Dashboard</Link>
       </div>
 
-      <select
-        onChange={handleThemeChange}
+      <button
+        onClick={toggleTheme}
         className="px-2 py-1 rounded"
         style={{ backgroundColor: "var(--primary)", color: "#fff" }}
       >
-        <option value="dark">Dark</option>
-        <option value="light">Light</option>
-      </select>
+        {isDark ? "Light Mode" : "Dark Mode"}
+      </button>
     </nav>
-  )
+  );
 }
