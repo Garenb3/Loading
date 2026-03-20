@@ -1,16 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Home from "./pages/Home"
-import Login from "./pages/Login"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import TVShowDetail from "./pages/TVShowDetail";
+import AddEditForm from "./pages/AddEditForm";
+import TVShows from "./pages/TVShows"; // Optional, if you have this page
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return <Home />
-    
-
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/tv/:id" element={<TVShowDetail />} />
+        <Route path="/add" element={<AddEditForm />} />
+        <Route path="/tv" element={<TVShows />} /> {/* Optional */}
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App
