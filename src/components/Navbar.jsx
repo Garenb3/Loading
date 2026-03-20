@@ -19,6 +19,8 @@ export default function Navbar() {
         <a href="/browse" className="hover:opacity-70">Browse</a>
         <a href="/watchlist" className="hover:opacity-70">Watchlist</a>
         <a href="/login" className="hover:opacity-70">Login</a>
+        <a href="/Register" className="hover:opacity-70">Register</a>
+        <a href="/Dashboard" className="hover:opacity-70">Dashboard</a>
       </div>
 
       <select

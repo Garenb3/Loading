@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Navbar from "../components/Navbar";
 
 function Dashboard() {
   // Mock data for now
@@ -24,69 +25,73 @@ function Dashboard() {
   ]);
 
   return (
-  <main className="dashboard-layout">
+    <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh" }}>
+    <Navbar />
 
-    {/* LEFT SIDE - PROFILE */}
-    <aside className="profile-section">
-      <img
-        src="https://via.placeholder.com/100"
-        alt="User profile"
-        className="profile-pic"
-      />
+      <main className="dashboard-layout">
 
-      <h2>{user.username}</h2>
-      <p>{user.email}</p>
+        {/* LEFT SIDE - PROFILE */}
+        <aside className="profile-section">
+          <img
+            src="https://via.placeholder.com/100"
+            alt="User profile"
+            className="profile-pic"
+          />
 
-      {/* Review box */}
-      <section className="review-box">
-        <h3>Leave a Review</h3>
-        <textarea placeholder="Write something..."></textarea>
-        <button>Submit</button>
-      </section>
-    </aside>
+          <h2>{user.username}</h2>
+          <p>{user.email}</p>
 
-    {/* RIGHT SIDE - CONTENT */}
-    <section className="content-section">
+          {/* Review box */}
+          <section className="review-box">
+            <h3>Leave a Review</h3>
+            <textarea placeholder="Write something..."></textarea>
+            <button>Submit</button>
+          </section>
+        </aside>
 
-      {/* Watchlist */}
-      <section className="dashboard-section">
-        <h3>My Watchlist</h3>
-        <ul className="card-grid">
-          {watchlist.map((item) => (
-            <li key={item.id} className="card">
-              {item.title}
-            </li>
-          ))}
-        </ul>
-      </section>
+        {/* RIGHT SIDE - CONTENT */}
+        <section className="content-section">
 
-      {/* Favorites */}
-      <section className="dashboard-section">
-        <h3>Favorites</h3>
-        <ul className="card-grid">
-          {favorites.map((item) => (
-            <li key={item.id} className="card">
-              {item.title}
-            </li>
-          ))}
-        </ul>
-      </section>
+          {/* Watchlist */}
+          <section className="dashboard-section">
+            <h3>My Watchlist</h3>
+            <ul className="card-grid">
+              {watchlist.map((item) => (
+                <li key={item.id} className="card">
+                  {item.title}
+                </li>
+              ))}
+            </ul>
+          </section>
 
-      {/* Recently Viewed */}
-      <section className="dashboard-section">
-        <h3>Recently Viewed</h3>
-        <ul className="card-grid">
-          {recentlyViewed.map((item) => (
-            <li key={item.id} className="card">
-              {item.title}
-            </li>
-          ))}
-        </ul>
-      </section>
+          {/* Favorites */}
+          <section className="dashboard-section">
+            <h3>Favorites</h3>
+            <ul className="card-grid">
+              {favorites.map((item) => (
+                <li key={item.id} className="card">
+                  {item.title}
+                </li>
+              ))}
+            </ul>
+          </section>
 
-    </section>
+          {/* Recently Viewed */}
+          <section className="dashboard-section">
+            <h3>Recently Viewed</h3>
+            <ul className="card-grid">
+              {recentlyViewed.map((item) => (
+                <li key={item.id} className="card">
+                  {item.title}
+                </li>
+              ))}
+            </ul>
+          </section>
 
-  </main>
+        </section>
+
+      </main>
+  </div>
 );
 }
 
