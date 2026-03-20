@@ -1,12 +1,19 @@
 import { setTheme } from "../utils/theme";
 import { darkTheme, lightTheme } from "../utils/themes";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
-  const handleThemeChange = (e) => {
-    if (e.target.value === "dark") setTheme(darkTheme);
-    if (e.target.value === "light") setTheme(lightTheme);
-  }
+  const [isDark, setIsDark] = useState(true);
+
+  const toggleTheme = () => {
+    if (isDark) {
+      setTheme(lightTheme);
+    } else {
+      setTheme(darkTheme);
+    }
+    setIsDark(!isDark);
+  };
 
   return (
     <nav
@@ -20,18 +27,15 @@ export default function Navbar() {
         <Link to="/browse" className="hover:opacity-70">Browse</Link>
         <Link to="/watchlist" className="hover:opacity-70">Watchlist</Link>
         <Link to="/login" className="hover:opacity-70">Login</Link>
-        <Link to="/add" className="hover:opacity-70">Add</Link>
-        <Link to="/tv" className="hover:opacity-70">TV Shows</Link>
       </div>
 
-      <select
-        onChange={handleThemeChange}
+      <button
+        onClick={toggleTheme}
         className="px-2 py-1 rounded"
         style={{ backgroundColor: "var(--primary)", color: "#fff" }}
       >
-        <option value="dark">Dark</option>
-        <option value="light">Light</option>
-      </select>
+        {isDark ? "Light Mode" : "Dark Mode"}
+      </button>
     </nav>
-  )
+  );
 }

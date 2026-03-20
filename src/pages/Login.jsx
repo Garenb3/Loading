@@ -14,7 +14,10 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor:"var(--bg)", color:"var(--text)" }}>
+    <div
+    className="min-h-screen w-full overflow-x-hidden"
+    style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}
+    >
       <Navbar />
       <div className="flex justify-center items-center py-12">
         <form onSubmit={handleLogin} className="bg-secondary p-6 rounded-lg shadow-md w-80" style={{ backgroundColor:"var(--secondary)", color:"var(--text)" }}>
