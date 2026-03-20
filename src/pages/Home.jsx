@@ -1,10 +1,10 @@
-import { movies } from "../data/movies";
+import { data } from "../data/Data";
 import MovieCard from "../components/MovieCard";
 import Navbar from "../components/Navbar";
 
 export default function Home() {
-  const featured = movies.filter(m => m.featured);
-  const trending = movies.filter(m => m.trending);
+  const featured = data.filter(m => m.featured);
+  const trending = data.filter(m => m.trending);
 
   return (
     <div style={{ backgroundColor: "var(--bg)", color: "var(--text)" }} className="min-h-screen">

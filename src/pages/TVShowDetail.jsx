@@ -1,13 +1,15 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import { tvShows } from "../data/tvshows";
+import { data } from "../data/Data";
 
 export default function TVShowDetail() {
   const { id } = useParams();
   const [added, setAdded] = useState(false);
 
-  const show = tvShows.find(s => s.id === parseInt(id));
+  const series = data.filter((item) => item.type === "series");
+
+  const show = series.find(s => s.id === parseInt(id));
   if (!show) return <p>Show not found</p>;
 
   return (

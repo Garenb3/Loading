@@ -24,7 +24,7 @@ export default function Navbar() {
 
       <div className="flex flex-wrap gap-4 justify-center md:justify-end">
         <Link to="/" className="hover:opacity-70">Home</Link>
-        <Link to="/browse" className="hover:opacity-70">Browse</Link>
+        <Link to="/listview" className="hover:opacity-70">Browse</Link>
         <Link to="/watchlist" className="hover:opacity-70">Watchlist</Link>
         <Link to="/login" className="hover:opacity-70">Login</Link>
         <Link to="/Register" className="hover:opacity-70">Register</Link>
