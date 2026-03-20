@@ -3,7 +3,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import TVShowDetail from "./pages/TVShowDetail";
 import AddEditForm from "./pages/AddEditForm";
-import TVShows from "./pages/TVShows"; // Optional, if you have this page
+import TVShows from "./pages/TVShows";
 
 export default function App() {
   return (
@@ -13,8 +13,8 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/tv/:id" element={<TVShowDetail />} />
         <Route path="/add" element={<AddEditForm />} />
-        <Route path="/tv" element={<TVShows />} /> {/* Optional */}
+        <Route path="/tv" element={<TVShows />} />
       </Routes>
     </BrowserRouter>
-  );
+  )
 }

@@ -6,7 +6,7 @@ export default function Navbar() {
   const handleThemeChange = (e) => {
     if (e.target.value === "dark") setTheme(darkTheme);
     if (e.target.value === "light") setTheme(lightTheme);
-  }
+  };
 
   return (
     <nav
@@ -17,11 +17,9 @@ export default function Navbar() {
 
       <div className="flex flex-wrap gap-4 justify-center md:justify-end">
         <Link to="/" className="hover:opacity-70">Home</Link>
-        <Link to="/browse" className="hover:opacity-70">Browse</Link>
-        <Link to="/watchlist" className="hover:opacity-70">Watchlist</Link>
-        <Link to="/login" className="hover:opacity-70">Login</Link>
-        <Link to="/add" className="hover:opacity-70">Add</Link>
         <Link to="/tv" className="hover:opacity-70">TV Shows</Link>
+        <Link to="/add" className="hover:opacity-70">Add/Edit</Link>
+        <Link to="/login" className="hover:opacity-70">Login</Link>
       </div>
 
       <select
@@ -33,5 +31,5 @@ export default function Navbar() {
         <option value="light">Light</option>
       </select>
     </nav>
-  )
+  );
 }
