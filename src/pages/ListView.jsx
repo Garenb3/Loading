@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { data } from "../data/Data";
 
 export default function ListView() {
+  console.log(data);
   return (
     <div className="p-4 min-h-screen bg-gray-900">
       <Navbar />
