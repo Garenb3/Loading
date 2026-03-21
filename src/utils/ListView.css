@@ -1,0 +1,181 @@
+.lv-page {
+  min-height: 100vh;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.lv-container {
+  padding: 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.lv-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  color: var(--text);
+  text-align: left;
+}
+
+.lv-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.lv-search-input {
+  flex: 1;
+  min-width: 0;
+  width: auto !important;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+
+.lv-search-input:focus {
+  border: 1px solid #4b5563;
+}
+
+.lv-btn-search,
+.lv-btn-filter {
+  width: auto !important;
+  flex-shrink: 0;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.lv-btn-search {
+  background-color: #2563eb;
+  color: white;
+}
+
+.lv-btn-search:hover {
+  background-color: #1d4ed8;
+  opacity: 1;
+}
+
+.lv-btn-filter {
+  background-color: #374151;
+  color: white;
+  border: 1px solid #4b5563;
+}
+
+.lv-btn-filter:hover {
+  background-color: #4b5563;
+  opacity: 1;
+}
+
+.lv-filter-panel {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  z-index: 50;
+  background-color: #1f2937;
+  border: 1px solid #4b5563;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  width: 520px;
+}
+
+.lv-filter-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+.lv-type-row {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.lv-genre-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  margin-bottom: 4px;
+}
+
+.lv-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  display: flex !important;
+}
+
+.lv-radio,
+.lv-checkbox {
+  width: auto !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+.lv-btn-clear {
+  width: 100% !important;
+  margin-top: 14px;
+  padding: 6px;
+  background: none !important;
+  color: #9ca3af;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.lv-btn-clear:hover {
+  color: white;
+  opacity: 1;
+}
+
+.lv-count {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 16px;
+}
+
+.lv-empty {
+  text-align: center;
+  padding: 96px 0;
+  color: #6b7280;
+}
+
+.lv-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.lv-empty-text {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.lv-empty-sub {
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
