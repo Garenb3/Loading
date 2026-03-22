@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import { data } from "../data/Data";
 
@@ -21,6 +21,15 @@ export default function MovieDetail() {
 
   const movie = data.find(m => m.id === parseInt(id));
 
+  useEffect(() => {
+    if (!movie) return;
+    const viewed = JSON.parse(localStorage.getItem("recentlyViewed") || "[]");
+    const filtered = viewed.filter(item => item.id !== movie.id);
+    const updated = [{ id: movie.id, title: movie.title, type: movie.type, image: movie.image }, ...filtered];
+    const capped = updated.slice(0, 5);
+    localStorage.setItem("recentlyViewed", JSON.stringify(capped));
+  }, [movie]);
+
   if (!movie) return (
     <div style={{ backgroundColor: "var(--bg)", color: "var(--text)" }} className="min-h-screen">
       <Navbar />
@@ -38,22 +47,34 @@ export default function MovieDetail() {
 
   const handleAddToWatchlist = () => {
     const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
-    if (!watchlist.some(item => item.id === movie.id)) {
-      watchlist.push({ id: movie.id, title: movie.title, type: movie.type, image: movie.image });
-      localStorage.setItem("watchlist", JSON.stringify(watchlist));
+    if (added) {
+      const updated = watchlist.filter(item => item.id !== movie.id);
+      localStorage.setItem("watchlist", JSON.stringify(updated));
+      setAdded(false);
+    } else {
+      if (!watchlist.some(item => item.id === movie.id)) {
+        watchlist.push({ id: movie.id, title: movie.title, type: movie.type, image: movie.image });
+        localStorage.setItem("watchlist", JSON.stringify(watchlist));
+      }
+      setAdded(true);
+      setShowModal(true);
     }
-    setAdded(true);
-    setShowModal(true);
   };
 
   const handleAddToFavorites = () => {
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    if (!favorites.some(item => item.id === movie.id)) {
-      favorites.push({ id: movie.id, title: movie.title, type: movie.type, image: movie.image });
-      localStorage.setItem("favorites", JSON.stringify(favorites));
+    if (addedFav) {
+      const updated = favorites.filter(item => item.id !== movie.id);
+      localStorage.setItem("favorites", JSON.stringify(updated));
+      setAddedFav(false);
+    } else {
+      if (!favorites.some(item => item.id === movie.id)) {
+        favorites.push({ id: movie.id, title: movie.title, type: movie.type, image: movie.image });
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+      }
+      setAddedFav(true);
+      setShowFavModal(true);
     }
-    setAddedFav(true);
-    setShowFavModal(true);
   };
 
   return (
@@ -156,33 +177,30 @@ export default function MovieDetail() {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={handleAddToWatchlist}
-                disabled={added}
                 className="px-6 py-3 rounded font-bold"
                 style={{
                   backgroundColor: added ? "#4caf50" : "var(--primary)",
                   color: "#fff", border: "none",
-                  cursor: added ? "default" : "pointer",
+                  cursor: "pointer",
                   fontSize: "15px", transition: "background-color 0.3s"
                 }}
               >
-                {added ? "✓ Added to Watchlist" : "+ Add to Watchlist"}
+                {added ? "✓ In Watchlist — Remove" : "+ Add to Watchlist"}
               </button>
 
               <button
                 onClick={handleAddToFavorites}
-                disabled={addedFav}
                 className="px-6 py-3 rounded font-bold"
                 style={{
                   backgroundColor: addedFav ? "#e59400" : "var(--secondary)",
                   color: "#fff", border: "1px solid rgba(255,255,255,0.2)",
-                  cursor: addedFav ? "default" : "pointer",
+                  cursor: "pointer",
                   fontSize: "15px", transition: "background-color 0.3s"
                 }}
               >
-                {addedFav ? "★ In Favorites" : "☆ Add to Favorites"}
+                {addedFav ? "★ In Favorites — Remove" : "☆ Add to Favorites"}
               </button>
             </div>
-
           </div>
         </div>
       </div>

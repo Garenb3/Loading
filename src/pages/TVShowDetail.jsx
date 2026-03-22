@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import { data } from "../data/Data";
 
@@ -21,6 +21,15 @@ export default function TVShowDetail() {
 
   const show = data.find(s => s.id === parseInt(id));
 
+  useEffect(() => {
+    if (!show) return;
+    const viewed = JSON.parse(localStorage.getItem("recentlyViewed") || "[]");
+    const filtered = viewed.filter(item => item.id !== show.id);
+    const updated = [{ id: show.id, title: show.title, type: show.type, image: show.image }, ...filtered];
+    const capped = updated.slice(0, 5);
+    localStorage.setItem("recentlyViewed", JSON.stringify(capped));
+  }, [show]);
+
   if (!show) return (
     <div style={{ backgroundColor: "var(--bg)", color: "var(--text)" }} className="min-h-screen">
       <Navbar />
@@ -38,22 +47,34 @@ export default function TVShowDetail() {
 
   const handleAddToWatchlist = () => {
     const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
-    if (!watchlist.some(item => item.id === show.id)) {
-      watchlist.push({ id: show.id, title: show.title, type: show.type, image: show.image });
-      localStorage.setItem("watchlist", JSON.stringify(watchlist));
+    if (added) {
+      const updated = watchlist.filter(item => item.id !== show.id);
+      localStorage.setItem("watchlist", JSON.stringify(updated));
+      setAdded(false);
+    } else {
+      if (!watchlist.some(item => item.id === show.id)) {
+        watchlist.push({ id: show.id, title: show.title, type: show.type, image: show.image });
+        localStorage.setItem("watchlist", JSON.stringify(watchlist));
+      }
+      setAdded(true);
+      setShowModal(true);
     }
-    setAdded(true);
-    setShowModal(true);
   };
 
   const handleAddToFavorites = () => {
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-    if (!favorites.some(item => item.id === show.id)) {
-      favorites.push({ id: show.id, title: show.title, type: show.type, image: show.image });
-      localStorage.setItem("favorites", JSON.stringify(favorites));
+    if (addedFav) {
+      const updated = favorites.filter(item => item.id !== show.id);
+      localStorage.setItem("favorites", JSON.stringify(updated));
+      setAddedFav(false);
+    } else {
+      if (!favorites.some(item => item.id === show.id)) {
+        favorites.push({ id: show.id, title: show.title, type: show.type, image: show.image });
+        localStorage.setItem("favorites", JSON.stringify(favorites));
+      }
+      setAddedFav(true);
+      setShowFavModal(true);
     }
-    setAddedFav(true);
-    setShowFavModal(true);
   };
 
   const renderStars = (rating) => {
@@ -82,9 +103,9 @@ export default function TVShowDetail() {
             <p style={{ opacity: 0.7, marginBottom: "20px" }}>{show.title} has been saved.</p>
             <button
               onClick={() => setShowModal(false)}
-              style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.2)", backgroundColor: "transparent", color: "var(--text)", cursor: "pointer", width: "100%" }}
+              style={{ backgroundColor: "var(--primary)", color: "#fff", padding: "10px 24px", borderRadius: "8px", border: "none", cursor: "pointer", width: "100%" }}
             >
-              Continue
+              Continue Browsing
             </button>
           </div>
         </div>
@@ -115,7 +136,6 @@ export default function TVShowDetail() {
 
       <div className="max-w-5xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row gap-8">
-
           <div className="w-full md:w-1/3">
             <img
               src={show.image}
@@ -187,33 +207,30 @@ export default function TVShowDetail() {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={handleAddToWatchlist}
-                disabled={added}
                 className="px-6 py-3 rounded font-bold"
                 style={{
                   backgroundColor: added ? "#4caf50" : "var(--primary)",
                   color: "#fff", border: "none",
-                  cursor: added ? "default" : "pointer",
+                  cursor: "pointer",
                   fontSize: "15px", transition: "background-color 0.3s"
                 }}
               >
-                {added ? "✓ Added to Watchlist" : "+ Add to Watchlist"}
+                {added ? "✓ In Watchlist — Remove" : "+ Add to Watchlist"}
               </button>
 
               <button
                 onClick={handleAddToFavorites}
-                disabled={addedFav}
                 className="px-6 py-3 rounded font-bold"
                 style={{
                   backgroundColor: addedFav ? "#e59400" : "var(--secondary)",
                   color: "#fff", border: "1px solid rgba(255,255,255,0.2)",
-                  cursor: addedFav ? "default" : "pointer",
+                  cursor: "pointer",
                   fontSize: "15px", transition: "background-color 0.3s"
                 }}
               >
-                {addedFav ? "★ In Favorites" : "☆ Add to Favorites"}
+                {addedFav ? "★ In Favorites — Remove" : "☆ Add to Favorites"}
               </button>
             </div>
-
           </div>
         </div>
       </div>
