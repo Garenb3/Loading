@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Login from "./Login";
 
 function Register() {
 
@@ -32,7 +34,7 @@ function Register() {
 
         <main className="container">
         <section className="form-box">
-            <h1>Create Account</h1>
+            <h2>Create Account</h2>
 
             <form onSubmit={handleSubmit}>
 
@@ -55,7 +57,8 @@ function Register() {
 
             <p className="login-link">
             Already have an account? <br />
-            <a href="#">Login here</a>
+            <Link to="/Login">Login here</Link>
+            
             </p>
         </section>
         </main>

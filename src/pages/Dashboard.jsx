@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import Profile from "../components/Profile";
 
 function Dashboard() {
   // Mock data for now
@@ -29,27 +30,8 @@ function Dashboard() {
     <Navbar />
 
       <main className="dashboard-layout">
-
-        {/* LEFT SIDE - PROFILE */}
-        <aside className="profile-section">
-          <img
-            src="https://via.placeholder.com/100"
-            alt="User profile"
-            className="profile-pic"
-          />
-
-          <h2>{user.username}</h2>
-          <p>{user.email}</p>
-
-          {/* Review box */}
-          <section className="review-box">
-            <h3>Leave a Review</h3>
-            <textarea placeholder="Write something..."></textarea>
-            <button>Submit</button>
-          </section>
-        </aside>
-
-        {/* RIGHT SIDE - CONTENT */}
+        <Profile user={user} />
+        
         <section className="content-section">
 
           {/* Watchlist */}
