@@ -37,7 +37,6 @@ const handleLogout = () => {
       <div className="flex flex-wrap gap-4 justify-center md:justify-end items-center">
         <Link to="/" style={linkStyle} className="hover:opacity-70">Home</Link>
         <Link to="/listview" style={linkStyle} className="hover:opacity-70">Browse</Link>
-        <Link to="/tv" style={linkStyle} className="hover:opacity-70">TV Shows</Link>
         <Link to="/add" style={linkStyle} className="hover:opacity-70">
           <span
             style={{
