@@ -68,8 +68,8 @@ export default function Login() {
               style={{ width: "120px", height: "120px", objectFit: "cover", borderRadius: "20px" }}
             />
 
-            <h1 style={{ fontSize: "22px", fontWeight: "bold", margin: 0 }}>
-              MovieTracker
+            <h1 style={{ fontSize: "22px", fontWeight: "bold", margin: 0 , color: "red"}}>
+              BingeBoard
             </h1>
 
             <p style={{ fontSize: "12px", textAlign: "center", margin: 0 }}>
