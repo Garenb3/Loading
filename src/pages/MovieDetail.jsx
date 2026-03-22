@@ -6,8 +6,18 @@ import { data } from "../data/Data";
 export default function MovieDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [added, setAdded] = useState(false);
+
+  const [added, setAdded] = useState(() => {
+    const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
+    return watchlist.some(item => item.id === parseInt(id));
+  });
   const [showModal, setShowModal] = useState(false);
+
+  const [addedFav, setAddedFav] = useState(() => {
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    return favorites.some(item => item.id === parseInt(id));
+  });
+  const [showFavModal, setShowFavModal] = useState(false);
 
   const movie = data.find(m => m.id === parseInt(id));
 
@@ -36,10 +46,21 @@ export default function MovieDetail() {
     setShowModal(true);
   };
 
+  const handleAddToFavorites = () => {
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    if (!favorites.some(item => item.id === movie.id)) {
+      favorites.push({ id: movie.id, title: movie.title, type: movie.type, image: movie.image });
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+    }
+    setAddedFav(true);
+    setShowFavModal(true);
+  };
+
   return (
     <div style={{ backgroundColor: "var(--bg)", color: "var(--text)" }} className="min-h-screen">
       <Navbar />
 
+      {/* Watchlist Modal */}
       {showModal && (
         <div
           onClick={() => setShowModal(false)}
@@ -54,6 +75,29 @@ export default function MovieDetail() {
             <p style={{ opacity: 0.7, marginBottom: "20px" }}>{movie.title} has been saved.</p>
             <button
               onClick={() => setShowModal(false)}
+              style={{ backgroundColor: "var(--primary)", color: "#fff", padding: "10px 24px", borderRadius: "8px", border: "none", cursor: "pointer", width: "100%" }}
+            >
+              Continue Browsing
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Favorites Modal */}
+      {showFavModal && (
+        <div
+          onClick={() => setShowFavModal(false)}
+          style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ backgroundColor: "var(--secondary)", borderRadius: "12px", padding: "32px", maxWidth: "360px", width: "90%", textAlign: "center" }}
+          >
+            <p style={{ fontSize: "36px", marginBottom: "8px" }}>★</p>
+            <h3 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "8px" }}>Added to Favorites!</h3>
+            <p style={{ opacity: 0.7, marginBottom: "20px" }}>{movie.title} has been saved.</p>
+            <button
+              onClick={() => setShowFavModal(false)}
               style={{ backgroundColor: "var(--primary)", color: "#fff", padding: "10px 24px", borderRadius: "8px", border: "none", cursor: "pointer", width: "100%" }}
             >
               Continue Browsing
@@ -109,18 +153,36 @@ export default function MovieDetail() {
               </div>
             )}
 
-            <button
-              onClick={handleAddToWatchlist}
-              disabled={added}
-              className="mt-6 px-6 py-3 rounded font-bold"
-              style={{
-                backgroundColor: added ? "#4caf50" : "var(--primary)",
-                color: "#fff", border: "none", cursor: added ? "default" : "pointer",
-                fontSize: "15px", transition: "background-color 0.3s"
-              }}
-            >
-              {added ? "✓ Added to Watchlist" : "+ Add to Watchlist"}
-            </button>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleAddToWatchlist}
+                disabled={added}
+                className="px-6 py-3 rounded font-bold"
+                style={{
+                  backgroundColor: added ? "#4caf50" : "var(--primary)",
+                  color: "#fff", border: "none",
+                  cursor: added ? "default" : "pointer",
+                  fontSize: "15px", transition: "background-color 0.3s"
+                }}
+              >
+                {added ? "✓ Added to Watchlist" : "+ Add to Watchlist"}
+              </button>
+
+              <button
+                onClick={handleAddToFavorites}
+                disabled={addedFav}
+                className="px-6 py-3 rounded font-bold"
+                style={{
+                  backgroundColor: addedFav ? "#e59400" : "var(--secondary)",
+                  color: "#fff", border: "1px solid rgba(255,255,255,0.2)",
+                  cursor: addedFav ? "default" : "pointer",
+                  fontSize: "15px", transition: "background-color 0.3s"
+                }}
+              >
+                {addedFav ? "★ In Favorites" : "☆ Add to Favorites"}
+              </button>
+            </div>
+
           </div>
         </div>
       </div>

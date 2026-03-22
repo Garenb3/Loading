@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Profile from "../components/Profile";
+import MovieCard from "../components/MovieCard";
+import { data } from "../data/Data";
 
 function Dashboard() {
   // Mock data for now
@@ -9,22 +11,25 @@ function Dashboard() {
     email: "lyn@example.com",
   });
 
-  const [watchlist] = useState([
-    { id: 1, title: "Movie 1" },
-    { id: 2, title: "Movie 2" },
-    { id: 3, title: "Show 1" },
-  ]);
+  const [watchlist, setWatchlist] = useState(() =>
+    JSON.parse(localStorage.getItem("watchlist") || "[]")
+  );
+  const [favorites, setFavorites] = useState(() =>
+    JSON.parse(localStorage.getItem("favorites") || "[]")
+  );
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
 
-  const [favorites] = useState([
-    { id: 1, title: "Movie 2" },
-    { id: 2, title: "Show 1" },
-  ]);
-
-  const [recentlyViewed] = useState([
-    { id: 1, title: "Movie 1" },
-    { id: 2, title: "Show 2" },
-  ]);
-
+  const removeFromWatchlist = (id) => {
+    const updated = watchlist.filter(m => m.id !== id);
+    setWatchlist(updated);
+    localStorage.setItem("watchlist", JSON.stringify(updated));
+  };
+  
+  const removeFromFavorites = (id) => {
+    const updated = favorites.filter(m => m.id !== id);
+    setFavorites(updated);
+    localStorage.setItem("favorites", JSON.stringify(updated));
+  };
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh" }}>
     <Navbar />
@@ -36,38 +41,32 @@ function Dashboard() {
 
           {/* Watchlist */}
           <section className="dashboard-section">
-            <h3>My Watchlist</h3>
-            <ul className="card-grid">
-              {watchlist.map((item) => (
-                <li key={item.id} className="card">
-                  {item.title}
-                </li>
+            <h2>My Watchlist</h2>
+            <div className="card-grid">
+              {watchlist.map((movie) => (
+                <MovieCard key={movie.id} movie={movie} />
               ))}
-            </ul>
+          </div>
           </section>
 
           {/* Favorites */}
           <section className="dashboard-section">
-            <h3>Favorites</h3>
-            <ul className="card-grid">
-              {favorites.map((item) => (
-                <li key={item.id} className="card">
-                  {item.title}
-                </li>
+            <h2>Favorites</h2>
+            <div className="card-grid">
+              {favorites.map((movie) => (
+                <MovieCard key={movie.id} movie={movie} />
               ))}
-            </ul>
+          </div>
           </section>
 
           {/* Recently Viewed */}
           <section className="dashboard-section">
-            <h3>Recently Viewed</h3>
-            <ul className="card-grid">
-              {recentlyViewed.map((item) => (
-                <li key={item.id} className="card">
-                  {item.title}
-                </li>
+            <h2>Recently Viewed</h2>
+            <div className="card-grid">
+              {recentlyViewed.map((movie) => (
+                <MovieCard key={movie.id} movie={movie} />
               ))}
-            </ul>
+          </div>
           </section>
 
         </section>

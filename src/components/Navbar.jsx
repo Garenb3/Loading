@@ -26,7 +26,6 @@ export default function Navbar() {
         <Link to="/" style={linkStyle} className="hover:opacity-70">Home</Link>
         <Link to="/listview" style={linkStyle} className="hover:opacity-70">Browse</Link>
         <Link to="/tv" style={linkStyle} className="hover:opacity-70">TV Shows</Link>
-        <Link to="/watchlist" style={linkStyle} className="hover:opacity-70">Watchlist</Link>
         <Link to="/add" style={linkStyle} className="hover:opacity-70">
           <span
             style={{

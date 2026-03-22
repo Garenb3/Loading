@@ -25,10 +25,10 @@ function Profile({ user }) {
       />
 
       <img
-        src={photo || profileImg} // show uploaded photo or default
+        src={photo || profileImg}
         alt="User profile"
         className="profile-pic"
-        onClick={() => fileInputRef.current.click()} // click opens file picker
+        onClick={() => fileInputRef.current.click()}
       />
 
       <div className="info-box">
