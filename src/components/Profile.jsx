@@ -1,52 +1,291 @@
 import React, { useState, useRef } from "react";
 import profileImg from "../images/Profile.jpg";
 
-function Profile({ user }) {
+function Profile({ user, onUserUpdate }) {
   const [photo, setPhoto] = useState(null);
-  const [review, setReview] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [username, setUsername] = useState(user.username);
+  const [email, setEmail] = useState(user.email);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+
+  // Change Password Modal
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordStep, setPasswordStep] = useState(1);
+  const [verifyEmail, setVerifyEmail] = useState("");
+  const [verifyCurrentPassword, setVerifyCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  // Email verification
+  const [showEmailVerifyModal, setShowEmailVerifyModal] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [emailVerifyPassword, setEmailVerifyPassword] = useState("");
+  const [emailVerifyError, setEmailVerifyError] = useState("");
 
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setPhoto(URL.createObjectURL(file)); // preview uploaded photo
+    if (file) setPhoto(URL.createObjectURL(file));
+  };
+
+  const handleSave = () => {
+    if (email !== user.email) {
+      setPendingEmail(email);
+      setEmail(user.email);
+      setShowEmailVerifyModal(true);
+      setEditing(false);
+      return;
     }
+    const updated = { ...JSON.parse(localStorage.getItem("user") || "{}"), username, email };
+    localStorage.setItem("user", JSON.stringify(updated));
+    onUserUpdate(updated);
+    setEditing(false);
+  };
+
+  const handleVerifyForPassword = () => {
+    const saved = JSON.parse(localStorage.getItem("user") || "{}");
+    if (verifyEmail !== saved.email || verifyCurrentPassword !== saved.password) {
+      setPasswordError("Email or password is incorrect.");
+      return;
+    }
+    setPasswordError("");
+    setPasswordStep(2);
+  };
+
+  const handleChangePassword = () => {
+    if (newPassword !== confirmNewPassword) {
+      setPasswordError("Passwords do not match.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      return;
+    }
+    const saved = JSON.parse(localStorage.getItem("user") || "{}");
+    localStorage.setItem("user", JSON.stringify({ ...saved, password: newPassword }));
+    setPasswordError("");
+    setShowPasswordModal(false);
+    setPasswordStep(1);
+    setVerifyEmail("");
+    setVerifyCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    alert("Password changed successfully!");
+  };
+
+  const closePasswordModal = () => {
+    setShowPasswordModal(false);
+    setPasswordStep(1);
+    setVerifyEmail("");
+    setVerifyCurrentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    setPasswordError("");
+  };
+
+  const handleEmailVerify = () => {
+    const saved = JSON.parse(localStorage.getItem("user") || "{}");
+    if (emailVerifyPassword !== saved.password) {
+      setEmailVerifyError("Incorrect password.");
+      return;
+    }
+    const updated = { ...saved, username, email: pendingEmail };
+    localStorage.setItem("user", JSON.stringify(updated));
+    onUserUpdate(updated);
+    setEmail(pendingEmail);
+    setEmailVerifyError("");
+    setEmailVerifyPassword("");
+    setShowEmailVerifyModal(false);
+    alert("Email updated successfully!");
+  };
+
+  const closeEmailModal = () => {
+    setShowEmailVerifyModal(false);
+    setEmailVerifyPassword("");
+    setEmailVerifyError("");
+    setPendingEmail("");
+  };
+
+  const handleRatingSubmit = () => {
+    if (rating === 0) return;
+    alert(`Thanks for rating us ${rating} star${rating > 1 ? "s" : ""}!`);
+    setRating(0);
+    setHoverRating(0);
+  };
+
+  const modalOverlay = {
+    position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)",
+    display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100
+  };
+  const modalBox = {
+    backgroundColor: "var(--secondary)", borderRadius: "12px", padding: "32px",
+    maxWidth: "360px", width: "90%", display: "flex", flexDirection: "column", gap: "12px"
+  };
+  const modalInput = {
+    backgroundColor: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)",
+    borderRadius: "6px", padding: "8px 12px", color: "var(--text)", fontSize: "14px", width: "100%"
+  };
+  const primaryBtn = {
+    backgroundColor: "var(--primary)", color: "#fff", border: "none",
+    borderRadius: "8px", padding: "10px", cursor: "pointer", fontWeight: "bold", width: "100%"
+  };
+  const ghostBtn = {
+    backgroundColor: "transparent", color: "var(--text)", border: "1px solid rgba(255,255,255,0.2)",
+    borderRadius: "8px", padding: "10px", cursor: "pointer", width: "100%"
+  };
+  const ovalBtn = {
+    display: "block", width: "80%", margin: "6px auto 0",
+    padding: "8px 0", borderRadius: "999px",
+    border: "1px solid rgba(255,255,255,0.2)",
+    backgroundColor: "rgba(255,255,255,0.08)",
+    color: "var(--text)", cursor: "pointer",
+    fontSize: "13px", fontWeight: "bold", transition: "background-color 0.2s"
   };
 
   return (
     <aside className="profile-section">
       <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={handleFileChange}
+        type="file" accept="image/*" ref={fileInputRef}
+        style={{ display: "none" }} onChange={handleFileChange}
       />
 
+      {/* Change Password Modal */}
+      {showPasswordModal && (
+        <div onClick={closePasswordModal} style={modalOverlay}>
+          <div onClick={e => e.stopPropagation()} style={modalBox}>
+            {passwordStep === 1 ? (
+              <>
+                <h3 style={{ fontWeight: "bold", fontSize: "18px" }}>Verify Identity</h3>
+                <p style={{ opacity: 0.6, fontSize: "13px" }}>Enter your email and current password to continue.</p>
+                <input style={modalInput} type="email" placeholder="Your email" value={verifyEmail} onChange={e => setVerifyEmail(e.target.value)} />
+                <input style={modalInput} type="password" placeholder="Current password" value={verifyCurrentPassword} onChange={e => setVerifyCurrentPassword(e.target.value)} />
+                {passwordError && <p style={{ color: "#e50914", fontSize: "13px" }}>{passwordError}</p>}
+                <button style={primaryBtn} onClick={handleVerifyForPassword}>Continue</button>
+                <button style={ghostBtn} onClick={closePasswordModal}>Cancel</button>
+              </>
+            ) : (
+              <>
+                <h3 style={{ fontWeight: "bold", fontSize: "18px" }}>New Password</h3>
+                <input style={modalInput} type="password" placeholder="New password" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+                <input style={modalInput} type="password" placeholder="Confirm new password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} />
+                {passwordError && <p style={{ color: "#e50914", fontSize: "13px" }}>{passwordError}</p>}
+                <button style={primaryBtn} onClick={handleChangePassword}>Change Password</button>
+                <button style={ghostBtn} onClick={closePasswordModal}>Cancel</button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Email Verify Modal */}
+      {showEmailVerifyModal && (
+        <div onClick={closeEmailModal} style={modalOverlay}>
+          <div onClick={e => e.stopPropagation()} style={modalBox}>
+            <h3 style={{ fontWeight: "bold", fontSize: "18px" }}>Confirm Email Change</h3>
+            <p style={{ opacity: 0.6, fontSize: "13px" }}>Enter your password to update your email to <strong>{pendingEmail}</strong>.</p>
+            <input style={modalInput} type="password" placeholder="Your password" value={emailVerifyPassword} onChange={e => setEmailVerifyPassword(e.target.value)} />
+            {emailVerifyError && <p style={{ color: "#e50914", fontSize: "13px" }}>{emailVerifyError}</p>}
+            <button style={primaryBtn} onClick={handleEmailVerify}>Confirm</button>
+            <button style={ghostBtn} onClick={closeEmailModal}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Profile Picture */}
       <img
         src={photo || profileImg}
         alt="User profile"
         className="profile-pic"
-        onClick={() => fileInputRef.current.click()}
       />
 
-      <div className="info-box">
-        <strong>Username:</strong> {user.username}
-      </div>
-      <div className="info-box">
-        <strong>Email:</strong> {user.email}
-      </div>
+      {/* Edit Profile Button */}
+      <button
+        onClick={() => editing ? handleSave() : setEditing(true)}
+        style={{ ...ovalBtn, backgroundColor: editing ? "var(--primary)" : "rgba(255,255,255,0.08)" }}
+      >
+        {editing ? "💾 Save Profile" : "✏️ Edit Profile"}
+      </button>
 
-      <section className="review-box">
-        <h3>Leave a Review</h3>
-        <textarea
-          placeholder="Write something..."
-          value={review}
-          onChange={(e) => setReview(e.target.value)}
-        />
-        <button>Submit</button>
+      {/* Change Password Button */}
+      <button onClick={() => setShowPasswordModal(true)} style={ovalBtn}>
+        🔒 Change Password
+      </button>
+
+      {/* Change Photo — only when editing */}
+      {editing && (
+        <button onClick={() => fileInputRef.current.click()} style={ovalBtn}>
+          📷 Change Photo
+        </button>
+      )}
+
+      {/* Username & Email */}
+      {editing ? (
+        <>
+          <div className="info-box">
+            <strong>Username:</strong>
+            <input value={username} onChange={e => setUsername(e.target.value)} style={{ ...modalInput, marginTop: "6px" }} />
+          </div>
+          <div className="info-box">
+            <strong>Email:</strong>
+            <input value={email} onChange={e => setEmail(e.target.value)} style={{ ...modalInput, marginTop: "6px" }} />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="info-box"><strong>Username:</strong> {username}</div>
+          <div className="info-box"><strong>Email:</strong> {email}</div>
+        </>
+      )}
+
+      {/* Divider */}
+      <div style={{
+        width: "80%", height: "1px",
+        backgroundColor: "rgba(255,255,255,0.1)",
+        margin: "16px auto"
+      }} />
+
+      {/* Rate Us Section */}
+      <section style={{ textAlign: "center", padding: "0 16px" }}>
+        <h3 style={{ fontSize: "15px", fontWeight: "bold", marginBottom: "12px" }}>Rate Us!</h3>
+
+        <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginBottom: "14px" }}>
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              onClick={() => setRating(star)}
+              onMouseEnter={() => setHoverRating(star)}
+              onMouseLeave={() => setHoverRating(0)}
+              style={{
+                fontSize: "28px",
+                cursor: "pointer",
+                color: star <= (hoverRating || rating) ? "#f5c518" : "rgba(255,255,255,0.2)",
+                transition: "color 0.15s, transform 0.15s",
+                transform: star <= (hoverRating || rating) ? "scale(1.2)" : "scale(1)"
+              }}
+            >
+              ★
+            </span>
+          ))}
+        </div>
+
+        <button
+          onClick={handleRatingSubmit}
+          disabled={rating === 0}
+          style={{
+            ...ovalBtn,
+            margin: "0 auto",
+            backgroundColor: rating > 0 ? "var(--primary)" : "rgba(255,255,255,0.05)",
+            opacity: rating > 0 ? 1 : 0.4,
+            cursor: rating > 0 ? "pointer" : "default"
+          }}
+        >
+          Submit Rating
+        </button>
       </section>
+
     </aside>
   );
 }

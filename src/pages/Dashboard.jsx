@@ -5,10 +5,16 @@ import Profile from "../components/Profile";
 import MovieCard from "../components/MovieCard";
 
 function Dashboard() {
-  const [user] = useState({
-    username: "Lyn",
-    email: "lyn@example.com",
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem("user");
+    return saved ? JSON.parse(saved) : { username: "Guest", email: "" };
   });
+
+  const handleUserUpdate = (updated) => {
+    setUser(updated);
+  };
+
+  const [profileOpen, setProfileOpen] = useState(true);
 
   const [watchlist, setWatchlist] = useState(() =>
     JSON.parse(localStorage.getItem("watchlist") || "[]")
@@ -37,7 +43,35 @@ function Dashboard() {
       <Navbar />
 
       <main className="dashboard-layout">
-        <Profile user={user} />
+        <div style={{ position: "relative", minHeight: "56px" }}>
+          {profileOpen && <Profile user={user} onUserUpdate={handleUserUpdate} />}
+          
+          <button
+            onClick={() => setProfileOpen(prev => !prev)}
+            style={{
+              position: "absolute",
+              top: "12px",
+              right: "-15px",
+              backgroundColor: "rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              borderRadius: "50%",
+              width: "32px",
+              height: "32px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "30px",
+              color: "var(--text)",
+              transition: "background-color 0.2s",
+              zIndex: 10
+            }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.2)"}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.1)"}
+          >
+            {profileOpen ? "☚" : "☛"}
+          </button>
+        </div>
 
         <section className="content-section">
 
