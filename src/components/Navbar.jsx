@@ -19,7 +19,7 @@ export default function Navbar() {
       style={{ backgroundColor: "var(--secondary)", color: "var(--text)" }}
     >
       <Link to="/" style={linkStyle}>
-        <h1 className="text-xl font-bold" style={{ color: "var(--primary)" }}>MovieTracker</h1>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--primary)" }}>BingeBoard</h1>
       </Link>
 
       <div className="flex flex-wrap gap-4 justify-center md:justify-end items-center">
@@ -37,16 +37,22 @@ export default function Navbar() {
           </span>
         </Link>
         <Link to="/login" style={linkStyle} className="hover:opacity-70">Login</Link>
-        <Link to="/register" style={linkStyle} className="hover:opacity-70">Register</Link>
         <Link to="/dashboard" style={linkStyle} className="hover:opacity-70">Dashboard</Link>
       </div>
 
       <button
         onClick={toggleTheme}
-        className="px-3 py-1 rounded"
-        style={{ backgroundColor: "var(--primary)", color: "#fff", border: "none", cursor: "pointer" }}
+        className="text-sm px-2 py-1 rounded-md"
+        style={{
+          background: "transparent",
+          color: "var(--text)",
+          border: "1px solid var(--primary)",
+          cursor: "pointer",
+          width: "auto",
+          flex: "0 0 auto"
+        }}
       >
-        {isDark ? "Light Mode" : "Dark Mode"}
+        {isDark ? "Light" : "Dark"}
       </button>
     </nav>
   );

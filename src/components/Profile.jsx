@@ -262,6 +262,7 @@ function Profile({ user, onUserUpdate }) {
                 fontSize: "28px",
                 cursor: "pointer",
                 color: star <= (hoverRating || rating) ? "#f5c518" : "rgba(255,255,255,0.2)",
+                textShadow: "0 0 1px #000",
                 transition: "color 0.15s, transform 0.15s",
                 transform: star <= (hoverRating || rating) ? "scale(1.2)" : "scale(1)"
               }}
