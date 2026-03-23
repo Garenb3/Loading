@@ -67,9 +67,9 @@ function Register() {
             <img
               src={logo}
               alt="MovieTracker logo"
-              style={{ width: "120px", height: "120px", objectFit: "cover", borderRadius: "20px" }}
+              style={{ width: "120px", height: "120px", objectFit: "cover",}}
             />
-            <h1 style={{ fontSize: "22px", fontWeight: "bold", textAlign: "center", margin: 0 , color: "red"}}>
+            <h1 style={{ fontSize: "22px", fontWeight: "bold", textAlign: "center", margin: 0 , color: "var(--primary)", }}>
               BingeBoard
             </h1>
             <p style={{ fontSize: "12px", textAlign: "center", margin: 0 }}>

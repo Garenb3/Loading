@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { setTheme } from "../utils/theme";
 import profileImg from "../images/Profile.jpg";
-import logo from "C:/Users/User/Pictures//logobb.png"; 
+import logo from "../images/logo.png";
 import { darkTheme, lightTheme } from "../utils/themes";
 
 export default function Navbar() {
@@ -14,8 +14,14 @@ export default function Navbar() {
     setIsDark(!isDark);
   };
 
-  const linkStyle = { color: "var(--text)", textDecoration: "none" };
-  const user = JSON.parse(localStorage.getItem("user")) || { username: "Guest" };
+  const linkStyle = {
+    color: "var(--text)",
+    textDecoration: "none",
+    fontSize: "30px",
+  };
+  const user = JSON.parse(localStorage.getItem("user")) || {
+    username: "Guest",
+  };
   const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
   const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
 
@@ -32,22 +38,28 @@ export default function Navbar() {
       className="px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4"
       style={{ backgroundColor: "var(--secondary)", color: "var(--text)" }}
     >
-      {/* ✅ LOGO INSTEAD OF TEXT */}
-      <Link to="/" style={{ display: "flex", alignItems: "center" }}>
-        <img
-          src={logo}
-          alt="BingeBoard Logo"
-          style={{
-            height: "50px",
-            objectFit: "contain",
-            cursor: "pointer",
-          }}
-        />
-      </Link>
+      <div style={{ margin: 0, padding: 0, width: "125px"}}>
+        <Link to="/" style={{ display: "flex", alignItems: "center" }}>
+          <img
+            src={logo}
+            alt="BingeBoard Logo"
+            style={{
+              height: "90px",
+              width: "100%",
+              objectFit: "contain",
+              cursor: "pointer",
+            }}
+          />
+        </Link>
+      </div>
 
       <div className="flex flex-wrap gap-4 justify-center md:justify-end items-center">
-        <Link to="/" style={linkStyle} className="hover:opacity-70">Home</Link>
-        <Link to="/listview" style={linkStyle} className="hover:opacity-70">Browse</Link>
+        <Link to="/" style={linkStyle} className="hover:opacity-70">
+          Home
+        </Link>
+        <Link to="/listview" style={linkStyle} className="hover:opacity-70">
+          Browse
+        </Link>
         <Link to="/add" style={linkStyle} className="hover:opacity-70">
           <span
             style={{
@@ -55,14 +67,18 @@ export default function Navbar() {
               color: "#fff",
               padding: "5px 12px",
               borderRadius: "6px",
-              fontSize: "14px",
+              fontSize: "25px",
             }}
           >
             + Add / Edit
           </span>
         </Link>
-        <Link to="/login" style={linkStyle} className="hover:opacity-70">Login</Link>
-        <Link to="/dashboard" style={linkStyle} className="hover:opacity-70">Dashboard</Link>
+        <Link to="/login" style={linkStyle} className="hover:opacity-70">
+          Login
+        </Link>
+        <Link to="/dashboard" style={linkStyle} className="hover:opacity-70">
+          Dashboard
+        </Link>
       </div>
 
       <div className="flex items-center relative">
@@ -70,7 +86,7 @@ export default function Navbar() {
           <img
             src={savedPhoto || profileImg}
             alt="profile"
-            className="w-10 h-10 rounded-full object-cover cursor-pointer border"
+            className="w-15 h-15 rounded-full object-cover cursor-pointer border"
             style={{ borderColor: "var(--primary)" }}
           />
 
