@@ -18,7 +18,6 @@ export default function TVShowDetail() {
     return favorites.some((item) => item.id === parseInt(id));
   });
   const [showFavModal, setShowFavModal] = useState(false);
-
   const [showTrailer, setShowTrailer] = useState(false);
 
   const show = data.find((s) => s.id === parseInt(id));
@@ -103,22 +102,6 @@ export default function TVShowDetail() {
     }
   };
 
-  const renderStars = (rating) => {
-    const filled = Math.round((rating / 10) * 5);
-    return Array.from({ length: 5 }, (_, i) => (
-      <span
-        key={i}
-        style={{
-          color: i < filled ? "#e50914" : "var(--text)",
-          opacity: i < filled ? 1 : 0.3,
-          fontSize: "18px",
-        }}
-      >
-        ★
-      </span>
-    ));
-  };
-
   return (
     <div
       style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}
@@ -126,6 +109,7 @@ export default function TVShowDetail() {
     >
       <Navbar />
 
+      {/* Watchlist Modal */}
       {showModal && (
         <div
           onClick={() => setShowModal(false)}
@@ -151,13 +135,7 @@ export default function TVShowDetail() {
             }}
           >
             <p style={{ fontSize: "36px", marginBottom: "8px" }}>✓</p>
-            <h3
-              style={{
-                fontSize: "18px",
-                fontWeight: "bold",
-                marginBottom: "8px",
-              }}
-            >
+            <h3 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "8px" }}>
               Added to Watchlist!
             </h3>
             <p style={{ opacity: 0.7, marginBottom: "20px" }}>
@@ -181,6 +159,7 @@ export default function TVShowDetail() {
         </div>
       )}
 
+      {/* Favorites Modal */}
       {showFavModal && (
         <div
           onClick={() => setShowFavModal(false)}
@@ -206,13 +185,7 @@ export default function TVShowDetail() {
             }}
           >
             <p style={{ fontSize: "36px", marginBottom: "8px" }}>★</p>
-            <h3
-              style={{
-                fontSize: "18px",
-                fontWeight: "bold",
-                marginBottom: "8px",
-              }}
-            >
+            <h3 style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "8px" }}>
               Added to Favorites!
             </h3>
             <p style={{ opacity: 0.7, marginBottom: "20px" }}>
@@ -236,7 +209,8 @@ export default function TVShowDetail() {
         </div>
       )}
 
-      {showTrailer && show.trailer && (
+      {/* Trailer Modal — no longer gated on show.trailer so it always mounts when showTrailer is true */}
+      {showTrailer && (
         <div
           onClick={() => setShowTrailer(false)}
           style={{
@@ -281,7 +255,7 @@ export default function TVShowDetail() {
             <iframe
               width="100%"
               height="450"
-              src={show.trailer}
+              src={`${show.trailer}?autoplay=1`}
               title={`${show.title} Trailer`}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -293,12 +267,13 @@ export default function TVShowDetail() {
 
       <div className="max-w-5xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row gap-8">
+          {/* Poster */}
           <div className="w-full md:w-1/3 flex items-center justify-center">
             <img
               src={show.image}
               alt={show.title}
               className="rounded-lg w-full"
-              style={{ objectFit: "cover"}}
+              style={{ objectFit: "cover" }}
               onError={(e) => {
                 e.target.src =
                   "https://via.placeholder.com/300x450?text=No+Image";
@@ -306,9 +281,11 @@ export default function TVShowDetail() {
             />
           </div>
 
+          {/* Details */}
           <div className="flex-1">
             <h1 className="text-3xl font-bold">{show.title}</h1>
 
+            {/* Genres */}
             {show.genre && (
               <div className="flex flex-wrap gap-2 mt-3">
                 {(Array.isArray(show.genre) ? show.genre : [show.genre]).map(
@@ -325,11 +302,12 @@ export default function TVShowDetail() {
                     >
                       {g}
                     </span>
-                  ),
+                  )
                 )}
               </div>
             )}
 
+            {/* Meta row */}
             <div
               className="flex flex-wrap gap-6 mt-4"
               style={{ opacity: 0.7, fontSize: "14px" }}
@@ -337,11 +315,11 @@ export default function TVShowDetail() {
               {show.releaseDate && (
                 <span>📅 {new Date(show.releaseDate).getFullYear()}</span>
               )}
-              {show.duration && <span>⏱ {show.duration} min</span>}
+              {show.duration && <span>⏱ {show.duration} min / ep</span>}
               {show.studio && <span>🎬 {show.studio}</span>}
               {show.rating != null && (
-                <span style={{ color: "#FBBF24", fontWeight: "700" }}>
-                  ★ {show.rating}/10
+                <span style={{ color: "#FBBF24", fontWeight: "700", opacity: 1 }}>
+                  ⭐ {show.rating}/10
                 </span>
               )}
             </div>
@@ -364,6 +342,7 @@ export default function TVShowDetail() {
               </div>
             )}
 
+            {/* Seasons Grid */}
             {show.seasons && show.seasons.total && (
               <div className="mt-6">
                 <h2 className="text-xl font-bold mb-3">Seasons & Episodes</h2>
@@ -396,7 +375,8 @@ export default function TVShowDetail() {
               </div>
             )}
 
-            <div className="flex gap-3 mt-6">
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-3 mt-6">
               <button
                 onClick={handleAddToWatchlist}
                 className="px-6 py-3 rounded font-bold"
@@ -426,22 +406,23 @@ export default function TVShowDetail() {
               >
                 {addedFav ? "★ In Favorites — Remove" : "☆ Add to Favorites"}
               </button>
+
+              {show.trailer && (
+                <button
+                  onClick={() => setShowTrailer(true)}
+                  className="px-6 py-3 rounded font-bold"
+                  style={{
+                    backgroundColor: "#1a1a1a",
+                    color: "#fff",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    cursor: "pointer",
+                    fontSize: "15px",
+                  }}
+                >
+                  ▶ Watch Trailer
+                </button>
+              )}
             </div>
-            {show.trailer && (
-              <button
-                onClick={() => setShowTrailer(true)}
-                className="px-6 py-3 rounded font-bold"
-                style={{
-                  backgroundColor: "#1a1a1a",
-                  color: "#fff",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                  cursor: "pointer",
-                  fontSize: "15px",
-                }}
-              >
-                ▶ Watch Trailer
-              </button>
-            )}
           </div>
         </div>
       </div>

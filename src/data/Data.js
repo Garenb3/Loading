@@ -9,6 +9,7 @@ export const data = [
     image: "/images/Inception.jpg",
     duration: 148,
     releaseDate: "2010",
+    rating: 8.8,
     director: "Christopher Nolan",
     studio: "Warner Bros.",
     cast: [
@@ -19,7 +20,8 @@ export const data = [
     ],
     description:
       "A skilled thief who specializes in corporate espionage by infiltrating the subconscious is offered a chance to have his criminal history erased. His task is not to steal an idea, but to plant one — a process known as inception — navigating layered dream worlds where time and reality bend.",
-  },
+    trailer: "https://www.youtube.com/embed/YoHD9XEInc0",
+    },
 
   {
     id: 2,
@@ -31,6 +33,7 @@ export const data = [
     image: "/images/Stranger Things.jpg",
     duration: 50,
     releaseDate: "2016",
+    rating: 8.7,
     director: "The Duffer Brothers",
     studio: "Netflix",
     cast: ["Millie Bobby Brown", "Finn Wolfhard", "David Harbour"],
@@ -40,6 +43,7 @@ export const data = [
       total: 4,
       episodesPerSeason: [8, 9, 8, 9],
     },
+    trailer:"https://www.youtube.com/embed/b9EkMc79ZSU",
   },
 
   {
@@ -52,12 +56,14 @@ export const data = [
     image: "/images/The Dark Knight.jpg",
     duration: 152,
     releaseDate: "2008",
+    rating: 9.0,
     director: "Christopher Nolan",
     studio: "Warner Bros.",
     cast: ["Christian Bale", "Heath Ledger", "Aaron Eckhart"],
     description:
       "Batman raises the stakes in his war on crime, forming an uneasy alliance with Lt. Jim Gordon and District Attorney Harvey Dent. But their efforts are challenged by the Joker, a criminal mastermind who plunges Gotham into chaos and forces Batman closer to crossing the line between hero and vigilante.",
-  },
+    trailer: "https://www.youtube.com/embed/EXeTwQWrcwY",
+    },
 
   {
     id: 4,
@@ -69,6 +75,7 @@ export const data = [
     image: "/images/Breaking Bad.jpg",
     duration: 47,
     releaseDate: "2008",
+    rating: 9.5,
     director: "Vince Gilligan",
     studio: "AMC",
     cast: ["Bryan Cranston", "Aaron Paul"],
@@ -78,6 +85,7 @@ export const data = [
       total: 5,
       episodesPerSeason: [7, 13, 13, 13, 16],
     },
+    trailer:"https://www.youtube.com/embed/HhesaQXLuRY",
   },
 
   {
@@ -90,12 +98,14 @@ export const data = [
     image: "/images/The Shawshank Redemption.jpg",
     duration: 142,
     releaseDate: "1994",
+    rating: 9.3,
     director: "Frank Darabont",
     studio: "Columbia Pictures",
     cast: ["Tim Robbins", "Morgan Freeman"],
     description:
       "Wrongly convicted of murder, banker Andy Dufresne begins a new life at Shawshank prison. Over the years, he forms a bond with fellow inmate Red and finds ways to maintain hope and dignity, ultimately orchestrating a daring plan for freedom.",
-  },
+    trailer:"https://www.youtube.com/embed/PLl99DlL6b4",
+    },
 
   {
     id: 6,
@@ -107,6 +117,7 @@ export const data = [
     image: "/images/Game of Thrones.jpg",
     duration: 57,
     releaseDate: "2011",
+    rating: 9.2,
     director: "Various",
     studio: "HBO",
     cast: ["Emilia Clarke", "Kit Harington", "Peter Dinklage"],
@@ -116,6 +127,7 @@ export const data = [
       total: 8,
       episodesPerSeason: [10, 10, 10, 10, 10, 10, 7, 6],
     },
+    trailer:"https://www.youtube.com/embed/KPLWWIOCOOQ",
   },
   {
     id: 7,
@@ -127,6 +139,7 @@ export const data = [
     image: "/images/The Mandalorian.webp",
     duration: 40,
     releaseDate: "2019",
+    rating: 8.6,
     director: "Jon Favreau",
     studio: "Disney+",
     cast: ["Pedro Pascal", "Katee Sackhoff", "Giancarlo Esposito"],
@@ -136,6 +149,7 @@ export const data = [
       total: 3,
       episodesPerSeason: [8, 8, 8],
     },
+    trailer:"https://www.youtube.com/embed/aOC8E8z_ifw",
   },
 
   {
@@ -148,6 +162,7 @@ export const data = [
     image: "/images/Avengers Endgame.jpg",
     duration: 181,
     releaseDate: "2019",
+    rating: 8.4,
     director: "Anthony Russo, Joe Russo",
     studio: "Marvel Studios",
     cast: [
@@ -157,8 +172,9 @@ export const data = [
       "Mark Ruffalo",
     ],
     description:
-      "After the devastating events of Infinity War, the remaining Avengers assemble once more in a desperate attempt to reverse Thanos’ actions and restore balance to the universe. Their mission leads to a high-stakes journey across time, testing sacrifice, friendship, and heroism.",
-  },
+      "After the devastating events of Infinity War, the remaining Avengers assemble once more in a desperate attempt to reverse Thanos' actions and restore balance to the universe. Their mission leads to a high-stakes journey across time, testing sacrifice, friendship, and heroism.",
+    trailer:"https://www.youtube.com/embed/TcMBFSGVi1c",
+    },
 
   {
     id: 9,
@@ -170,6 +186,7 @@ export const data = [
     image: "/images/Friends.webp",
     duration: 22,
     releaseDate: "1994",
+    rating: 8.9,
     director: "Various",
     studio: "NBC",
     cast: [
@@ -184,6 +201,7 @@ export const data = [
       total: 10,
       episodesPerSeason: [24, 24, 25, 24, 24, 25, 24, 24, 24, 18],
     },
+    trailer:"https://www.youtube.com/embed/Zg2LCD5QOJs",
   },
 
   {
@@ -196,12 +214,14 @@ export const data = [
     image: "/images/The Matrix.jpg",
     duration: 136,
     releaseDate: "1999",
+    rating: 8.7,
     director: "Lana Wachowski, Lilly Wachowski",
     studio: "Warner Bros.",
     cast: ["Keanu Reeves", "Laurence Fishburne", "Carrie-Anne Moss"],
     description:
       "A computer hacker discovers that reality as he knows it is a simulated illusion created by machines. Guided by rebels, he embraces his role in a war against artificial intelligence and begins to understand his destiny as 'The One.'",
-  },
+    trailer: "https://www.youtube.com/embed/vKQi3bBA1y8",
+    },
 
   {
     id: 11,
@@ -213,6 +233,7 @@ export const data = [
     image: "/images/The Witcher.jpg",
     duration: 60,
     releaseDate: "2019",
+    rating: 8.2,
     director: "Various",
     studio: "Netflix",
     cast: ["Henry Cavill", "Anya Chalotra", "Freya Allan"],
@@ -222,6 +243,7 @@ export const data = [
       total: 3,
       episodesPerSeason: [8, 8, 8],
     },
+    trailer:"https://www.youtube.com/embed/ndl1W4ltcmg",
   },
 
   {
@@ -234,6 +256,7 @@ export const data = [
     image: "/images/Black Mirror.jpg",
     duration: 55,
     releaseDate: "2011",
+    rating: 8.8,
     director: "Various",
     studio: "Netflix",
     cast: ["Bryce Dallas Howard", "Jon Hamm", "Daniel Kaluuya"],
@@ -243,6 +266,7 @@ export const data = [
       total: 6,
       episodesPerSeason: [3, 3, 6, 6, 3, 5],
     },
+    trailer:"https://www.youtube.com/embed/V0XOApF5nLU",
   },
 
   {
@@ -255,12 +279,14 @@ export const data = [
     image: "/images/Interstellar.jpg",
     duration: 169,
     releaseDate: "2014",
+    rating: 8.6,
     director: "Christopher Nolan",
     studio: "Paramount Pictures",
     cast: ["Matthew McConaughey", "Anne Hathaway", "Jessica Chastain"],
     description:
       "In a future where Earth is becoming uninhabitable, a team of astronauts travels through a wormhole in search of a new home for humanity. Blending science with emotion, the journey explores time dilation, love, and sacrifice across galaxies.",
-  },
+    trailer:"https://www.youtube.com/embed/zSWdZVtXT7E",
+    },
 
   {
     id: 14,
@@ -272,6 +298,7 @@ export const data = [
     image: "/images/The Office.jpg",
     duration: 22,
     releaseDate: "2005",
+    rating: 9.0,
     director: "Various",
     studio: "NBC",
     cast: ["Steve Carell", "John Krasinski", "Jenna Fischer"],
@@ -281,6 +308,7 @@ export const data = [
       total: 9,
       episodesPerSeason: [6, 22, 25, 19, 28, 26, 26, 24, 25],
     },
+    trailer:"https://www.youtube.com/embed/-C2z-nshFts",
   },
 
   {
@@ -293,6 +321,7 @@ export const data = [
     image: "/images/Sherlock.jpg",
     duration: 90,
     releaseDate: "2010",
+    rating: 9.1,
     director: "Various",
     studio: "BBC",
     cast: ["Benedict Cumberbatch", "Martin Freeman"],
@@ -302,6 +331,7 @@ export const data = [
       total: 4,
       episodesPerSeason: [3, 3, 3, 3],
     },
+    trailer:"https://www.youtube.com/embed/y9ZouUyPKx8",
   },
 
   {
@@ -314,12 +344,14 @@ export const data = [
     image: "/images/Titanic.jpg",
     duration: 195,
     releaseDate: "1997",
+    rating: 7.9,
     director: "James Cameron",
     studio: "20th Century Fox",
     cast: ["Leonardo DiCaprio", "Kate Winslet"],
     description:
-      "A sweeping romance unfolds aboard the ill-fated RMS Titanic, where two lovers from different social classes meet and fall in love. Their story is set against the backdrop of one of history’s most tragic maritime disasters.",
-  },
+      "A sweeping romance unfolds aboard the ill-fated RMS Titanic, where two lovers from different social classes meet and fall in love. Their story is set against the backdrop of one of history's most tragic maritime disasters.",
+    trailer:"https://www.youtube.com/embed/kVrqfYjkTdQ",
+    },
   {
     id: 17,
     title: "The Last of Us",
@@ -330,6 +362,7 @@ export const data = [
     image: "/images/The Last of Us.jpg",
     duration: 60,
     releaseDate: "2023",
+    rating: 8.8,
     director: "Craig Mazin",
     studio: "HBO",
     cast: ["Pedro Pascal", "Bella Ramsey"],
@@ -339,6 +372,7 @@ export const data = [
       total: 1,
       episodesPerSeason: [9],
     },
+    trailer:"https://www.youtube.com/embed/TdcXP-groXc",
   },
   {
     id: 18,
@@ -350,6 +384,7 @@ export const data = [
     image: "/images/The Crown.jpg",
     duration: 58,
     releaseDate: "2016",
+    rating: 8.6,
     director: "Various",
     studio: "Netflix",
     cast: ["Claire Foy", "Olivia Colman", "Imelda Staunton"],
@@ -359,6 +394,7 @@ export const data = [
       total: 6,
       episodesPerSeason: [10, 10, 10, 10, 10, 10],
     },
+    trailer:"https://www.youtube.com/embed/JWtnJjn6ng0",
   },
 
   {
@@ -371,6 +407,7 @@ export const data = [
     image: "/images/Seinfeld.jpg",
     duration: 22,
     releaseDate: "1989",
+    rating: 8.9,
     director: "Various",
     studio: "NBC",
     cast: [
@@ -385,6 +422,7 @@ export const data = [
       total: 9,
       episodesPerSeason: [5, 12, 23, 24, 22, 24, 24, 22, 24],
     },
+    trailer:"https://www.youtube.com/embed/hQXKyIG_NS4",
   },
 
   {
@@ -397,12 +435,14 @@ export const data = [
     image: "/images/The Godfather.jpg",
     duration: 175,
     releaseDate: "1972",
+    rating: 9.2,
     director: "Francis Ford Coppola",
     studio: "Paramount Pictures",
     cast: ["Marlon Brando", "Al Pacino", "James Caan"],
     description:
       "The aging patriarch of an organized crime dynasty transfers control of his empire to his reluctant son. A sweeping saga of family, loyalty, and power, the film explores the moral complexities of crime and the American Dream.",
-  },
+    trailer:"https://www.youtube.com/embed/UaVTIH8mujA",
+    },
 
   {
     id: 21,
@@ -414,6 +454,7 @@ export const data = [
     image: "/images/Money Heist.jpg",
     duration: 48,
     releaseDate: "2017",
+    rating: 8.3,
     director: "Álex Pina",
     studio: "Netflix",
     cast: ["Úrsula Corberó", "Álvaro Morte", "Itziar Ituño"],
@@ -423,6 +464,7 @@ export const data = [
       total: 5,
       episodesPerSeason: [9, 6, 8, 8, 10],
     },
+    trailer:"https://www.youtube.com/embed/_InqQJRqGW4",
   },
 
   {
@@ -435,6 +477,7 @@ export const data = [
     image: "/images/The Boys.jpg",
     duration: 55,
     releaseDate: "2019",
+    rating: 8.7,
     director: "Eric Kripke",
     studio: "Prime Video",
     cast: ["Karl Urban", "Jack Quaid", "Antony Starr"],
@@ -444,6 +487,7 @@ export const data = [
       total: 4,
       episodesPerSeason: [8, 8, 8, 8],
     },
+    trailer:"https://www.youtube.com/embed/M1bhOaLV4FU",
   },
 
   {
@@ -456,15 +500,17 @@ export const data = [
     image: "/images/Squid Game.jpg",
     duration: 55,
     releaseDate: "2021",
+    rating: 8.0,
     director: "Hwang Dong-hyuk",
     studio: "Netflix",
     cast: ["Lee Jung-jae", "Park Hae-soo"],
     description:
-      "Hundreds of financially struggling players accept an invitation to compete in deadly children’s games for a massive cash prize. Beneath the surface lies a brutal critique of inequality and human desperation.",
+      "Hundreds of financially struggling players accept an invitation to compete in deadly children's games for a massive cash prize. Beneath the surface lies a brutal critique of inequality and human desperation.",
     seasons: {
       total: 1,
       episodesPerSeason: [9],
     },
+    trailer:"https://www.youtube.com/embed/oqxAJKy0ii4",
   },
 
   {
@@ -477,12 +523,14 @@ export const data = [
     image: "/images/Parasite.jpg",
     duration: 132,
     releaseDate: "2019",
+    rating: 8.5,
     director: "Bong Joon-ho",
     studio: "CJ Entertainment",
     cast: ["Song Kang-ho", "Lee Sun-kyun", "Cho Yeo-jeong"],
     description:
       "Greed and class discrimination threaten the newly formed symbiotic relationship between a wealthy family and a destitute one. What begins as deception spirals into a tense and unpredictable tragedy.",
-  },
+    trailer:"https://www.youtube.com/embed/5xH0HfJHsaY",
+    },
 
   {
     id: 25,
@@ -494,12 +542,14 @@ export const data = [
     image: "/images/Avatar The Way of Water.jpg",
     duration: 192,
     releaseDate: "2022",
+    rating: 7.6,
     director: "James Cameron",
     studio: "20th Century Studios",
     cast: ["Sam Worthington", "Zoe Saldaña", "Sigourney Weaver"],
     description:
       "Jake Sully lives with his newfound family on Pandora when a familiar threat returns. Forced to leave their home, they explore the oceans of Pandora, encountering new cultures and dangers while fighting to protect their world.",
-  },
+    trailer:"https://www.youtube.com/embed/d9MyW72ELq0",
+    },
 
   {
     id: 26,
@@ -511,6 +561,7 @@ export const data = [
     image: "/images/Chernobyl.jpg",
     duration: 60,
     releaseDate: "2019",
+    rating: 9.4,
     director: "Johan Renck",
     studio: "HBO",
     cast: ["Jared Harris", "Stellan Skarsgård", "Emily Watson"],
@@ -520,6 +571,7 @@ export const data = [
       total: 1,
       episodesPerSeason: [5],
     },
+    trailer:"https://www.youtube.com/embed/s9APLXM9Ei8",
   },
 
   {
@@ -532,6 +584,7 @@ export const data = [
     image: "/images/BoJack Horseman.jpg",
     duration: 25,
     releaseDate: "2014",
+    rating: 8.7,
     director: "Raphael Bob-Waksberg",
     studio: "Netflix",
     cast: ["Will Arnett", "Amy Sedaris", "Alison Brie"],
@@ -541,6 +594,7 @@ export const data = [
       total: 6,
       episodesPerSeason: [12, 12, 12, 12, 16, 16],
     },
+    trailer:"https://www.youtube.com/embed/i1eJMig5Ik4",
   },
 
   {
@@ -553,12 +607,14 @@ export const data = [
     image: "/images/Black Panther.jpg",
     duration: 134,
     releaseDate: "2018",
+    rating: 7.3,
     director: "Ryan Coogler",
     studio: "Marvel Studios",
     cast: ["Chadwick Boseman", "Michael B. Jordan", "Lupita Nyong'o"],
     description:
-      "T’Challa returns to Wakanda to take his rightful place as king. However, his leadership is challenged by a powerful enemy with ties to his past, forcing him to fight for his nation’s future.",
-  },
+      "T'Challa returns to Wakanda to take his rightful place as king. However, his leadership is challenged by a powerful enemy with ties to his past, forcing him to fight for his nation's future.",
+    trailer:"https://www.youtube.com/embed/xjDjIWPwcPU",
+    },
 
   {
     id: 29,
@@ -570,6 +626,7 @@ export const data = [
     image: "/images/Better Call Saul.jpg",
     duration: 50,
     releaseDate: "2015",
+    rating: 9.0,
     director: "Various",
     studio: "AMC",
     cast: ["Bob Odenkirk", "Rhea Seehorn", "Jonathan Banks"],
@@ -579,18 +636,20 @@ export const data = [
       total: 6,
       episodesPerSeason: [10, 10, 10, 10, 10, 13],
     },
+    trailer:"https://www.youtube.com/embed/HN4oydykJFc",
   },
 
   {
     id: 30,
-    title: "The Queen’s Gambit",
+    title: "The Queen's Gambit",
     type: "series",
     genre: ["Drama"],
     featured: false,
     trending: true,
-    image: "/images/The Queen’s Gambit.jpg",
+    image: "/images/The Queen's Gambit.jpg",
     duration: 45,
     releaseDate: "2020",
+    rating: 8.6,
     director: "Scott Frank",
     studio: "Netflix",
     cast: ["Anya Taylor-Joy", "Thomas Brodie-Sangster"],
@@ -600,6 +659,7 @@ export const data = [
       total: 1,
       episodesPerSeason: [7],
     },
+    trailer:"https://www.youtube.com/embed/oZn3qSgmLqI",
   },
   {
     id: 31,
@@ -611,12 +671,14 @@ export const data = [
     image: "/images/Spider‑Man Across the Spider‑Verse.jpg",
     duration: 140,
     releaseDate: "2023",
+    rating: 8.7,
     director: "Joaquim Dos Santos, Kemp Powers, Justin K. Thompson",
     studio: "Sony Pictures Animation",
     cast: ["Shameik Moore", "Hailee Steinfeld", "Oscar Isaac"],
     description:
       "Miles Morales returns for the next chapter of the Spider-Verse saga, joining forces with Gwen Stacy and a team of Spider-People across multiple dimensions. As he struggles with identity and responsibility, he must redefine what it means to be a hero.",
-  },
+    trailer:"https://www.youtube.com/embed/cqGjhVJWtEg",
+    },
 
   {
     id: 32,
@@ -628,6 +690,7 @@ export const data = [
     image: "/images/Narcos.jpg",
     duration: 50,
     releaseDate: "2015",
+    rating: 8.8,
     director: "Various",
     studio: "Netflix",
     cast: ["Wagner Moura", "Pedro Pascal", "Boyd Holbrook"],
@@ -637,6 +700,7 @@ export const data = [
       total: 3,
       episodesPerSeason: [10, 10, 10],
     },
+    trailer:"https://www.youtube.com/embed/xl8zdCY-abw",
   },
 
   {
@@ -649,6 +713,7 @@ export const data = [
     image: "/images/House of the Dragon.jpg",
     duration: 60,
     releaseDate: "2022",
+    rating: 8.5,
     director: "Various",
     studio: "HBO",
     cast: ["Emma D'Arcy", "Matt Smith", "Olivia Cooke"],
@@ -658,6 +723,7 @@ export const data = [
       total: 1,
       episodesPerSeason: [10],
     },
+    trailer:"https://www.youtube.com/embed/DotnJ7tTA34",
   },
 
   {
@@ -670,6 +736,7 @@ export const data = [
     image: "/images/Ted Lasso.jpg",
     duration: 30,
     releaseDate: "2020",
+    rating: 8.8,
     director: "Various",
     studio: "Apple TV+",
     cast: ["Jason Sudeikis", "Hannah Waddingham", "Brett Goldstein"],
@@ -679,6 +746,7 @@ export const data = [
       total: 3,
       episodesPerSeason: [10, 12, 12],
     },
+    trailer:"https://www.youtube.com/embed/3u7EIiohs6U",
   },
 
   {
@@ -691,12 +759,14 @@ export const data = [
     image: "/images/Dune.jpg",
     duration: 155,
     releaseDate: "2021",
+    rating: 8.0,
     director: "Denis Villeneuve",
     studio: "Warner Bros.",
     cast: ["Timothée Chalamet", "Rebecca Ferguson", "Zendaya"],
     description:
       "Paul Atreides, a gifted young man born into a great destiny, must travel to the most dangerous planet in the universe to secure the future of his family and people. The story unfolds amid political intrigue and interstellar conflict.",
-  },
+    trailer:"https://www.youtube.com/embed/n9xhJrPXop4",
+    },
 
   {
     id: 36,
@@ -708,6 +778,7 @@ export const data = [
     image: "/images/Westworld.jpg",
     duration: 60,
     releaseDate: "2016",
+    rating: 8.5,
     director: "Jonathan Nolan",
     studio: "HBO",
     cast: ["Evan Rachel Wood", "Thandiwe Newton", "Jeffrey Wright"],
@@ -717,6 +788,7 @@ export const data = [
       total: 4,
       episodesPerSeason: [10, 10, 8, 8],
     },
+    trailer:"https://www.youtube.com/embed/kEkZdgWu7mM",
   },
 
   {
@@ -729,6 +801,7 @@ export const data = [
     image: "/images/Ozark.jpg",
     duration: 55,
     releaseDate: "2017",
+    rating: 8.4,
     director: "Various",
     studio: "Netflix",
     cast: ["Jason Bateman", "Laura Linney"],
@@ -738,6 +811,7 @@ export const data = [
       total: 4,
       episodesPerSeason: [10, 10, 10, 14],
     },
+    trailer:"https://www.youtube.com/embed/5hAXVqrljbs",
   },
 
   {
@@ -750,12 +824,14 @@ export const data = [
     image: "/images/Sherlock Holmes.jpg",
     duration: 130,
     releaseDate: "2009",
+    rating: 7.6,
     director: "Guy Ritchie",
     studio: "Warner Bros.",
     cast: ["Robert Downey Jr.", "Jude Law"],
     description:
       "Detective Sherlock Holmes and his partner Dr. Watson must stop a mysterious villain whose dark plots threaten London. Combining intellect with action, Holmes uses observation and deduction to unravel the case.",
-  },
+    trailer:"https://www.youtube.com/embed/iKUzhzustok",
+    },
 
   {
     id: 39,
@@ -767,6 +843,7 @@ export const data = [
     image: "/images/Lost.jpg",
     duration: 45,
     releaseDate: "2004",
+    rating: 8.3,
     director: "Various",
     studio: "ABC",
     cast: ["Matthew Fox", "Evangeline Lilly", "Josh Holloway"],
@@ -776,6 +853,7 @@ export const data = [
       total: 6,
       episodesPerSeason: [25, 24, 23, 14, 17, 18],
     },
+    trailer:"https://www.youtube.com/embed/KTu8iDynwNc",
   },
 
   {
@@ -788,15 +866,17 @@ export const data = [
     image: "/images/Succession.jpg",
     duration: 60,
     releaseDate: "2018",
+    rating: 8.9,
     director: "Various",
     studio: "HBO",
     cast: ["Brian Cox", "Jeremy Strong", "Sarah Snook"],
     description:
-      "The Roy family controls a global media empire, but internal conflicts arise as the patriarch’s health declines. Power struggles, betrayal, and ambition dominate this sharp corporate drama.",
+      "The Roy family controls a global media empire, but internal conflicts arise as the patriarch's health declines. Power struggles, betrayal, and ambition dominate this sharp corporate drama.",
     seasons: {
       total: 4,
       episodesPerSeason: [10, 10, 9, 10],
     },
+    trailer:"https://www.youtube.com/embed/OzYxJV_rmE8",
   },
 
   {
@@ -809,11 +889,13 @@ export const data = [
     image: "/images/Joker.jpg",
     duration: 122,
     releaseDate: "2019",
+    rating: 8.4,
     director: "Todd Phillips",
     studio: "Warner Bros.",
     cast: ["Joaquin Phoenix", "Robert De Niro"],
     description:
-      "A mentally troubled comedian is pushed to the brink by society’s cruelty and neglect. His descent into madness transforms him into the infamous Joker, igniting chaos in Gotham.",
+      "A mentally troubled comedian is pushed to the brink by society's cruelty and neglect. His descent into madness transforms him into the infamous Joker, igniting chaos in Gotham.",
+    trailer:"https://www.youtube.com/embed/zAGVQLHvwOY",
   },
 
   {
@@ -826,6 +908,7 @@ export const data = [
     image: "/images/Mindhunter.jpg",
     duration: 50,
     releaseDate: "2017",
+    rating: 8.6,
     director: "David Fincher",
     studio: "Netflix",
     cast: ["Jonathan Groff", "Holt McCallany"],
@@ -835,6 +918,7 @@ export const data = [
       total: 2,
       episodesPerSeason: [10, 9],
     },
+    trailer:"https://www.youtube.com/embed/DHJO6VR6TYY",
   },
   {
     id: 43,
@@ -846,6 +930,7 @@ export const data = [
     image: "/images/Dark.jpg",
     duration: 55,
     releaseDate: "2017",
+    rating: 8.8,
     director: "Baran bo Odar",
     studio: "Netflix",
     cast: ["Louis Hofmann", "Lisa Vicari"],
@@ -855,6 +940,7 @@ export const data = [
       total: 3,
       episodesPerSeason: [10, 8, 8],
     },
+    trailer:"https://www.youtube.com/embed/ESEUoa-mz2c",
   },
   {
     id: 44,
@@ -866,6 +952,7 @@ export const data = [
     image: "/images/The Haunting of Hill House.jpg",
     duration: 55,
     releaseDate: "2018",
+    rating: 8.6,
     director: "Mike Flanagan",
     studio: "Netflix",
     cast: ["Victoria Pedretti", "Oliver Jackson-Cohen", "Henry Thomas"],
@@ -875,6 +962,7 @@ export const data = [
       total: 1,
       episodesPerSeason: [10],
     },
+    trailer:"https://www.youtube.com/embed/3eqxXqJDmcY",
   },
 
   {
@@ -887,12 +975,14 @@ export const data = [
     image: "/images/Thor Ragnarok.jpg",
     duration: 130,
     releaseDate: "2017",
+    rating: 7.9,
     director: "Taika Waititi",
     studio: "Marvel Studios",
     cast: ["Chris Hemsworth", "Tom Hiddleston", "Cate Blanchett"],
     description:
       "Thor must escape an alien planet and return to Asgard in time to stop Ragnarok, the destruction of his home world. Along the way, he teams up with unlikely allies in a colorful and comedic cosmic adventure.",
-  },
+    trailer:"https://www.youtube.com/embed/v7MGUNV8MxU",
+    },
 
   {
     id: 46,
@@ -904,6 +994,7 @@ export const data = [
     image: "/images/Love Death & Robots.webp",
     duration: 15,
     releaseDate: "2019",
+    rating: 8.4,
     director: "Various",
     studio: "Netflix",
     cast: ["Various"],
@@ -913,6 +1004,7 @@ export const data = [
       total: 3,
       episodesPerSeason: [18, 8, 9],
     },
+    trailer:"https://www.youtube.com/embed/Xj2b0swdpX8",
   },
 
   {
@@ -925,12 +1017,14 @@ export const data = [
     image: "/images/Black Widow.jpg",
     duration: 134,
     releaseDate: "2021",
+    rating: 6.7,
     director: "Cate Shortland",
     studio: "Marvel Studios",
     cast: ["Scarlett Johansson", "Florence Pugh", "David Harbour"],
     description:
       "Natasha Romanoff confronts the darker parts of her past when a dangerous conspiracy tied to her history emerges. Forced to face old allies and enemies, she uncovers the truth behind the Red Room program.",
-  },
+    trailer:"https://www.youtube.com/embed/ybji16u608U",
+    },
 
   {
     id: 48,
@@ -942,6 +1036,7 @@ export const data = [
     image: "/images/Euphoria.jpg",
     duration: 50,
     releaseDate: "2019",
+    rating: 8.4,
     director: "Sam Levinson",
     studio: "HBO",
     cast: ["Zendaya", "Sydney Sweeney", "Jacob Elordi"],
@@ -951,6 +1046,7 @@ export const data = [
       total: 2,
       episodesPerSeason: [8, 8],
     },
+    trailer:"https://www.youtube.com/embed/-1UJJPAWudQ",
   },
 
   {
@@ -963,6 +1059,7 @@ export const data = [
     image: "/images/Attack on Titan.jpg",
     duration: 24,
     releaseDate: "2013",
+    rating: 9.0,
     director: "Tetsuro Araki",
     studio: "NHK",
     cast: ["Yuki Kaji", "Yui Ishikawa"],
@@ -972,6 +1069,7 @@ export const data = [
       total: 4,
       episodesPerSeason: [25, 12, 22, 28],
     },
+    trailer:"https://www.youtube.com/embed/LV-nazLVmgo",
   },
   {
     id: 50,
@@ -983,6 +1081,7 @@ export const data = [
     image: "/images/The Simpsons.jpg",
     duration: 22,
     releaseDate: "1989",
+    rating: 8.7,
     director: "Matt Groening",
     studio: "Fox",
     cast: ["Dan Castellaneta", "Julie Kavner", "Nancy Cartwright"],
@@ -992,6 +1091,7 @@ export const data = [
       total: 35,
       episodesPerSeason: "Varies (700+ episodes total)",
     },
+    trailer:"https://www.youtube.com/embed/XPG0MqIcby8",
   },
 
   {
@@ -1004,12 +1104,14 @@ export const data = [
     image: "/images/The Lord of the Rings.jpg",
     duration: 178,
     releaseDate: "2001",
+    rating: 8.9,
     director: "Peter Jackson",
     studio: "New Line Cinema",
     cast: ["Elijah Wood", "Ian McKellen", "Viggo Mortensen"],
     description:
-      "A young hobbit named Frodo inherits a powerful ring and must journey across Middle-earth to destroy it. Joined by a fellowship of allies, he faces dark forces seeking the ring’s power.",
-  },
+      "A young hobbit named Frodo inherits a powerful ring and must journey across Middle-earth to destroy it. Joined by a fellowship of allies, he faces dark forces seeking the ring's power.",
+    trailer:"https://www.youtube.com/embed/V75dMMIW2B4",
+    },
 
   {
     id: 52,
@@ -1021,6 +1123,7 @@ export const data = [
     image: "/images/House of Cards.jpg",
     duration: 50,
     releaseDate: "2013",
+    rating: 8.7,
     director: "Various",
     studio: "Netflix",
     cast: ["Kevin Spacey", "Robin Wright"],
@@ -1030,6 +1133,7 @@ export const data = [
       total: 6,
       episodesPerSeason: [13, 13, 13, 13, 13, 8],
     },
+    trailer:"https://www.youtube.com/embed/8QnMmpfKWvo",
   },
 
   {
@@ -1042,6 +1146,7 @@ export const data = [
     image: "/images/Bridgerton.jpg",
     duration: 45,
     releaseDate: "2020",
+    rating: 7.3,
     director: "Various",
     studio: "Netflix",
     cast: ["Phoebe Dynevor", "Regé-Jean Page"],
@@ -1051,6 +1156,7 @@ export const data = [
       total: 3,
       episodesPerSeason: [8, 8, 8],
     },
+    trailer:"https://www.youtube.com/embed/gpv7ayf_tyE",
   },
 
   {
@@ -1063,12 +1169,14 @@ export const data = [
     image: "/images/Top Gun Maverick.jpg",
     duration: 131,
     releaseDate: "2022",
+    rating: 8.3,
     director: "Joseph Kosinski",
     studio: "Paramount Pictures",
     cast: ["Tom Cruise", "Miles Teller", "Jennifer Connelly"],
     description:
       "After decades of service, Maverick returns as a top aviator training a new generation of pilots. Confronting his past, he must lead a dangerous mission that demands sacrifice and courage.",
-  },
+    trailer:"https://www.youtube.com/embed/qSqVVswa420",
+    },
 
   {
     id: 55,
@@ -1080,15 +1188,17 @@ export const data = [
     image: "/images/Wednesday.jpg",
     duration: 45,
     releaseDate: "2022",
+    rating: 8.1,
     director: "Tim Burton",
     studio: "Netflix",
     cast: ["Jenna Ortega", "Catherine Zeta-Jones"],
     description:
-      "Wednesday Addams attends Nevermore Academy, where she attempts to master her psychic abilities while solving a supernatural mystery tied to her family’s past.",
+      "Wednesday Addams attends Nevermore Academy, where she attempts to master her psychic abilities while solving a supernatural mystery tied to her family's past.",
     seasons: {
       total: 1,
       episodesPerSeason: [8],
     },
+    trailer:"https://www.youtube.com/embed/Di310WS8zLk",
   },
 
   {
@@ -1101,15 +1211,17 @@ export const data = [
     image: "/images/The Umbrella Academy.jpg",
     duration: 45,
     releaseDate: "2019",
+    rating: 7.9,
     director: "Various",
     studio: "Netflix",
     cast: ["Elliot Page", "Tom Hopper", "Robert Sheehan"],
     description:
-      "A dysfunctional family of adopted superpowered siblings reunites after their father’s death. As they attempt to solve the mystery of his passing, they must also prevent an impending apocalypse.",
+      "A dysfunctional family of adopted superpowered siblings reunites after their father's death. As they attempt to solve the mystery of his passing, they must also prevent an impending apocalypse.",
     seasons: {
       total: 4,
       episodesPerSeason: [10, 10, 10, 6],
     },
+    trailer:"https://www.youtube.com/embed/0DAmWHxeoKw",
   },
 
   {
@@ -1122,12 +1234,14 @@ export const data = [
     image: "/images/Coco.jpg",
     duration: 105,
     releaseDate: "2017",
+    rating: 8.4,
     director: "Lee Unkrich",
     studio: "Pixar Animation Studios",
     cast: ["Anthony Gonzalez", "Gael García Bernal"],
     description:
-      "A young boy named Miguel dreams of becoming a musician despite his family’s ban on music. His journey into the Land of the Dead reveals the importance of family, memory, and heritage.",
-  },
+      "A young boy named Miguel dreams of becoming a musician despite his family's ban on music. His journey into the Land of the Dead reveals the importance of family, memory, and heritage.",
+    trailer:"https://www.youtube.com/embed/xlnPHQ3TLX8",
+    },
 
   {
     id: 58,
@@ -1139,12 +1253,14 @@ export const data = [
     image: "/images/Mad Max Fury Road.jpg",
     duration: 120,
     releaseDate: "2015",
+    rating: 8.1,
     director: "George Miller",
     studio: "Warner Bros.",
     cast: ["Tom Hardy", "Charlize Theron"],
     description:
-      "In a post-apocalyptic wasteland, Max teams up with Furiosa to escape a tyrant’s rule. High-octane action and stunning visuals drive this relentless chase across the desert.",
-  },
+      "In a post-apocalyptic wasteland, Max teams up with Furiosa to escape a tyrant's rule. High-octane action and stunning visuals drive this relentless chase across the desert.",
+    trailer:"https://www.youtube.com/embed/hEJnMQG9ev8",
+    },
   {
     id: 59,
     title: "The Bear",
@@ -1155,15 +1271,17 @@ export const data = [
     image: "/images/The Bear.jpg",
     duration: 30,
     releaseDate: "2022",
+    rating: 8.7,
     director: "Christopher Storer",
     studio: "FX",
     cast: ["Jeremy Allen White", "Ayo Edebiri"],
     description:
-      "A fine-dining chef returns home to run his family’s sandwich shop in Chicago. As he struggles with grief, debt, and chaos, he attempts to transform the business and himself.",
+      "A fine-dining chef returns home to run his family's sandwich shop in Chicago. As he struggles with grief, debt, and chaos, he attempts to transform the business and himself.",
     seasons: {
       total: 2,
       episodesPerSeason: [8, 10],
     },
+    trailer:"https://www.youtube.com/embed/gBmkI4jlaIo",
   },
 
   {
@@ -1176,10 +1294,12 @@ export const data = [
     image: "/images/Oppenheimer.jpg",
     duration: 180,
     releaseDate: "2023",
+    rating: 8.9,
     director: "Christopher Nolan",
     studio: "Universal Pictures",
     cast: ["Cillian Murphy", "Robert Downey Jr.", "Emily Blunt"],
     description:
       "The story of physicist J. Robert Oppenheimer and his role in the development of the atomic bomb, exploring the moral dilemmas and consequences of scientific discovery.",
-  },
+    trailer:"https://www.youtube.com/embed/uYPbbksJxIg",
+    },
 ];
