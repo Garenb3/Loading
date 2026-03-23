@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { setTheme } from "../utils/theme";
 import profileImg from "../images/Profile.jpg";
+import logo from "C:/Users/User/Pictures//logobb.png"; 
 import { darkTheme, lightTheme } from "../utils/themes";
 
 export default function Navbar() {
@@ -21,17 +22,27 @@ export default function Navbar() {
   const savedPhoto = localStorage.getItem("profilePhoto");
   const navigate = useNavigate();
 
-const handleLogout = () => {
-  localStorage.removeItem("user");
-  navigate("/login");
-};
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
   return (
     <nav
       className="px-6 py-4 flex flex-col md:flex-row md:justify-between md:items-center gap-4"
       style={{ backgroundColor: "var(--secondary)", color: "var(--text)" }}
     >
-      <Link to="/" style={linkStyle}>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--primary)" }}>BingeBoard</h1>
+      {/* ✅ LOGO INSTEAD OF TEXT */}
+      <Link to="/" style={{ display: "flex", alignItems: "center" }}>
+        <img
+          src={logo}
+          alt="BingeBoard Logo"
+          style={{
+            height: "50px",
+            objectFit: "contain",
+            cursor: "pointer",
+          }}
+        />
       </Link>
 
       <div className="flex flex-wrap gap-4 justify-center md:justify-end items-center">
@@ -40,8 +51,11 @@ const handleLogout = () => {
         <Link to="/add" style={linkStyle} className="hover:opacity-70">
           <span
             style={{
-              backgroundColor: "var(--primary)", color: "#fff",
-              padding: "5px 12px", borderRadius: "6px", fontSize: "14px"
+              backgroundColor: "var(--primary)",
+              color: "#fff",
+              padding: "5px 12px",
+              borderRadius: "6px",
+              fontSize: "14px",
             }}
           >
             + Add / Edit
@@ -52,95 +66,99 @@ const handleLogout = () => {
       </div>
 
       <div className="flex items-center relative">
-  <div className="relative group">
+        <div className="relative group">
+          <img
+            src={savedPhoto || profileImg}
+            alt="profile"
+            className="w-10 h-10 rounded-full object-cover cursor-pointer border"
+            style={{ borderColor: "var(--primary)" }}
+          />
 
-    {/* Avatar */}
-    <img
-      src={savedPhoto || profileImg}
-      alt="profile"
-      className="w-10 h-10 rounded-full object-cover cursor-pointer border"
-      style={{ borderColor: "var(--primary)" }}
-    />
+          {/* Dropdown Card */}
+          <div
+            className="absolute right-0 mt-3 w-56 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200"
+            style={{
+              backgroundColor: "var(--secondary)",
+              color: "var(--text)",
+              padding: "16px",
+              border: "1px solid rgba(255,255,255,0.1)",
+              zIndex: 50,
+            }}
+          >
+            {/* Username */}
+            <p
+              style={{
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: "15px",
+                marginBottom: "10px",
+              }}
+            >
+              {user.username}
+            </p>
 
-    {/* Dropdown Card */}
-    <div
-      className="absolute right-0 mt-3 w-56 rounded-xl shadow-xl opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200"
-      style={{
-        backgroundColor: "var(--secondary)",
-        color: "var(--text)",
-        padding: "16px",
-        border: "1px solid rgba(255,255,255,0.1)",
-        zIndex: 50
-      }}
-    >
+            {/* Divider */}
+            <div
+              style={{
+                height: "1px",
+                background: "rgba(255,255,255,0.1)",
+                margin: "8px 0",
+              }}
+            />
 
-      {/* Username */}
-      <p style={{
-        textAlign: "center",
-        fontWeight: "bold",
-        fontSize: "15px",
-        marginBottom: "10px"
-      }}>
-        {user.username}
-      </p>
+            {/* Stats */}
+            <div style={{ fontSize: "13px", opacity: 0.85, lineHeight: "1.6" }}>
+              <p>🎬 Favorites: {favorites.length}</p>
+              <p>📺 Watchlist: {watchlist.length}</p>
+            </div>
 
-      {/* Divider */}
-      <div style={{
-        height: "1px",
-        background: "rgba(255,255,255,0.1)",
-        margin: "8px 0"
-      }} />
+            {/* Divider */}
+            <div
+              style={{
+                height: "1px",
+                background: "rgba(255,255,255,0.1)",
+                margin: "12px 0",
+              }}
+            />
 
-      {/* Stats */}
-      <div style={{ fontSize: "13px", opacity: 0.85, lineHeight: "1.6" }}>
-        <p>🎬 Favorites: {favorites.length}</p>
-        <p>📺 Watchlist: {watchlist.length}</p>
+            {/* Theme Switch */}
+            <button
+              onClick={toggleTheme}
+              style={{
+                width: "100%",
+                padding: "8px",
+                borderRadius: "8px",
+                border: "1px solid var(--primary)",
+                background: "transparent",
+                color: "var(--text)",
+                cursor: "pointer",
+                fontSize: "13px",
+                fontWeight: "bold",
+              }}
+            >
+              Switch to {isDark ? "Light Mode" : "Dark Mode"}
+            </button>
+
+            <button
+              onClick={handleLogout}
+              style={{
+                width: "100%",
+                padding: "8px",
+                borderRadius: "8px",
+                border: "1px solid rgba(255,255,255,0.2)",
+                background: "transparent",
+                color: "#ff4d4f",
+                cursor: "pointer",
+                fontSize: "13px",
+                fontWeight: "bold",
+                marginTop: "8px",
+              }}
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
       </div>
-
-      {/* Divider */}
-      <div style={{
-        height: "1px",
-        background: "rgba(255,255,255,0.1)",
-        margin: "12px 0"
-      }} />
-
-      {/* Theme Switch */}
-      <button
-        onClick={toggleTheme}
-        style={{
-          width: "100%",
-          padding: "8px",
-          borderRadius: "8px",
-          border: "1px solid var(--primary)",
-          background: "transparent",
-          color: "var(--text)",
-          cursor: "pointer",
-          fontSize: "13px",
-          fontWeight: "bold"
-        }}
-      >
-        Switch to {isDark ? "Light Mode" : "Dark Mode"}
-      </button>
-      <button
-  onClick={handleLogout}
-  style={{
-    width: "100%",
-    padding: "8px",
-    borderRadius: "8px",
-    border: "1px solid rgba(255,255,255,0.2)",
-    background: "transparent",
-    color: "#ff4d4f",
-    cursor: "pointer",
-    fontSize: "13px",
-    fontWeight: "bold",
-    marginTop: "8px"
-  }}
->
-  Log Out
-</button>
-    </div>
-  </div>
-</div>
     </nav>
   );
 }
