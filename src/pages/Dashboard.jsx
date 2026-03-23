@@ -3,19 +3,59 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Profile from "../components/Profile";
 import MovieCard from "../components/MovieCard";
-
+ 
+function CollapsibleSection({ title, children }) {
+  const [open, setOpen] = useState(true);
+ 
+  return (
+    <section className="dashboard-section">
+      <div
+        onClick={() => setOpen(prev => !prev)}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          cursor: "pointer",
+          userSelect: "none",
+        }}
+      >
+        <h2 style={{ margin: 0 }}>{title}</h2>
+        <span style={{
+          fontSize: "20px",
+          color: "var(--text)",
+          transition: "transform 0.3s ease",
+          transform: open ? "rotate(0deg)" : "rotate(-90deg)",
+          display: "inline-block",
+        }}>
+          ▾
+        </span>
+      </div>
+ 
+      <div style={{
+        overflow: "hidden",
+        maxHeight: open ? "2000px" : "0px",
+        opacity: open ? 1 : 0,
+        transition: "max-height 0.4s ease, opacity 0.3s ease",
+        marginTop: open ? "12px" : "0px",
+      }}>
+        {children}
+      </div>
+    </section>
+  );
+}
+ 
 function Dashboard() {
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem("user");
     return saved ? JSON.parse(saved) : { username: "Guest", email: "" };
   });
-
+ 
   const handleUserUpdate = (updated) => {
     setUser(updated);
   };
-
+ 
   const [profileOpen, setProfileOpen] = useState(true);
-
+ 
   const [watchlist, setWatchlist] = useState(() =>
     JSON.parse(localStorage.getItem("watchlist") || "[]")
   );
@@ -25,27 +65,38 @@ function Dashboard() {
   const [recentlyViewed, setRecentlyViewed] = useState(() =>
     JSON.parse(localStorage.getItem("recentlyViewed") || "[]")
   );
-
+ 
   const removeFromWatchlist = (id) => {
     const updated = watchlist.filter(m => m.id !== id);
     setWatchlist(updated);
     localStorage.setItem("watchlist", JSON.stringify(updated));
   };
-
+ 
   const removeFromFavorites = (id) => {
     const updated = favorites.filter(m => m.id !== id);
     setFavorites(updated);
     localStorage.setItem("favorites", JSON.stringify(updated));
   };
-
+ 
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh" }}>
       <Navbar />
-
+ 
       <main className="dashboard-layout">
+        {/* Profile panel with smooth slide + fade */}
         <div style={{ position: "relative", minHeight: "56px" }}>
-          {profileOpen && <Profile user={user} onUserUpdate={handleUserUpdate} />}
-          
+          <div
+            style={{
+              overflow: "hidden",
+              maxWidth: profileOpen ? "400px" : "0px",
+              opacity: profileOpen ? 1 : 0,
+              transition: "max-width 0.35s ease, opacity 0.25s ease",
+              pointerEvents: profileOpen ? "auto" : "none",
+            }}
+          >
+            <Profile user={user} onUserUpdate={handleUserUpdate} />
+          </div>
+ 
           <button
             onClick={() => setProfileOpen(prev => !prev)}
             style={{
@@ -72,12 +123,10 @@ function Dashboard() {
             {profileOpen ? "☚" : "☛"}
           </button>
         </div>
-
+ 
         <section className="content-section">
-
-          {/* Watchlist */}
-          <section className="dashboard-section">
-            <h2>My Watchlist</h2>
+ 
+          <CollapsibleSection title="My Watchlist">
             {watchlist.length === 0 ? (
               <p>
                 No watchlist yet.{" "}
@@ -92,11 +141,9 @@ function Dashboard() {
                 ))}
               </div>
             )}
-          </section>
-
-          {/* Favorites */}
-          <section className="dashboard-section">
-            <h2>Favorites</h2>
+          </CollapsibleSection>
+ 
+          <CollapsibleSection title="Favorites">
             {favorites.length === 0 ? (
               <p>
                 No favorites yet.{" "}
@@ -111,11 +158,9 @@ function Dashboard() {
                 ))}
               </div>
             )}
-          </section>
-
-          {/* Recently Viewed */}
-          <section className="dashboard-section">
-            <h2>Recently Viewed</h2>
+          </CollapsibleSection>
+ 
+          <CollapsibleSection title="Recently Viewed">
             {recentlyViewed.length === 0 ? (
               <p>
                 Nothing viewed yet.{" "}
@@ -130,12 +175,12 @@ function Dashboard() {
                 ))}
               </div>
             )}
-          </section>
-
+          </CollapsibleSection>
+ 
         </section>
       </main>
     </div>
   );
 }
-
+ 
 export default Dashboard;
