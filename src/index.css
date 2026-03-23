@@ -6,6 +6,7 @@
   --text: #ffffff;
   --primary: #e50914;
   --secondary: #1f1f1f;
+  --new: rgba(23, 23, 23, 0.8);
 
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -122,19 +123,14 @@ a {
 }
 
 .dashboard-section {
-  background-color: #333;
+  background-color: var(--new);
   padding: 20px;
   border-radius: 15px;
   margin-bottom: 25px;
-
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   border: 1px solid #121212;
 }
 
-.dashboard-section:hover {
-  transform: translateY(-3px);
-  transition: 0.2s ease;
-}
 
 .dashboard-section h3 {
   margin-bottom: 15px;

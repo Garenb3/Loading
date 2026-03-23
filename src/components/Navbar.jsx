@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { setTheme } from "../utils/theme";
@@ -7,7 +7,22 @@ import logo from "../images/logo.png";
 import { darkTheme, lightTheme } from "../utils/themes";
 
 export default function Navbar() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem("theme");
+    if (!saved) return true;
+    const theme = JSON.parse(saved);
+    return theme.bg === darkTheme.bg;
+  });
+
+  const [savedPhoto, setSavedPhoto] = useState(() => localStorage.getItem("profilePhoto"));
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setSavedPhoto(localStorage.getItem("profilePhoto"));
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   const toggleTheme = () => {
     setTheme(isDark ? lightTheme : darkTheme);
@@ -25,7 +40,6 @@ export default function Navbar() {
   const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
   const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
 
-  const savedPhoto = localStorage.getItem("profilePhoto");
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -101,7 +115,6 @@ export default function Navbar() {
               zIndex: 50,
             }}
           >
-            {/* Username */}
             <p
               style={{
                 textAlign: "center",
@@ -113,7 +126,6 @@ export default function Navbar() {
               {user.username}
             </p>
 
-            {/* Divider */}
             <div
               style={{
                 height: "1px",
@@ -122,13 +134,11 @@ export default function Navbar() {
               }}
             />
 
-            {/* Stats */}
             <div style={{ fontSize: "13px", opacity: 0.85, lineHeight: "1.6" }}>
               <p>🎬 Favorites: {favorites.length}</p>
               <p>📺 Watchlist: {watchlist.length}</p>
             </div>
 
-            {/* Divider */}
             <div
               style={{
                 height: "1px",
@@ -137,7 +147,6 @@ export default function Navbar() {
               }}
             />
 
-            {/* Theme Switch */}
             <button
               onClick={toggleTheme}
               style={{

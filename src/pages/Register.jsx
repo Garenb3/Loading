@@ -78,7 +78,7 @@ function Register() {
 
 
             {/* Divider */}
-            <div style={{ width: "60%", height: "1px", backgroundColor: "rgba(255,255,255,0.1)", margin: "4px 0" }} />
+            <div style={{ width: "60%", height: "1px", backgroundColor: "var(--text)", opacity: "0.5", margin: "4px 0" }} />
 
             <h2 style={{ fontSize: "18px", fontWeight: "bold", textAlign: "center", margin: 0 }}>
               Create Account
