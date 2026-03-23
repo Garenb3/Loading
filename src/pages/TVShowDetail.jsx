@@ -19,6 +19,8 @@ export default function TVShowDetail() {
   });
   const [showFavModal, setShowFavModal] = useState(false);
 
+  const [showTrailer, setShowTrailer] = useState(false);
+
   const show = data.find((s) => s.id === parseInt(id));
 
   useEffect(() => {
@@ -124,7 +126,6 @@ export default function TVShowDetail() {
     >
       <Navbar />
 
-      {/* Watchlist Modal */}
       {showModal && (
         <div
           onClick={() => setShowModal(false)}
@@ -180,7 +181,6 @@ export default function TVShowDetail() {
         </div>
       )}
 
-      {/* Favorites Modal */}
       {showFavModal && (
         <div
           onClick={() => setShowFavModal(false)}
@@ -236,14 +236,69 @@ export default function TVShowDetail() {
         </div>
       )}
 
+      {showTrailer && show.trailer && (
+        <div
+          onClick={() => setShowTrailer(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.85)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 50,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "90%",
+              maxWidth: "800px",
+              borderRadius: "12px",
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
+            <button
+              onClick={() => setShowTrailer(false)}
+              style={{
+                position: "absolute",
+                top: "8px",
+                right: "12px",
+                background: "none",
+                border: "none",
+                color: "white",
+                fontSize: "24px",
+                cursor: "pointer",
+                zIndex: 10,
+                width: "auto",
+                marginTop: 0,
+                padding: 0,
+              }}
+            >
+              ✕
+            </button>
+            <iframe
+              width="100%"
+              height="450"
+              src={show.trailer}
+              title={`${show.title} Trailer`}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
+
       <div className="max-w-5xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row gap-8">
-          <div className="w-full md:w-1/3">
+          <div className="w-full md:w-1/3 flex items-center justify-center">
             <img
               src={show.image}
               alt={show.title}
               className="rounded-lg w-full"
-              style={{ objectFit: "cover", maxHeight: "450px" }}
+              style={{ objectFit: "cover"}}
               onError={(e) => {
                 e.target.src =
                   "https://via.placeholder.com/300x450?text=No+Image";
@@ -275,15 +330,6 @@ export default function TVShowDetail() {
               </div>
             )}
 
-            {show.rating && (
-              <div className="mt-4 flex items-center gap-2">
-                <div>{renderStars(show.rating)}</div>
-                <span style={{ opacity: 0.7, fontSize: "14px" }}>
-                  {show.rating}/10
-                </span>
-              </div>
-            )}
-
             <div
               className="flex flex-wrap gap-6 mt-4"
               style={{ opacity: 0.7, fontSize: "14px" }}
@@ -293,6 +339,11 @@ export default function TVShowDetail() {
               )}
               {show.duration && <span>⏱ {show.duration} min</span>}
               {show.studio && <span>🎬 {show.studio}</span>}
+              {show.rating != null && (
+                <span style={{ color: "#FBBF24", fontWeight: "700" }}>
+                  ★ {show.rating}/10
+                </span>
+              )}
             </div>
 
             <p className="mt-4" style={{ lineHeight: "1.7", opacity: 0.85 }}>
@@ -313,33 +364,37 @@ export default function TVShowDetail() {
               </div>
             )}
 
-            {show.seasons &&
-              Array.isArray(show.seasons) &&
-              show.seasons.length > 0 && (
-                <div className="mt-6">
-                  <h2 className="text-xl font-bold mb-3">Seasons & Episodes</h2>
-                  <div className="flex flex-col gap-2">
-                    {show.seasons.map((s, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          backgroundColor: "var(--secondary)",
-                          borderRadius: "8px",
-                          padding: "12px 16px",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <span className="font-bold">Season {s.season}</span>
-                        <span style={{ opacity: 0.7, fontSize: "14px" }}>
-                          {s.episodes} Episodes
-                        </span>
+            {show.seasons && show.seasons.total && (
+              <div className="mt-6">
+                <h2 className="text-xl font-bold mb-3">Seasons & Episodes</h2>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "8px",
+                  }}
+                >
+                  {show.seasons.episodesPerSeason.map((eps, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        backgroundColor: "var(--secondary)",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <div className="font-bold" style={{ fontSize: "14px" }}>
+                        Season {i + 1}
                       </div>
-                    ))}
-                  </div>
+                      <div style={{ opacity: 0.7, fontSize: "12px" }}>
+                        {eps} Episodes
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
+            )}
 
             <div className="flex gap-3 mt-6">
               <button
@@ -361,7 +416,7 @@ export default function TVShowDetail() {
                 onClick={handleAddToFavorites}
                 className="px-6 py-3 rounded font-bold"
                 style={{
-                  backgroundColor: addedFav ? "#e59400" : "var(--secondary)",
+                  backgroundColor: addedFav ? "#e59400" : "var(--primary)",
                   color: "#fff",
                   border: "1px solid rgba(255,255,255,0.2)",
                   cursor: "pointer",
@@ -372,6 +427,21 @@ export default function TVShowDetail() {
                 {addedFav ? "★ In Favorites — Remove" : "☆ Add to Favorites"}
               </button>
             </div>
+            {show.trailer && (
+              <button
+                onClick={() => setShowTrailer(true)}
+                className="px-6 py-3 rounded font-bold"
+                style={{
+                  backgroundColor: "#1a1a1a",
+                  color: "#fff",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  cursor: "pointer",
+                  fontSize: "15px",
+                }}
+              >
+                ▶ Watch Trailer
+              </button>
+            )}
           </div>
         </div>
       </div>
