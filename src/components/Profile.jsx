@@ -1,7 +1,8 @@
 import React, { useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import profileImg from "../images/Profile.jpg";
- 
-function Profile({ user, onUserUpdate }) {
+
+function Profile({ user, onUserUpdate, isGuest }) {
   const [photo, setPhoto] = useState(() => localStorage.getItem("profilePhoto") || null);
   const [editing, setEditing] = useState(false);
   const [username, setUsername] = useState(user.username);
@@ -9,7 +10,10 @@ function Profile({ user, onUserUpdate }) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [hoverPhoto, setHoverPhoto] = useState(false);
- 
+
+  // Not logged in popup
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
   // Change Password Modal
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordStep, setPasswordStep] = useState(1);
@@ -18,15 +22,15 @@ function Profile({ user, onUserUpdate }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
- 
+
   // Email verification
   const [showEmailVerifyModal, setShowEmailVerifyModal] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
   const [emailVerifyPassword, setEmailVerifyPassword] = useState("");
   const [emailVerifyError, setEmailVerifyError] = useState("");
- 
+
   const fileInputRef = useRef(null);
- 
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -37,7 +41,7 @@ function Profile({ user, onUserUpdate }) {
     };
     reader.readAsDataURL(file);
   };
- 
+
   const handleSave = () => {
     if (email !== user.email) {
       setPendingEmail(email);
@@ -51,7 +55,7 @@ function Profile({ user, onUserUpdate }) {
     onUserUpdate(updated);
     setEditing(false);
   };
- 
+
   const handleVerifyForPassword = () => {
     const saved = JSON.parse(localStorage.getItem("user") || "{}");
     if (verifyEmail !== saved.email || verifyCurrentPassword !== saved.password) {
@@ -61,7 +65,7 @@ function Profile({ user, onUserUpdate }) {
     setPasswordError("");
     setPasswordStep(2);
   };
- 
+
   const handleChangePassword = () => {
     if (newPassword !== confirmNewPassword) {
       setPasswordError("Passwords do not match.");
@@ -82,7 +86,7 @@ function Profile({ user, onUserUpdate }) {
     setConfirmNewPassword("");
     alert("Password changed successfully!");
   };
- 
+
   const closePasswordModal = () => {
     setShowPasswordModal(false);
     setPasswordStep(1);
@@ -92,7 +96,7 @@ function Profile({ user, onUserUpdate }) {
     setConfirmNewPassword("");
     setPasswordError("");
   };
- 
+
   const handleEmailVerify = () => {
     const saved = JSON.parse(localStorage.getItem("user") || "{}");
     if (emailVerifyPassword !== saved.password) {
@@ -108,21 +112,21 @@ function Profile({ user, onUserUpdate }) {
     setShowEmailVerifyModal(false);
     alert("Email updated successfully!");
   };
- 
+
   const closeEmailModal = () => {
     setShowEmailVerifyModal(false);
     setEmailVerifyPassword("");
     setEmailVerifyError("");
     setPendingEmail("");
   };
- 
+
   const handleRatingSubmit = () => {
     if (rating === 0) return;
     alert(`Thanks for rating us ${rating} star${rating > 1 ? "s" : ""}!`);
     setRating(0);
     setHoverRating(0);
   };
- 
+
   const modalOverlay = {
     position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)",
     display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100
@@ -151,14 +155,35 @@ function Profile({ user, onUserUpdate }) {
     color: "var(--text)", cursor: "pointer",
     fontSize: "13px", fontWeight: "bold", transition: "background-color 0.2s"
   };
- 
+
   return (
     <aside className="profile-section">
       <input
         type="file" accept="image/*" ref={fileInputRef}
         style={{ display: "none" }} onChange={handleFileChange}
       />
- 
+
+      {/* Not Logged In Popup */}
+      {showLoginPrompt && (
+        <div onClick={() => setShowLoginPrompt(false)} style={modalOverlay}>
+          <div onClick={e => e.stopPropagation()} style={{ ...modalBox, textAlign: "center", gap: "16px" }}>
+            <div style={{ fontSize: "40px" }}>🎬</div>
+            <h3 style={{ fontWeight: "bold", fontSize: "18px", margin: 0 }}>
+              You're not logged in!
+            </h3>
+            <p style={{ opacity: 0.6, fontSize: "13px", margin: 0 }}>
+              Join us to track your watchlist, favorites, and more.
+            </p>
+            <Link to="/Login" style={{ textDecoration: "none", width: "100%" }}>
+              <button style={primaryBtn}>Join Us!</button>
+            </Link>
+            <button style={ghostBtn} onClick={() => setShowLoginPrompt(false)}>
+              Maybe Later
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Change Password Modal */}
       {showPasswordModal && (
         <div onClick={closePasswordModal} style={modalOverlay}>
@@ -186,7 +211,7 @@ function Profile({ user, onUserUpdate }) {
           </div>
         </div>
       )}
- 
+
       {/* Email Verify Modal */}
       {showEmailVerifyModal && (
         <div onClick={closeEmailModal} style={modalOverlay}>
@@ -200,7 +225,7 @@ function Profile({ user, onUserUpdate }) {
           </div>
         </div>
       )}
- 
+
       {/* Profile Picture */}
       <div
         style={{ position: "relative", width: "100px", height: "100px" }}
@@ -227,20 +252,26 @@ function Profile({ user, onUserUpdate }) {
           </div>
         )}
       </div>
- 
+
       {/* Edit Profile Button */}
       <button
-        onClick={() => editing ? handleSave() : setEditing(true)}
+        onClick={() => {
+          if (isGuest) {
+            setShowLoginPrompt(true);
+            return;
+          }
+          editing ? handleSave() : setEditing(true);
+        }}
         style={{ ...ovalBtn, backgroundColor: editing ? "var(--primary)" : "rgba(255,255,255,0.08)" }}
       >
         {editing ? "💾 Save Profile" : "✏️ Edit Profile"}
       </button>
- 
+
       {/* Change Password Button */}
       <button onClick={() => setShowPasswordModal(true)} style={ovalBtn}>
         🔒 Change Password
       </button>
- 
+
       {/* Username & Email */}
       {editing ? (
         <>
@@ -259,18 +290,18 @@ function Profile({ user, onUserUpdate }) {
           <div className="info-box"><strong>Email:</strong> {email}</div>
         </>
       )}
- 
+
       {/* Divider */}
       <div style={{
         width: "80%", height: "1px",
         backgroundColor: "rgba(255,255,255,0.1)",
         margin: "16px auto"
       }} />
- 
+
       {/* Rate Us Section */}
       <section style={{ textAlign: "center", padding: "0 16px" }}>
         <h3 style={{ fontSize: "15px", fontWeight: "bold", marginBottom: "12px" }}>Rate Us!</h3>
- 
+
         <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginBottom: "14px" }}>
           {[1, 2, 3, 4, 5].map((star) => (
             <span
@@ -291,7 +322,7 @@ function Profile({ user, onUserUpdate }) {
             </span>
           ))}
         </div>
- 
+
         <button
           onClick={handleRatingSubmit}
           disabled={rating === 0}
@@ -306,10 +337,9 @@ function Profile({ user, onUserUpdate }) {
           Submit Rating
         </button>
       </section>
- 
+
     </aside>
   );
 }
- 
+
 export default Profile;
- 

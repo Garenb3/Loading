@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import { data } from "../data/Data";
@@ -6,6 +6,8 @@ import { data } from "../data/Data";
 export default function MovieDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const isGuest = !JSON.parse(localStorage.getItem("user") || "{}").email;
 
   const [added, setAdded] = useState(() => {
     const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
@@ -19,6 +21,7 @@ export default function MovieDetail() {
   });
   const [showFavModal, setShowFavModal] = useState(false);
   const [showTrailer, setShowTrailer] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const movie = data.find((m) => m.id === parseInt(id));
 
@@ -51,6 +54,10 @@ export default function MovieDetail() {
     );
 
   const handleAddToWatchlist = () => {
+    if (isGuest) {
+      setShowLoginPrompt(true);
+      return;
+    }
     const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
     if (added) {
       const updated = watchlist.filter((item) => item.id !== movie.id);
@@ -67,6 +74,10 @@ export default function MovieDetail() {
   };
 
   const handleAddToFavorites = () => {
+    if (isGuest) {
+      setShowLoginPrompt(true);
+      return;
+    }
     const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
     if (addedFav) {
       const updated = favorites.filter((item) => item.id !== movie.id);
@@ -86,7 +97,29 @@ export default function MovieDetail() {
     <div style={{ backgroundColor: "var(--bg)", color: "var(--text)" }} className="min-h-screen">
       <Navbar />
 
-      
+      {/* Not Logged In Popup */}
+      {showLoginPrompt && (
+        <div onClick={() => setShowLoginPrompt(false)} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ backgroundColor: "var(--secondary)", borderRadius: "12px", padding: "32px", maxWidth: "360px", width: "90%", textAlign: "center", display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div style={{ fontSize: "40px" }}>🎬</div>
+            <h3 style={{ fontWeight: "bold", fontSize: "18px", margin: 0 }}>You're not logged in!</h3>
+            <p style={{ opacity: 0.6, fontSize: "13px", margin: 0 }}>Join us to track your watchlist, favorites, and more.</p>
+            <Link to="/Login" style={{ textDecoration: "none", width: "100%" }}>
+              <button style={{ backgroundColor: "var(--primary)", color: "#fff", border: "none", borderRadius: "8px", padding: "10px", cursor: "pointer", fontWeight: "bold", width: "100%" }}>
+                Join Us!
+              </button>
+            </Link>
+            <button
+              onClick={() => setShowLoginPrompt(false)}
+              style={{ backgroundColor: "transparent", color: "var(--text)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "8px", padding: "10px", cursor: "pointer", width: "100%" }}
+            >
+              Maybe Later
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Watchlist Modal */}
       {showModal && (
         <div onClick={() => setShowModal(false)} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
           <div onClick={(e) => e.stopPropagation()} style={{ backgroundColor: "var(--secondary)", borderRadius: "12px", padding: "32px", maxWidth: "360px", width: "90%", textAlign: "center" }}>
@@ -100,7 +133,7 @@ export default function MovieDetail() {
         </div>
       )}
 
-      
+      {/* Favorites Modal */}
       {showFavModal && (
         <div onClick={() => setShowFavModal(false)} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
           <div onClick={(e) => e.stopPropagation()} style={{ backgroundColor: "var(--secondary)", borderRadius: "12px", padding: "32px", maxWidth: "360px", width: "90%", textAlign: "center" }}>
@@ -114,7 +147,7 @@ export default function MovieDetail() {
         </div>
       )}
 
-      
+      {/* Trailer Modal */}
       {showTrailer && (
         <div onClick={() => setShowTrailer(false)} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
           <div onClick={(e) => e.stopPropagation()} style={{ width: "90%", maxWidth: "800px", borderRadius: "12px", overflow: "hidden", position: "relative" }}>
@@ -137,7 +170,6 @@ export default function MovieDetail() {
       <div className="max-w-5xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row gap-8">
 
-          
           <div className="w-full md:w-1/3 flex items-center justify-center">
             <img
               src={movie.image}
@@ -148,7 +180,6 @@ export default function MovieDetail() {
             />
           </div>
 
-          
           <div className="flex-1">
             <h1 className="text-3xl font-bold">{movie.title}</h1>
 
@@ -187,7 +218,6 @@ export default function MovieDetail() {
               </div>
             )}
 
-           
             <div style={{ display: "flex", flexDirection: "row", gap: "12px", marginTop: "24px", flexWrap: "wrap" }}>
               <button
                 onClick={handleAddToWatchlist}
@@ -228,7 +258,6 @@ export default function MovieDetail() {
               </button>
             </div>
 
-            
             {movie.trailer && (
               <button
                 onClick={() => setShowTrailer(true)}

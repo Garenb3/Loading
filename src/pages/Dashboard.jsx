@@ -94,7 +94,7 @@ function Dashboard() {
               pointerEvents: profileOpen ? "auto" : "none",
             }}
           >
-            <Profile user={user} onUserUpdate={handleUserUpdate} />
+            <Profile user={user} onUserUpdate={handleUserUpdate} isGuest={!user.email} />
           </div>
  
           <button
