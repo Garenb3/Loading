@@ -80,17 +80,20 @@ Then open your browser and go to `http://localhost:5173`.
 
 **Register Page**
 
-- Designed a two-section registration layout for improved UX.
+- Designed a two-section registration layout for improved visual organization and user experience.
 - Built complete client-side validation: email format, minimum 6-character password, and password confirmation matching.
 - On successful registration, user data is saved to `localStorage` and the user is redirected to the dashboard.
+- Link to Login page for old users.
 
 **Dashboard Page**
 
-- Developed the main dashboard with three fully functional sections: Watchlist, Favorites, and Recently Viewed — all driven by `localStorage`.
+- Developed the main dashboard with three fully functional sections: Watchlist, Favorites, and Recently Viewed.
+- All three sections are driven by localStorage, staying in sync with actions taken across the app.
 - Implemented collapsible sections with smooth expand/collapse animations and a slide-in/out profile panel.
-- Wired add/remove functionality in `MovieDetail.jsx` and `TVShowDetail.jsx` to stay in sync with the dashboard.
-- Implemented guest user restrictions — unauthenticated users attempting to add items see a popup prompting them to log in.
+- Implemented toggle behavior (add/remove) functionality in `MovieDetail.jsx` and `TVShowDetail.jsx` then wired it to stay in sync with the dashboard.
+- Implemented guest user restrictions for Favorites and Watchlist actions — when a non-authenticated user attempts to add items, a popup prompts them to join/log in and redirects them to the login page.
 - Implemented Recently Viewed tracking — any visited movie or show page is automatically logged and shown on the dashboard.
+- Displays a re-direction to browse (ListView.jsx) page if Watchlist, Favorites or Recently Viewed are empty.
 
 **Profile Component (`Profile.jsx`)**
 
@@ -109,8 +112,7 @@ Then open your browser and go to `http://localhost:5173`.
 
 - Built a detailed view for each TV show using route parameters to dynamically load the correct data.
 - Displays title, description, rating, genres, studio, release year, director, cast, and a seasons breakdown (total seasons + episodes per season).
-- Integrated "Add to Watchlist" and "Add to Favorites" buttons, fully synced with the dashboard via `localStorage`.
-- Implemented Recently Viewed tracking for visited shows.
+- Integrated "Add to Watchlist" and "Add to Favorites" buttons.
 - Added a working "Watch Trailer" button that opens a YouTube embed in a modal overlay.
 
 **Add / Edit Form Page**
@@ -143,10 +145,8 @@ Then open your browser and go to `http://localhost:5173`.
 **Movie Detail Page**
 
 - Displays full movie information: title, type badge, genres, full release date (e.g. "March 24, 1972"), duration, studio, rating (`★ 8.9/10`), description, director, writer, producer, and cast.
-- "Add to Watchlist" and "Add to Favorites" buttons with toggle behavior (add and remove), synced with `localStorage`.
-- Guest restriction: unauthenticated users see a login prompt popup when attempting to add items.
+- Integrated "Add to Watchlist" and "Add to Favorites" buttons.
 - "Watch Trailer" button opens the trailer in a modal overlay using a YouTube embed URL.
-- Recently Viewed tracking via `useEffect` — each visit logs the movie to `localStorage`.
 
 ---
 
@@ -229,17 +229,18 @@ seasons: {
 
 ## 🖼️ Screenshots
 
-| Feature           | Preview                              |
-| ----------------- | ------------------------------------ |
-| Home Page         | ![Home](imagess/Home.png)            |
-| Add / Edit        | ![Add Edit](imagess/AddEdit.png)     |
-| Dashboard         | ![Dashboard](imagess/Dashboard.png)  |
-| Filter Panel      | ![Filter](imagess/Filter.png)        |
-| Light / Dark Mode | ![Light Dark](imagess/LighDark.png)  |
-| Light Mode        | ![Light](imagess/Light.png)          |
-| TV Shows          | ![TV Shows](imagess/TVShows.png)     |
-| User Login        | ![Login](imagess/UserLogIn.png)      |
-| Watch Trailer     | ![Trailer](imagess/WatchTrailer.png) |
+| Feature             | Preview                              |
+| ------------------- | ------------------------------------ |
+| Home Page           | ![Home](imagess/Home.png)            |
+| Add / Edit          | ![Add Edit](imagess/AddEdit.png)     |
+| Dashboard           | ![Dashboard](imagess/Dashboard.png)  |
+| Filter Panel        | ![Filter](imagess/Filter.png)        |
+| Light / Dark Mode   | ![Light Dark](imagess/LighDark.png)  |
+| Light Mode          | ![Light](imagess/Light.png)          |
+| TV Shows            | ![TV Shows](imagess/TVShows.png)     |
+| User Login          | ![Login](imagess/UserLogIn.png)      |
+| Watch Trailer       | ![Trailer](imagess/WatchTrailer.png) |
+| Password validation | ![validation](imagess/val.png)       |
 
 ---
 
