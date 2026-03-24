@@ -31,6 +31,14 @@
 
 8- Screenshots of the website application:
 ![Home Page](imagess/Home.png)
+![image](imagess/AddEdit.png)
+![image](imagess/Dashboard.png)
+![image](imagess/Filter.png)
+![image](imagess/LighDark.png)
+![image](imagess/Light.png)
+![image](imagess/TVShows.png)
+![image](imagess/UserLogIn.png)
+![image](imagess/WatchTrailer.png)
 
 9: Contributions:
 
