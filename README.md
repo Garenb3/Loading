@@ -71,7 +71,8 @@ Implemented access control for guest users — if a user attempts to edit their 
 Contributed to the app's overall visual design, including support for light and dark mode across all pages authored, as well as implementing smooth UI animations and interactive transitions for pages and popups.
 
   2- Hamza El Hallak:
-  Add/Edit Form Page (AddEditForm.jsx):
+  
+    Add/Edit Form Page (AddEditForm.jsx):
 
 Developed a dynamic and reusable form component for both adding new items and editing existing ones within the application.
 Implemented full client-side validation for all input fields, ensuring data consistency and proper formatting before submission.
@@ -95,7 +96,7 @@ Configured the button to open trailers (e.g., YouTube links) in a new tab for a 
 Added visual feedback and hover animations to improve interactivity and responsiveness.
 Ensured accessibility by clearly labeling the button and maintaining consistent styling across all detail pages.
 
-  Website Logo:
+    Website Logo:
 
 Designed and integrated the application’s logo as a key branding element within the Navbar and across the platform.
 Implemented click functionality on the logo to redirect users to the homepage, improving navigation usability.
