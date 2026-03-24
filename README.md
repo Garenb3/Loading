@@ -1,129 +1,255 @@
-1- Project Title: BingeBoard
+# 🎬 BingeBoard
 
-2- Team Members: - Leen Harfoush
-                 - Hamza El Hallak
-                 - Garen Garo Baghsarian
-                 - Laura Malaeb
-                
-3- Project Topic: Movie/TV Show Tracker              
-                A web application where users can browse, series, and manage movies and 
-                TV shows.
-4- Live Demo:
-5- Features: - Browse movies and TV Shows.
-             - View detailes pages for each movie/TV Show.
-             - Search and filter content.
-             - Add/Edit items
-             -Resopnsive design.
-             -Dark/Light mode toggle.
-             
-6- Pages:   - AddEditForm.jsx
-             - Dashboard.jsx
-             - Home.jsx
-             - ListView.jsx
-             - MovieDetail.jsx
-             - Register.jsx
-             - TVShowDetail.jsx
-             
-7- Tech Stack: - React (Vite)
-               - Tailwind CSS
-               - React Router
-               - JavaScript
+A movie and TV show tracker web application — browse, search, and manage your watchlist and favorites.
 
-8- Screenshots of the website application:
-![Home Page](images/home.png)
+---
 
-9: Contributions:
+## 👥 Team Members
 
-  1- Leen Harfoush:
+| Name                  | GitHub          |
+| --------------------- | --------------- |
+| Leen Harfoush         | harfoushleen    |
+| Hamza El Hallak       | HamzaElHallak   |
+| Garen Garo Baghsarian | GarenBaghsarian |
+| Laura Malaeb          | laura1025       |
 
-Responsible for the full implementation of the user authentication flow, dashboard experience, and profile management system.
+---
 
-Register Page (Register.jsx)
-Built the complete registration form with client-side validation — enforcing email format, minimum password length (6 characters), and password confirmation matching.
-On successful registration, user data is persisted to localStorage and the user is redirected to the dashboard.
+## 📌 Project Topic
 
-Dashboard Page (Dashboard.jsx)
-Developed the main dashboard layout featuring three fully functional sections: Watchlist, Favorites, and Recently Viewed.
-All three sections are driven by localStorage, staying in sync with actions taken across the app.
-Implemented collapsible sections with smooth expand/collapse animations and a slide-in/out profile panel toggle.
-Wired up the add-to-watchlist and add-to-favorites buttons inside MovieDetails.jsx and TVShowDetails.jsx so items correctly appear in their respective dashboard sections.
-Implemented guest user restrictions for Favorites and Watchlist actions — when a non-authenticated user attempts to add items, a popup prompts them to join/log in and redirects them to the login page.
-Implemented Recently Viewed tracking — any movie or show page visited automatically gets logged and displayed on the dashboard.
+**Movie / TV Show Tracker** — A web application where users can browse, search, and manage movies and TV shows.
 
-Profile Component (Profile.jsx)
-Built a fully interactive profile panel supporting profile picture upload (with live preview), and username/email editing
-Profile picture updates are reflected in real time across the app, including in the Navbar
-Email changes trigger a password verification modal before saving, preventing unauthorized updates
-Password changes follow a two-step verification flow — users must confirm their current credentials before setting a new password
-Includes a Rate Us feature with an interactive star rating widget
-Implemented access control for guest users — if a user attempts to edit their profile without being logged in, a popup prompts them to sign up/log in and redirects them to the login page
+### Primary Data Entities
 
-UI & Theming
-Contributed to the app's overall visual design, including support for light and dark mode across all pages authored, as well as implementing smooth UI animations and interactive transitions for pages and popups.
+- **Movie** — Includes title, genre, year, rating, director, cast, studio, duration, trailer, and description.
+- **TV Show (Series)** — Same as Movie, with an additional `seasons` object containing total season count and episodes per season.
 
-  2- Hamza El Hallak:
-  Add/Edit Form Page (AddEditForm.jsx):
+---
 
-Developed a dynamic and reusable form component for both adding new items and editing existing ones within the application.
-Implemented full client-side validation for all input fields, ensuring data consistency and proper formatting before submission.
-The form is powered by React state and updates the local data structure (mock data/localStorage), simulating real CRUD operations.
-Supports pre-filled inputs when editing an existing item, providing a seamless user experience.
-Integrated navigation logic to redirect users back to the appropriate list or detail view after submission.
-Designed the form with responsive layouts and clear input feedback using Tailwind CSS.
+## 🚀 Live Demo
 
-TV Show Detail Page (TVShowDetail.jsx):
+> _Link to be added after deployment._
 
-Built a detailed view page displaying comprehensive information about each TV show, including title, description, rating, and visuals.
-Connected the page dynamically to the app’s data source using route parameters, ensuring each show loads its correct data.
-Integrated interactive buttons such as “Add to Watchlist” and “Add to Favorites,” fully synchronized with the dashboard via localStorage.
-Implemented “Recently Viewed” tracking, automatically logging visited shows to enhance user engagement.
-Ensured consistency in UI/UX with the Movie Detail page, maintaining a unified design system across the app.
+---
 
-Watch Trailer Button:
+## ⚙️ Setup Instructions
 
-Implemented a dedicated “Watch Trailer” button that enhances user interaction by allowing quick access to external trailer content.
-Configured the button to open trailers (e.g., YouTube links) in a new tab for a seamless viewing experience without disrupting app navigation.
-Added visual feedback and hover animations to improve interactivity and responsiveness.
-Ensured accessibility by clearly labeling the button and maintaining consistent styling across all detail pages.
+### Prerequisites
 
-  Website Logo:
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- npm (comes with Node.js)
 
-Designed and integrated the application’s logo as a key branding element within the Navbar and across the platform.
-Implemented click functionality on the logo to redirect users to the homepage, improving navigation usability.
-Optimized the logo asset for performance and fast loading, while maintaining visual clarity.
- And finally, we all actively supported one another thorughout the project.
- When challenges arose, we collaborated and shared assistance when needed, ensuring a cohesive final product.
+### Steps
 
-  3- Laura Malaeb
-Responsible for the implementation of the homepage experience, login system, and key reusable UI components, as well as enhancing interactivity and navigation across the application.
+```bash
+# 1. Clone the repository
+git clone https://github.com/Garenb3/Loading.git
 
-Home Page (Home.jsx)
-Designed and developed the main landing page showcasing Featured and Trending content sections.
-Implemented dynamic filtering logic to separate featured and trending items from the dataset.
-Added a “Show More / Show Less” functionality with smooth state toggling, allowing users to expand or collapse content efficiently.
-Integrated scroll-to-section behavior when collapsing content to improve user experience and navigation flow.
-Styled interactive buttons with custom borders, hover effects, and transitions to maintain consistency with the application’s theme.
-Ensured responsive grid layouts using Tailwind CSS for optimal display across different screen sizes.
+# 2. Navigate into the project directory
+cd bingeboard
 
-Login Page (Login.jsx)
-Redesigned the login page to match the structure and styling of the registration page for a consistent authentication experience.
-Implemented form handling with validation to ensure all required fields are completed.
-Connected login logic to localStorage, verifying user credentials against stored data.
-Added error handling for invalid credentials with clear user feedback.
-Integrated navigation flow to redirect users to the dashboard upon successful login.
-Included a direct link to the registration page for new users, improving accessibility and user onboarding.
+# 3. Install dependencies
+npm install
 
-Navbar Component (Navbar.jsx)
-Enhanced the navigation bar by integrating a dynamic user profile section with a dropdown card.
-Implemented real-time display of user data (username, favorites count, watchlist count) retrieved from localStorage.
-Designed and implemented a hover-based dropdown card with improved UI styling, centered username display, and structured information layout.
-Moved theme switching functionality into the profile dropdown, replacing the standalone navbar button for a cleaner interface.
-Implemented a logout system that clears all user-related data (user info, favorites, watchlist, recently viewed, and profile image) from localStorage and redirects to the login page.
-Ensured responsiveness and proper alignment of all navbar elements across different screen sizes.
+# 4. Start the development server
+npm run dev
+```
 
-Movie Card Component (MovieCard.jsx)
-Developed a reusable card component for displaying both movies and TV shows.
-Implemented dynamic routing logic to navigate users to the correct detail page based on content type (movie or series).
-Added fallback image handling to prevent broken UI when images fail to load.
-Designed consistent card styling with hover scaling effects and clean layout for title, genre, and type labels.
-Ensured reusability of the component across multiple pages, including Home and Dashboard.
+Then open your browser and go to `http://localhost:5173`.
+
+---
+
+## 🗂️ Pages & Views
+
+| Page               | File               | Responsible Member    |
+| ------------------ | ------------------ | --------------------- |
+| Home               | `Home.jsx`         | Laura Malaeb          |
+| Login              | `Login.jsx`        | Laura Malaeb          |
+| Register           | `Register.jsx`     | Leen Harfoush         |
+| Dashboard          | `Dashboard.jsx`    | Leen Harfoush         |
+| Browse (List View) | `ListView.jsx`     | Garen Garo Baghsarian |
+| Movie Detail       | `MovieDetail.jsx`  | Garen Garo Baghsarian |
+| TV Show Detail     | `TVShowDetail.jsx` | Hamza El Hallak       |
+| Add / Edit Form    | `AddEditForm.jsx`  | Hamza El Hallak       |
+
+---
+
+## 🧩 Team Contributions
+
+### Leen Harfoush — `Register.jsx`, `Dashboard.jsx`
+
+**Register Page**
+
+- Designed a two-section registration layout for improved UX.
+- Built complete client-side validation: email format, minimum 6-character password, and password confirmation matching.
+- On successful registration, user data is saved to `localStorage` and the user is redirected to the dashboard.
+
+**Dashboard Page**
+
+- Developed the main dashboard with three fully functional sections: Watchlist, Favorites, and Recently Viewed — all driven by `localStorage`.
+- Implemented collapsible sections with smooth expand/collapse animations and a slide-in/out profile panel.
+- Wired add/remove functionality in `MovieDetail.jsx` and `TVShowDetail.jsx` to stay in sync with the dashboard.
+- Implemented guest user restrictions — unauthenticated users attempting to add items see a popup prompting them to log in.
+- Implemented Recently Viewed tracking — any visited movie or show page is automatically logged and shown on the dashboard.
+
+**Profile Component (`Profile.jsx`)**
+
+- Built an interactive profile panel supporting profile picture upload with live preview, and username/email editing.
+- Profile picture updates reflect across the app in real time, including the Navbar.
+- Email changes trigger a password verification modal before saving.
+- Password changes follow a two-step flow requiring current credential confirmation.
+- Includes a Rate Us feature with an interactive star rating widget.
+- Guest access control: non-logged-in users are prompted to sign up before editing their profile.
+
+---
+
+### Hamza El Hallak — `TVShowDetail.jsx`, `AddEditForm.jsx`
+
+**TV Show Detail Page**
+
+- Built a detailed view for each TV show using route parameters to dynamically load the correct data.
+- Displays title, description, rating, genres, studio, release year, director, cast, and a seasons breakdown (total seasons + episodes per season).
+- Integrated "Add to Watchlist" and "Add to Favorites" buttons, fully synced with the dashboard via `localStorage`.
+- Implemented Recently Viewed tracking for visited shows.
+- Added a working "Watch Trailer" button that opens a YouTube embed in a modal overlay.
+
+**Add / Edit Form Page**
+
+- Built a dynamic, reusable form supporting both adding new items and editing existing ones.
+- Full client-side validation on all fields.
+- Supports pre-filled inputs when editing an existing item.
+- Powered by React state, simulating CRUD operations on the local data structure.
+- Redirects users to the appropriate view after submission.
+
+**Website Logo**
+
+- Designed and integrated the BingeBoard logo into the Navbar with homepage navigation on click.
+
+---
+
+### Garen Garo Baghsarian — `ListView.jsx`, `MovieDetail.jsx`
+
+**Browse / List View Page**
+
+- Displays all movies and series from the mock data in a responsive 4-column grid.
+- Implemented a **search bar** with word-level matching — searching "umbrella" or "academy" both return "The Umbrella Academy". Triggers on Enter key press or Search button click.
+- Implemented a **filter panel** (toggled open/closed) with:
+  - Type filter: All / Movies / Series (radio buttons, instant filtering).
+  - Genre filter: 16 genre checkboxes in a 4-column grid, filtering items that match any selected genre.
+  - "Clear all filters" button to reset the state.
+- Live result count updates as filters change.
+- Empty state UI shown when no results match.
+
+**Movie Detail Page**
+
+- Displays full movie information: title, type badge, genres, full release date (e.g. "March 24, 1972"), duration, studio, rating (`★ 8.9/10`), description, director, writer, producer, and cast.
+- "Add to Watchlist" and "Add to Favorites" buttons with toggle behavior (add and remove), synced with `localStorage`.
+- Guest restriction: unauthenticated users see a login prompt popup when attempting to add items.
+- "Watch Trailer" button opens the trailer in a modal overlay using a YouTube embed URL.
+- Recently Viewed tracking via `useEffect` — each visit logs the movie to `localStorage`.
+
+---
+
+### Laura Malaeb — `Home.jsx`, `Login.jsx`
+
+**Home Page**
+
+- Landing page showcasing Featured and Trending content sections, dynamically filtered from the dataset.
+- "Show More / Show Less" toggle with smooth state transitions and scroll-to-section behavior on collapse.
+- Responsive grid layout using Tailwind CSS.
+
+**Login Page**
+
+- Consistent layout and styling matching the Register page.
+- Form validation ensuring all required fields are filled.
+- Credential verification against `localStorage`-stored user data, with clear error feedback on failure.
+- Redirects to the dashboard on successful login.
+- Link to Register page for new users.
+
+**Navbar Component (`Navbar.jsx`)**
+
+- Dynamic user profile section with a hover-based dropdown card showing username, favorites count, and watchlist count from `localStorage`.
+- Theme toggle (dark/light mode) integrated into the profile dropdown.
+- Logout clears all user-related `localStorage` data and redirects to login.
+
+**Movie Card Component (`MovieCard.jsx`)**
+
+- Reusable card component for movies and series with dynamic routing to the correct detail page based on `type`.
+- Fallback image handling, hover scale effect, and consistent title/genre display.
+
+---
+
+## 🗃️ Mock Data
+
+All application data is stored in `src/data/Data.js` as a exported JavaScript array of 60 items. Each item contains:
+
+```js
+id: (1,
+  {
+    title: "Inception",
+    type: "movie", // movie or series
+    genre: ["Sci-Fi", "Action", "Thriller"],
+    featured: true,
+    trending: true,
+    image: "/images/Inception.jpg",
+    duration: 148,
+    releaseDate: "2010",
+    rating: 8.8,
+    director: "Christopher Nolan",
+    studio: "Warner Bros.",
+    cast: [
+      "Leonardo DiCaprio",
+      "Joseph Gordon-Levitt",
+      "Elliot Page",
+      "Tom Hardy",
+    ],
+    description: "...",
+    trailer: "https://www.youtube.com/embed/YoHD9XEInc0",
+  });
+```
+
+Series items additionally include:
+
+```js
+seasons: {
+  total: 4,
+  episodesPerSeason: [8, 9, 8, 9]
+}
+```
+
+**How mock data simulates backend interactions:**
+
+- **Browsing & Search** — The `ListView` page filters and searches the `data` array entirely in the browser using `useMemo`, with no server calls.
+- **Detail pages** — `MovieDetail` and `TVShowDetail` use `useParams` to find the matching item in the array by ID.
+- **Watchlist / Favorites / Recently Viewed** — Actions are persisted to `localStorage`, simulating a user account database. Data is read/written on every interaction and reflected across the Dashboard, Navbar, and detail pages.
+- **Add / Edit** — The `AddEditForm` updates the local data structure and `localStorage`, simulating CRUD without a real API.
+- **Authentication** — User accounts (email, username, password) are stored in `localStorage` on registration and verified on login, simulating a user auth system.
+
+---
+
+## 🖼️ Screenshots
+
+| Feature           | Preview                              |
+| ----------------- | ------------------------------------ |
+| Home Page         | ![Home](imagess/Home.png)            |
+| Add / Edit        | ![Add Edit](imagess/AddEdit.png)     |
+| Dashboard         | ![Dashboard](imagess/Dashboard.png)  |
+| Filter Panel      | ![Filter](imagess/Filter.png)        |
+| Light / Dark Mode | ![Light Dark](imagess/LighDark.png)  |
+| Light Mode        | ![Light](imagess/Light.png)          |
+| TV Shows          | ![TV Shows](imagess/TVShows.png)     |
+| User Login        | ![Login](imagess/UserLogIn.png)      |
+| Watch Trailer     | ![Trailer](imagess/WatchTrailer.png) |
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology        | Usage                                                          |
+| ----------------- | -------------------------------------------------------------- |
+| React (Vite)      | Component-based UI, hooks (`useState`, `useEffect`, `useMemo`) |
+| React Router      | Client-side navigation, route parameters                       |
+| Tailwind CSS      | Responsive utility-first styling                               |
+| JavaScript (ES6+) | Application logic                                              |
+| localStorage      | Mock data persistence across sessions                          |
+| Git & GitHub      | Version control and collaboration                              |
