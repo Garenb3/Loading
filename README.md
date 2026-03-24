@@ -28,7 +28,7 @@ A movie and TV show tracker web application — browse, search, and manage your 
 
 ## 🚀 Live Demo
 
-> _Link to be added after deployment._
+> https://loading-sigma-one.vercel.app/
 
 ---
 
