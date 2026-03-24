@@ -10,7 +10,7 @@ A movie and TV show tracker web application — browse, search, and manage your 
 | --------------------- | --------------- |
 | Leen Harfoush         | harfoushleen    |
 | Hamza El Hallak       | HamzaElHallak   |
-| Garen Garo Baghsarian | GarenBaghsarian |
+| Garen Garo Baghsarian | Garenb3         |
 | Laura Malaeb          | laura1025       |
 
 ---
