@@ -1,25 +1,38 @@
-# React + Vite
-Hello
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1- Project Title: BingeBoard
+2- Team Members: - Leen Harfoush
+                 - Hamza El Hallak
+                 - Garen Garo Baghsarian
+                 - Laura Malaeb
+                
+3- Project Topic: Movie/TV Show Tracker              
+                A web application where users can browse, series, and manage movies and 
+                TV shows.
+4- Live Demo:
+5- Features: - Browse movies and TV Shows.
+             - View detailes pages for each movie/TV Show.
+             - Search and filter content.
+             - Add/Edit items
+             -Resopnsive design.
+             -Dark/Light mode toggle.
+             
+6- Pages:   - AddEditForm.jsx
+             - Dashboard.jsx
+             - Home.jsx
+             - ListView.jsx
+             - MovieDetail.jsx
+             - Register.jsx
+             - TVShowDetail.jsx
+             
+7- Tech Stack: - React (Vite)
+               - Tailwind CSS
+               - React Router
+               - JavaScript
 
-Currently, two official plugins are available:
+8- Screenshots of the website application:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+9: Contributions:
 
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
-## Contributions
-
-Leen Harfoush - 202403506
+  1- Leen Harfoush:
 
 Responsible for the full implementation of the user authentication flow, dashboard experience, and profile management system.
 
@@ -44,5 +57,37 @@ Includes a Rate Us feature with an interactive star rating widget
 Implemented access control for guest users — if a user attempts to edit their profile without being logged in, a popup prompts them to sign up/log in and redirects them to the login page
 
 UI & Theming
-Contributed to the app's overall visual design, including support for light and dark mode across all pages authored, as well as implementing smooth UI animations and interactive transitions for pages and popups
+Contributed to the app's overall visual design, including support for light and dark mode across all pages authored, as well as implementing smooth UI animations and interactive transitions for pages and popups.
 
+  2- Hamza El Hallak:
+  Add/Edit Form Page (AddEditForm.jsx):
+
+Developed a dynamic and reusable form component for both adding new items and editing existing ones within the application.
+Implemented full client-side validation for all input fields, ensuring data consistency and proper formatting before submission.
+The form is powered by React state and updates the local data structure (mock data/localStorage), simulating real CRUD operations.
+Supports pre-filled inputs when editing an existing item, providing a seamless user experience.
+Integrated navigation logic to redirect users back to the appropriate list or detail view after submission.
+Designed the form with responsive layouts and clear input feedback using Tailwind CSS.
+
+TV Show Detail Page (TVShowDetail.jsx):
+
+Built a detailed view page displaying comprehensive information about each TV show, including title, description, rating, and visuals.
+Connected the page dynamically to the app’s data source using route parameters, ensuring each show loads its correct data.
+Integrated interactive buttons such as “Add to Watchlist” and “Add to Favorites,” fully synchronized with the dashboard via localStorage.
+Implemented “Recently Viewed” tracking, automatically logging visited shows to enhance user engagement.
+Ensured consistency in UI/UX with the Movie Detail page, maintaining a unified design system across the app.
+
+Watch Trailer Button:
+
+Implemented a dedicated “Watch Trailer” button that enhances user interaction by allowing quick access to external trailer content.
+Configured the button to open trailers (e.g., YouTube links) in a new tab for a seamless viewing experience without disrupting app navigation.
+Added visual feedback and hover animations to improve interactivity and responsiveness.
+Ensured accessibility by clearly labeling the button and maintaining consistent styling across all detail pages.
+
+  Website Logo:
+
+Designed and integrated the application’s logo as a key branding element within the Navbar and across the platform.
+Implemented click functionality on the logo to redirect users to the homepage, improving navigation usability.
+Optimized the logo asset for performance and fast loading, while maintaining visual clarity.
+ And finally, we all actively supported one another thorughout the project.
+ When challenges arose, we collaborated and shared assistance when needed, ensuring a cohesive final product.
