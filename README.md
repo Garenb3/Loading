@@ -92,3 +92,38 @@ Implemented click functionality on the logo to redirect users to the homepage, i
 Optimized the logo asset for performance and fast loading, while maintaining visual clarity.
  And finally, we all actively supported one another thorughout the project.
  When challenges arose, we collaborated and shared assistance when needed, ensuring a cohesive final product.
+
+  3- Laura Malaeb
+Responsible for the implementation of the homepage experience, login system, and key reusable UI components, as well as enhancing interactivity and navigation across the application.
+
+Home Page (Home.jsx)
+Designed and developed the main landing page showcasing Featured and Trending content sections.
+Implemented dynamic filtering logic to separate featured and trending items from the dataset.
+Added a “Show More / Show Less” functionality with smooth state toggling, allowing users to expand or collapse content efficiently.
+Integrated scroll-to-section behavior when collapsing content to improve user experience and navigation flow.
+Styled interactive buttons with custom borders, hover effects, and transitions to maintain consistency with the application’s theme.
+Ensured responsive grid layouts using Tailwind CSS for optimal display across different screen sizes.
+
+Login Page (Login.jsx)
+Redesigned the login page to match the structure and styling of the registration page for a consistent authentication experience.
+Implemented form handling with validation to ensure all required fields are completed.
+Connected login logic to localStorage, verifying user credentials against stored data.
+Added error handling for invalid credentials with clear user feedback.
+Integrated navigation flow to redirect users to the dashboard upon successful login.
+Included a direct link to the registration page for new users, improving accessibility and user onboarding.
+
+Navbar Component (Navbar.jsx)
+Enhanced the navigation bar by integrating a dynamic user profile section with a dropdown card.
+Implemented real-time display of user data (username, favorites count, watchlist count) retrieved from localStorage.
+Added profile image support with live updates synced across the application.
+Designed and implemented a hover-based dropdown card with improved UI styling, centered username display, and structured information layout.
+Moved theme switching functionality into the profile dropdown, replacing the standalone navbar button for a cleaner interface.
+Implemented a logout system that clears all user-related data (user info, favorites, watchlist, recently viewed, and profile image) from localStorage and redirects to the login page.
+Ensured responsiveness and proper alignment of all navbar elements across different screen sizes.
+
+Movie Card Component (MovieCard.jsx)
+Developed a reusable card component for displaying both movies and TV shows.
+Implemented dynamic routing logic to navigate users to the correct detail page based on content type (movie or series).
+Added fallback image handling to prevent broken UI when images fail to load.
+Designed consistent card styling with hover scaling effects and clean layout for title, genre, and type labels.
+Ensured reusability of the component across multiple pages, including Home and Dashboard.

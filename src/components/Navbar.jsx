@@ -44,6 +44,10 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("watchlist");
+    localStorage.removeItem("favorites");
+    localStorage.removeItem("recentlyViewed");
+    localStorage.removeItem("profilePhoto");
     navigate("/login");
   };
 
