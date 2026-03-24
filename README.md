@@ -109,8 +109,7 @@ Then open your browser and go to `http://localhost:5173`.
 
 - Built a detailed view for each TV show using route parameters to dynamically load the correct data.
 - Displays title, description, rating, genres, studio, release year, director, cast, and a seasons breakdown (total seasons + episodes per season).
-- Integrated "Add to Watchlist" and "Add to Favorites" buttons, fully synced with the dashboard via `localStorage`.
-- Implemented Recently Viewed tracking for visited shows.
+- Integrated "Add to Watchlist" and "Add to Favorites" buttons
 - Added a working "Watch Trailer" button that opens a YouTube embed in a modal overlay.
 
 **Add / Edit Form Page**
