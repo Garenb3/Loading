@@ -116,7 +116,6 @@ Included a direct link to the registration page for new users, improving accessi
 Navbar Component (Navbar.jsx)
 Enhanced the navigation bar by integrating a dynamic user profile section with a dropdown card.
 Implemented real-time display of user data (username, favorites count, watchlist count) retrieved from localStorage.
-Added profile image support with live updates synced across the application.
 Designed and implemented a hover-based dropdown card with improved UI styling, centered username display, and structured information layout.
 Moved theme switching functionality into the profile dropdown, replacing the standalone navbar button for a cleaner interface.
 Implemented a logout system that clears all user-related data (user info, favorites, watchlist, recently viewed, and profile image) from localStorage and redirects to the login page.
