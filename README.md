@@ -1,4 +1,5 @@
 1- Project Title: BingeBoard
+
 2- Team Members: - Leen Harfoush
                  - Hamza El Hallak
                  - Garen Garo Baghsarian
