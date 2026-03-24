@@ -32,7 +32,7 @@ export default function Navbar() {
   const linkStyle = {
     color: "var(--text)",
     textDecoration: "none",
-    fontSize: "30px",
+    fontSize: "20px",
   };
   const user = JSON.parse(localStorage.getItem("user")) || {
     username: "Guest",
@@ -85,7 +85,7 @@ export default function Navbar() {
               color: "#fff",
               padding: "5px 12px",
               borderRadius: "6px",
-              fontSize: "25px",
+              fontSize: "20px",
             }}
           >
             + Add / Edit
