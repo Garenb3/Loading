@@ -30,8 +30,7 @@
                - JavaScript
 
 8- Screenshots of the website application:
-![Home Page](Pictures/Home.png)
-
+![Home Page](images/home.png)
 
 9: Contributions:
 
