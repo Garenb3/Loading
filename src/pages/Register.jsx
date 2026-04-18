@@ -1,46 +1,63 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { ToastContainer, useToast } from "../components/Toast";
 import logo from "../images/logo.png";
 
+// Basic email format check
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+}
+
 function Register() {
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
+  const { toasts, showToast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    const username = event.target.username.value;
-    const email = event.target.email.value;
+    const username = event.target.username.value.trim();
+    const email = event.target.email.value.trim();
     const password = event.target.password.value;
     const confirmPassword = event.target.confirmPassword.value;
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
+    const newErrors = {};
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      event.target.confirmPassword.value = "";
+    if (!username) newErrors.username = "Username is required";
+
+    if (!isValidEmail(email)) newErrors.email = "Enter a valid email address (e.g. user@example.com)";
+
+    if (password.length < 6) newErrors.password = "Password must be at least 6 characters";
+    else if (!/[A-Z]/.test(password) && !/[0-9]/.test(password))
+      newErrors.password = "Password should include a number or uppercase letter";
+
+    if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
     localStorage.setItem("user", JSON.stringify({ username, email, password }));
-    setError("");
-    alert("Registered successfully!");
-    navigate("/dashboard");
+    showToast("Registered successfully! Redirecting…", "success");
+    setTimeout(() => navigate("/dashboard"), 1200);
+  };
+
+  const clearError = (field) => {
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   return (
     <div style={{ backgroundColor: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
       <Navbar />
+      <ToastContainer toasts={toasts} />
+
       <main style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        height: "calc(100vh - 60px)",
-        padding: "16px"
+        minHeight: "calc(100vh - 70px)",
+        padding: "24px 16px",
       }}>
         <div style={{
           display: "flex",
@@ -50,99 +67,113 @@ function Register() {
           overflow: "hidden",
           width: "100%",
           maxWidth: "780px",
-          height: "min(520px, 90%)"
+          flexWrap: "wrap",
         }}>
-
-          {/* Left Panel — Branding */}
+          {/* Left Panel */}
           <div style={{
-            flex: 1,
+            flex: "1 1 240px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "32px 24px",
-            borderRight: "1px solid rgba(255,255,255,0.1)",
-            gap: "12px"
+            padding: "40px 24px",
+            borderRight: "1px solid rgba(255,255,255,0.08)",
+            gap: "12px",
+            minWidth: "200px",
           }}>
-            <img
-              src={logo}
-              alt="MovieTracker logo"
-              style={{ width: "120px", height: "120px", objectFit: "cover",}}
-            />
-            <h1 style={{ fontSize: "22px", fontWeight: "bold", textAlign: "center", margin: 0 , color: "var(--primary)", }}>
+            <img src={logo} alt="BingeBoard logo" style={{ width: "100px", height: "100px", objectFit: "contain" }} />
+            <h1 style={{ fontSize: "22px", fontWeight: "bold", margin: 0, color: "var(--primary)" }}>
               BingeBoard
             </h1>
-            <p style={{ fontSize: "12px", textAlign: "center", margin: 0 }}>
-              Track what you watch. <br /> Save what you love.
+            <p style={{ fontSize: "12px", textAlign: "center", margin: 0, opacity: 0.65 }}>
+              Track what you watch.<br />Save what you love.
             </p>
-
-
-            {/* Divider */}
-            <div style={{ width: "60%", height: "1px", backgroundColor: "var(--text)", opacity: "0.5", margin: "4px 0" }} />
-
-            <h2 style={{ fontSize: "18px", fontWeight: "bold", textAlign: "center", margin: 0 }}>
-              Create Account
-            </h2>
-            <p style={{ fontSize: "12px", textAlign: "center", margin: 0 }}>
-              Join us today — it's free!
-            </p>
-
+            <div style={{ width: "60%", height: "1px", backgroundColor: "rgba(255,255,255,0.1)", margin: "4px 0" }} />
+            <h2 style={{ fontSize: "18px", fontWeight: "bold", margin: 0 }}>Create Account</h2>
+            <p style={{ fontSize: "12px", margin: 0, opacity: 0.65 }}>Join us today — it's free!</p>
             <p style={{ marginTop: "12px", fontSize: "12px", textAlign: "center" }}>
-                Already have an account?{" "}
-                <Link to="/Login" style={{ color: "var(--primary)", textDecoration: "underline" }}>
+              Already have an account?{" "}
+              <Link to="/login" style={{ color: "var(--primary)", textDecoration: "underline" }}>
                 Login here
-                </Link>
+              </Link>
             </p>
-
           </div>
 
-          {/* Right Panel — Form only */}
-            <div style={{
-            flex: 1.3,
+          {/* Right Panel */}
+          <div style={{
+            flex: "1 1 300px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            padding: "32px 36px",
+            padding: "40px 36px",
             overflowY: "auto",
-            maxHeight: "100%"
-            }}>
+          }}>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
 
-                <label htmlFor="username" style={{ fontSize: "13px", opacity: 0.9, fontWeight: "600" }}>Username</label>
-                <input type="text" id="username" name="username" placeholder="enter your username" required
-                style={{ padding: "11px 14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.25)", backgroundColor: "rgba(255,255,255,0.09)", color: "var(--text)", fontSize: "14px" }}
-                />
+              <label style={labelStyle}>Username</label>
+              <input
+                type="text" name="username" placeholder="enter your username" required
+                onChange={() => clearError("username")}
+                style={{ ...inputStyle, borderColor: errors.username ? "#ef4444" : "rgba(255,255,255,0.2)" }}
+              />
+              {errors.username && <FieldError msg={errors.username} />}
 
-                <label htmlFor="email" style={{ fontSize: "13px", opacity: 0.9, fontWeight: "600" }}>Email</label>
-                <input type="email" id="email" name="email" placeholder="example@email.com" required
-                style={{ padding: "11px 14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.25)", backgroundColor: "rgba(255,255,255,0.09)", color: "var(--text)", fontSize: "14px" }}
-                />
+              <label style={labelStyle}>Email</label>
+              <input
+                type="email" name="email" placeholder="example@email.com" required
+                onChange={() => clearError("email")}
+                style={{ ...inputStyle, borderColor: errors.email ? "#ef4444" : "rgba(255,255,255,0.2)" }}
+              />
+              {errors.email && <FieldError msg={errors.email} />}
 
-                <label htmlFor="password" style={{ fontSize: "13px", opacity: 0.9, fontWeight: "600" }}>Password</label>
-                <input type="password" id="password" name="password" placeholder="at least 6 characters" minLength="6" required
-                style={{ padding: "11px 14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.25)", backgroundColor: "rgba(255,255,255,0.09)", color: "var(--text)", fontSize: "14px" }}
-                />
-                {error && <p style={{ color: "red", fontSize: "11px", margin: "0" }}>{error}</p>}
+              <label style={labelStyle}>Password</label>
+              <input
+                type="password" name="password" placeholder="at least 6 characters" minLength="6" required
+                onChange={() => clearError("password")}
+                style={{ ...inputStyle, borderColor: errors.password ? "#ef4444" : "rgba(255,255,255,0.2)" }}
+              />
+              {errors.password && <FieldError msg={errors.password} />}
 
-                <label htmlFor="confirmPassword" style={{ fontSize: "13px", opacity: 0.9, fontWeight: "600" }}>Confirm Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="rewrite password" required
-                style={{ padding: "11px 14px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.25)", backgroundColor: "rgba(255,255,255,0.09)", color: "var(--text)", fontSize: "14px" }}
-                />
+              <label style={labelStyle}>Confirm Password</label>
+              <input
+                type="password" name="confirmPassword" placeholder="rewrite password" required
+                onChange={() => clearError("confirmPassword")}
+                style={{ ...inputStyle, borderColor: errors.confirmPassword ? "#ef4444" : "rgba(255,255,255,0.2)" }}
+              />
+              {errors.confirmPassword && <FieldError msg={errors.confirmPassword} />}
 
-                <button type="submit" style={{
-                marginTop: "10px", padding: "12px",
-                backgroundColor: "var(--primary)", color: "#fff",
-                border: "none", borderRadius: "8px",
-                fontWeight: "bold", fontSize: "15px", cursor: "pointer"
-                }}>
+              <button
+                type="submit"
+                style={{
+                  marginTop: "12px", padding: "12px",
+                  backgroundColor: "var(--primary)", color: "#fff",
+                  border: "none", borderRadius: "8px",
+                  fontWeight: "bold", fontSize: "15px", cursor: "pointer"
+                }}
+              >
                 Register
-                </button>
+              </button>
             </form>
-            </div>
+          </div>
         </div>
       </main>
     </div>
   );
 }
+
+function FieldError({ msg }) {
+  return <p style={{ color: "#ef4444", fontSize: "12px", margin: 0 }}>{msg}</p>;
+}
+
+const labelStyle = { fontSize: "13px", fontWeight: "600", opacity: 0.9 };
+const inputStyle = {
+  padding: "11px 14px",
+  borderRadius: "8px",
+  border: "1px solid rgba(255,255,255,0.2)",
+  backgroundColor: "rgba(255,255,255,0.07)",
+  color: "var(--text)",
+  fontSize: "14px",
+  outline: "none",
+};
 
 export default Register;

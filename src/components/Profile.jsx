@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import profileImg from "../images/Profile.jpg";
+import { ToastContainer, useToast } from "./Toast";
 
 function Profile({ user, onUserUpdate, isGuest }) {
   const [photo, setPhoto] = useState(() => localStorage.getItem("profilePhoto") || null);
@@ -10,11 +11,9 @@ function Profile({ user, onUserUpdate, isGuest }) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [hoverPhoto, setHoverPhoto] = useState(false);
+  const { toasts, showToast } = useToast();
 
-  // Not logged in popup
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-
-  // Change Password Modal
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordStep, setPasswordStep] = useState(1);
   const [verifyEmail, setVerifyEmail] = useState("");
@@ -23,7 +22,6 @@ function Profile({ user, onUserUpdate, isGuest }) {
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  // Email verification
   const [showEmailVerifyModal, setShowEmailVerifyModal] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
   const [emailVerifyPassword, setEmailVerifyPassword] = useState("");
@@ -38,6 +36,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
     reader.onloadend = () => {
       setPhoto(reader.result);
       localStorage.setItem("profilePhoto", reader.result);
+      showToast("Profile photo updated!", "success");
     };
     reader.readAsDataURL(file);
   };
@@ -54,6 +53,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
     localStorage.setItem("user", JSON.stringify(updated));
     onUserUpdate(updated);
     setEditing(false);
+    showToast("Profile saved!", "success");
   };
 
   const handleVerifyForPassword = () => {
@@ -67,64 +67,44 @@ function Profile({ user, onUserUpdate, isGuest }) {
   };
 
   const handleChangePassword = () => {
-    if (newPassword !== confirmNewPassword) {
-      setPasswordError("Passwords do not match.");
-      return;
-    }
-    if (newPassword.length < 6) {
-      setPasswordError("Password must be at least 6 characters.");
-      return;
-    }
+    if (newPassword !== confirmNewPassword) { setPasswordError("Passwords do not match."); return; }
+    if (newPassword.length < 6) { setPasswordError("Password must be at least 6 characters."); return; }
     const saved = JSON.parse(localStorage.getItem("user") || "{}");
     localStorage.setItem("user", JSON.stringify({ ...saved, password: newPassword }));
     setPasswordError("");
-    setShowPasswordModal(false);
-    setPasswordStep(1);
-    setVerifyEmail("");
-    setVerifyCurrentPassword("");
-    setNewPassword("");
-    setConfirmNewPassword("");
-    alert("Password changed successfully!");
+    closePasswordModal();
+    showToast("Password changed successfully!", "success");
   };
 
   const closePasswordModal = () => {
     setShowPasswordModal(false);
     setPasswordStep(1);
-    setVerifyEmail("");
-    setVerifyCurrentPassword("");
-    setNewPassword("");
-    setConfirmNewPassword("");
+    setVerifyEmail(""); setVerifyCurrentPassword("");
+    setNewPassword(""); setConfirmNewPassword("");
     setPasswordError("");
   };
 
   const handleEmailVerify = () => {
     const saved = JSON.parse(localStorage.getItem("user") || "{}");
-    if (emailVerifyPassword !== saved.password) {
-      setEmailVerifyError("Incorrect password.");
-      return;
-    }
+    if (emailVerifyPassword !== saved.password) { setEmailVerifyError("Incorrect password."); return; }
     const updated = { ...saved, username, email: pendingEmail };
     localStorage.setItem("user", JSON.stringify(updated));
     onUserUpdate(updated);
     setEmail(pendingEmail);
-    setEmailVerifyError("");
-    setEmailVerifyPassword("");
+    setEmailVerifyError(""); setEmailVerifyPassword("");
     setShowEmailVerifyModal(false);
-    alert("Email updated successfully!");
+    showToast("Email updated!", "success");
   };
 
   const closeEmailModal = () => {
     setShowEmailVerifyModal(false);
-    setEmailVerifyPassword("");
-    setEmailVerifyError("");
-    setPendingEmail("");
+    setEmailVerifyPassword(""); setEmailVerifyError(""); setPendingEmail("");
   };
 
   const handleRatingSubmit = () => {
     if (rating === 0) return;
-    alert(`Thanks for rating us ${rating} star${rating > 1 ? "s" : ""}!`);
-    setRating(0);
-    setHoverRating(0);
+    showToast(`Thanks for rating us ${rating} star${rating > 1 ? "s" : ""}! ⭐`, "success");
+    setRating(0); setHoverRating(0);
   };
 
   const modalOverlay = {
@@ -137,7 +117,8 @@ function Profile({ user, onUserUpdate, isGuest }) {
   };
   const modalInput = {
     backgroundColor: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)",
-    borderRadius: "6px", padding: "8px 12px", color: "var(--text)", fontSize: "14px", width: "100%"
+    borderRadius: "6px", padding: "8px 12px", color: "var(--text)", fontSize: "14px", width: "100%",
+    boxSizing: "border-box",
   };
   const primaryBtn = {
     backgroundColor: "var(--primary)", color: "#fff", border: "none",
@@ -158,28 +139,20 @@ function Profile({ user, onUserUpdate, isGuest }) {
 
   return (
     <aside className="profile-section">
-      <input
-        type="file" accept="image/*" ref={fileInputRef}
-        style={{ display: "none" }} onChange={handleFileChange}
-      />
+      <ToastContainer toasts={toasts} />
+      <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} />
 
       {/* Not Logged In Popup */}
       {showLoginPrompt && (
         <div onClick={() => setShowLoginPrompt(false)} style={modalOverlay}>
-          <div onClick={e => e.stopPropagation()} style={{ ...modalBox, textAlign: "center", gap: "16px" }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ ...modalBox, textAlign: "center", gap: "16px" }}>
             <div style={{ fontSize: "40px" }}>🎬</div>
-            <h3 style={{ fontWeight: "bold", fontSize: "18px", margin: 0 }}>
-              You're not logged in!
-            </h3>
-            <p style={{ opacity: 0.6, fontSize: "13px", margin: 0 }}>
-              Join us to track your watchlist, favorites, and more.
-            </p>
+            <h3 style={{ fontWeight: "bold", fontSize: "18px", margin: 0 }}>You're not logged in!</h3>
+            <p style={{ opacity: 0.6, fontSize: "13px", margin: 0 }}>Join us to track your watchlist, favorites, and more.</p>
             <Link to="/Login" style={{ textDecoration: "none", width: "100%" }}>
               <button style={primaryBtn}>Join Us!</button>
             </Link>
-            <button style={ghostBtn} onClick={() => setShowLoginPrompt(false)}>
-              Maybe Later
-            </button>
+            <button style={ghostBtn} onClick={() => setShowLoginPrompt(false)}>Maybe Later</button>
           </div>
         </div>
       )}
@@ -187,13 +160,13 @@ function Profile({ user, onUserUpdate, isGuest }) {
       {/* Change Password Modal */}
       {showPasswordModal && (
         <div onClick={closePasswordModal} style={modalOverlay}>
-          <div onClick={e => e.stopPropagation()} style={modalBox}>
+          <div onClick={(e) => e.stopPropagation()} style={modalBox}>
             {passwordStep === 1 ? (
               <>
                 <h3 style={{ fontWeight: "bold", fontSize: "18px" }}>Verify Identity</h3>
                 <p style={{ opacity: 0.6, fontSize: "13px" }}>Enter your email and current password to continue.</p>
-                <input style={modalInput} type="email" placeholder="Your email" value={verifyEmail} onChange={e => setVerifyEmail(e.target.value)} />
-                <input style={modalInput} type="password" placeholder="Current password" value={verifyCurrentPassword} onChange={e => setVerifyCurrentPassword(e.target.value)} />
+                <input style={modalInput} type="email" placeholder="Your email" value={verifyEmail} onChange={(e) => setVerifyEmail(e.target.value)} />
+                <input style={modalInput} type="password" placeholder="Current password" value={verifyCurrentPassword} onChange={(e) => setVerifyCurrentPassword(e.target.value)} />
                 {passwordError && <p style={{ color: "#e50914", fontSize: "13px" }}>{passwordError}</p>}
                 <button style={primaryBtn} onClick={handleVerifyForPassword}>Continue</button>
                 <button style={ghostBtn} onClick={closePasswordModal}>Cancel</button>
@@ -201,8 +174,8 @@ function Profile({ user, onUserUpdate, isGuest }) {
             ) : (
               <>
                 <h3 style={{ fontWeight: "bold", fontSize: "18px" }}>New Password</h3>
-                <input style={modalInput} type="password" placeholder="New password" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
-                <input style={modalInput} type="password" placeholder="Confirm new password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} />
+                <input style={modalInput} type="password" placeholder="New password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                <input style={modalInput} type="password" placeholder="Confirm new password" value={confirmNewPassword} onChange={(e) => setConfirmNewPassword(e.target.value)} />
                 {passwordError && <p style={{ color: "#e50914", fontSize: "13px" }}>{passwordError}</p>}
                 <button style={primaryBtn} onClick={handleChangePassword}>Change Password</button>
                 <button style={ghostBtn} onClick={closePasswordModal}>Cancel</button>
@@ -215,10 +188,10 @@ function Profile({ user, onUserUpdate, isGuest }) {
       {/* Email Verify Modal */}
       {showEmailVerifyModal && (
         <div onClick={closeEmailModal} style={modalOverlay}>
-          <div onClick={e => e.stopPropagation()} style={modalBox}>
+          <div onClick={(e) => e.stopPropagation()} style={modalBox}>
             <h3 style={{ fontWeight: "bold", fontSize: "18px" }}>Confirm Email Change</h3>
             <p style={{ opacity: 0.6, fontSize: "13px" }}>Enter your password to update your email to <strong>{pendingEmail}</strong>.</p>
-            <input style={modalInput} type="password" placeholder="Your password" value={emailVerifyPassword} onChange={e => setEmailVerifyPassword(e.target.value)} />
+            <input style={modalInput} type="password" placeholder="Your password" value={emailVerifyPassword} onChange={(e) => setEmailVerifyPassword(e.target.value)} />
             {emailVerifyError && <p style={{ color: "#e50914", fontSize: "13px" }}>{emailVerifyError}</p>}
             <button style={primaryBtn} onClick={handleEmailVerify}>Confirm</button>
             <button style={ghostBtn} onClick={closeEmailModal}>Cancel</button>
@@ -241,25 +214,19 @@ function Profile({ user, onUserUpdate, isGuest }) {
         />
         {editing && hoverPhoto && (
           <div style={{
-            position: "absolute", inset: 0,
-            borderRadius: "50%",
+            position: "absolute", inset: 0, borderRadius: "50%",
             backgroundColor: "rgba(0,0,0,0.55)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "22px",
-            cursor: "pointer"
+            fontSize: "22px", cursor: "pointer"
           }}>
             📷
           </div>
         )}
       </div>
 
-      {/* Edit Profile Button */}
       <button
         onClick={() => {
-          if (isGuest) {
-            setShowLoginPrompt(true);
-            return;
-          }
+          if (isGuest) { setShowLoginPrompt(true); return; }
           editing ? handleSave() : setEditing(true);
         }}
         style={{ ...ovalBtn, backgroundColor: editing ? "var(--primary)" : "rgba(255,255,255,0.08)" }}
@@ -267,21 +234,21 @@ function Profile({ user, onUserUpdate, isGuest }) {
         {editing ? "💾 Save Profile" : "✏️ Edit Profile"}
       </button>
 
-      {/* Change Password Button */}
-      <button onClick={() => setShowPasswordModal(true)} style={ovalBtn}>
-        🔒 Change Password
-      </button>
+      {!isGuest && (
+        <button onClick={() => setShowPasswordModal(true)} style={ovalBtn}>
+          🔒 Change Password
+        </button>
+      )}
 
-      {/* Username & Email */}
       {editing ? (
         <>
           <div className="info-box">
             <strong>Username:</strong>
-            <input value={username} onChange={e => setUsername(e.target.value)} style={{ ...modalInput, marginTop: "6px" }} />
+            <input value={username} onChange={(e) => setUsername(e.target.value)} style={{ ...modalInput, marginTop: "6px" }} />
           </div>
           <div className="info-box">
             <strong>Email:</strong>
-            <input value={email} onChange={e => setEmail(e.target.value)} style={{ ...modalInput, marginTop: "6px" }} />
+            <input value={email} onChange={(e) => setEmail(e.target.value)} style={{ ...modalInput, marginTop: "6px" }} />
           </div>
         </>
       ) : (
@@ -291,17 +258,11 @@ function Profile({ user, onUserUpdate, isGuest }) {
         </>
       )}
 
-      {/* Divider */}
-      <div style={{
-        width: "80%", height: "1px",
-        backgroundColor: "rgba(255,255,255,0.1)",
-        margin: "16px auto"
-      }} />
+      <div style={{ width: "80%", height: "1px", backgroundColor: "rgba(255,255,255,0.1)", margin: "16px auto" }} />
 
-      {/* Rate Us Section */}
+      {/* Rate Us */}
       <section style={{ textAlign: "center", padding: "0 16px" }}>
         <h3 style={{ fontSize: "15px", fontWeight: "bold", marginBottom: "12px" }}>Rate Us!</h3>
-
         <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginBottom: "14px" }}>
           {[1, 2, 3, 4, 5].map((star) => (
             <span
@@ -310,25 +271,19 @@ function Profile({ user, onUserUpdate, isGuest }) {
               onMouseEnter={() => setHoverRating(star)}
               onMouseLeave={() => setHoverRating(0)}
               style={{
-                fontSize: "28px",
-                cursor: "pointer",
+                fontSize: "28px", cursor: "pointer",
                 color: star <= (hoverRating || rating) ? "#f5c518" : "rgba(255,255,255,0.2)",
-                textShadow: "0 0 1px #000",
                 transition: "color 0.15s, transform 0.15s",
                 transform: star <= (hoverRating || rating) ? "scale(1.2)" : "scale(1)"
               }}
-            >
-              ★
-            </span>
+            >★</span>
           ))}
         </div>
-
         <button
           onClick={handleRatingSubmit}
           disabled={rating === 0}
           style={{
-            ...ovalBtn,
-            margin: "0 auto",
+            ...ovalBtn, margin: "0 auto",
             backgroundColor: rating > 0 ? "var(--primary)" : "rgba(255,255,255,0.05)",
             opacity: rating > 0 ? 1 : 0.4,
             cursor: rating > 0 ? "pointer" : "default"
@@ -337,7 +292,6 @@ function Profile({ user, onUserUpdate, isGuest }) {
           Submit Rating
         </button>
       </section>
-
     </aside>
   );
 }

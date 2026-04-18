@@ -119,7 +119,7 @@ export default function TVShowDetail() {
         </div>
       )}
 
-      {/* Watchlist Modal */}
+    
       {showModal && (
         <div onClick={() => setShowModal(false)} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
           <div onClick={(e) => e.stopPropagation()} style={{ backgroundColor: "var(--secondary)", borderRadius: "12px", padding: "32px", maxWidth: "360px", width: "90%", textAlign: "center" }}>
@@ -133,7 +133,7 @@ export default function TVShowDetail() {
         </div>
       )}
 
-      {/* Favorites Modal */}
+      
       {showFavModal && (
         <div onClick={() => setShowFavModal(false)} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
           <div onClick={(e) => e.stopPropagation()} style={{ backgroundColor: "var(--secondary)", borderRadius: "12px", padding: "32px", maxWidth: "360px", width: "90%", textAlign: "center" }}>
@@ -147,7 +147,7 @@ export default function TVShowDetail() {
         </div>
       )}
 
-      {/* Trailer Modal */}
+     
       {showTrailer && (
         <div onClick={() => setShowTrailer(false)} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50 }}>
           <div onClick={(e) => e.stopPropagation()} style={{ width: "90%", maxWidth: "800px", borderRadius: "12px", overflow: "hidden", position: "relative" }}>
