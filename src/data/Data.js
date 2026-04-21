@@ -641,12 +641,12 @@ export const data = [
 
   {
     id: 30,
-    title: "The Queen's Gambit",
+    title: "The Queen’s Gambit",
     type: "series",
     genre: ["Drama"],
     featured: false,
     trending: true,
-    image: "/images/The Queen's Gambit.jpg",
+    image: "/images/The Queen’s Gambit.jpg",
     duration: 45,
     releaseDate: "2020",
     rating: 8.6,
