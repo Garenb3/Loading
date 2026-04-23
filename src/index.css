@@ -123,12 +123,12 @@ a {
 }
 
 .dashboard-section {
-  background-color: var(--new);
+  background-color: var(--secondary);
   padding: 20px;
   border-radius: 15px;
   margin-bottom: 25px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  border: 1px solid #121212;
+  border: 1px solid #12121224;
 }
 
 
