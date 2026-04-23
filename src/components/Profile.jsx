@@ -132,7 +132,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
     display: "block", width: "80%", margin: "6px auto 0",
     padding: "8px 0", borderRadius: "999px",
     border: "1px solid rgba(255,255,255,0.2)",
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: "var(--primary)",
     color: "var(--text)", cursor: "pointer",
     fontSize: "13px", fontWeight: "bold", transition: "background-color 0.2s"
   };
@@ -258,12 +258,14 @@ function Profile({ user, onUserUpdate, isGuest }) {
         </>
       )}
 
-      <div style={{ width: "80%", height: "1px", backgroundColor: "rgba(255,255,255,0.1)", margin: "16px auto" }} />
+      <div style={{ width: "80%", height: "1px", backgroundColor: "var(--text)", margin: "16px auto" }} />
 
-      {/* Rate Us */}
-      <section style={{ textAlign: "center", padding: "0 16px" }}>
-        <h3 style={{ fontSize: "15px", fontWeight: "bold", marginBottom: "12px" }}>Rate Us!</h3>
-        <div style={{ display: "flex", justifyContent: "center", gap: "8px", marginBottom: "14px" }}>
+      {/* ── Rate Us ──────────────────────────────────────── */}
+      <section style={{ textAlign: "center", width: "100%", padding: "0 8px" }}>
+        <h3 style={{ fontSize: "14px", fontWeight: "700", marginBottom: "12px", marginTop: 0 }}>
+          Rate Us!
+        </h3>
+        <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginBottom: "14px" }}>
           {[1, 2, 3, 4, 5].map((star) => (
             <span
               key={star}
@@ -271,22 +273,32 @@ function Profile({ user, onUserUpdate, isGuest }) {
               onMouseEnter={() => setHoverRating(star)}
               onMouseLeave={() => setHoverRating(0)}
               style={{
-                fontSize: "28px", cursor: "pointer",
-                color: star <= (hoverRating || rating) ? "#f5c518" : "rgba(255,255,255,0.2)",
+                fontSize: "26px",
+                cursor: "pointer",
+                /* ← was hardcoded rgba(255,255,255,0.2) — now uses CSS variable */
+                color: star <= (hoverRating || rating)
+                  ? "#f5c518"
+                  : "var(--starEmpty)",
                 transition: "color 0.15s, transform 0.15s",
-                transform: star <= (hoverRating || rating) ? "scale(1.2)" : "scale(1)"
+                transform: star <= (hoverRating || rating) ? "scale(1.25)" : "scale(1)",
+                userSelect: "none",
               }}
-            >★</span>
+            >
+              ★
+            </span>
           ))}
         </div>
         <button
           onClick={handleRatingSubmit}
           disabled={rating === 0}
           style={{
-            ...ovalBtn, margin: "0 auto",
-            backgroundColor: rating > 0 ? "var(--primary)" : "rgba(255,255,255,0.05)",
-            opacity: rating > 0 ? 1 : 0.4,
-            cursor: rating > 0 ? "pointer" : "default"
+            ...ovalBtn,
+            margin: "0 auto",
+            backgroundColor: rating > 0 ? "var(--primary)" : "var(--surfaceSubtle)",
+            borderColor:     rating > 0 ? "var(--primary)" : "var(--surfaceBorder)",
+            color:           rating > 0 ? "#fff"           : "var(--text)",
+            opacity:         rating > 0 ? 1                : 0.45,
+            cursor:          rating > 0 ? "pointer"        : "default",
           }}
         >
           Submit Rating
