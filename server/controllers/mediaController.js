@@ -58,17 +58,26 @@ export const createMedia = async (req, res) => {
 
 export const updateMedia = async (req, res) => {
   try {
-    const media = await Media.findByIdAndUpdate(
+    // First, find the media to check ownership
+    const media = await Media.findById(req.params.id);
+    if (!media) {
+      return res.status(404).json({ error: "Media not found" });
+    }
+
+    // ---- AUTHORIZATION CHECK ----
+    if (media.createdBy.toString() !== req.userId) {
+      return res.status(403).json({ error: "You are not allowed to update this media" });
+    }
+    // ----------------------------
+
+    // Perform update
+    const updatedMedia = await Media.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true }
     );
 
-    if (!media) {
-      return res.status(404).json({ error: "Media not found" });
-    }
-
-    res.json(media);
+    res.json(updatedMedia);
   } catch (err) {
     console.error("Error updating media:", err);
     res.status(500).json({ error: "Error updating media" });
@@ -77,12 +86,19 @@ export const updateMedia = async (req, res) => {
 
 export const deleteMedia = async (req, res) => {
   try {
-    const media = await Media.findByIdAndDelete(req.params.id);
-
+    // Find media to check ownership
+    const media = await Media.findById(req.params.id);
     if (!media) {
       return res.status(404).json({ error: "Media not found" });
     }
 
+    // ---- AUTHORIZATION CHECK ----
+    if (media.createdBy.toString() !== req.userId) {
+      return res.status(403).json({ error: "You are not allowed to delete this media" });
+    }
+    // ----------------------------
+
+    await Media.findByIdAndDelete(req.params.id);
     res.json({ message: "Media deleted successfully" });
   } catch (err) {
     console.error("Error deleting media:", err);
