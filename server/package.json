@@ -9,7 +9,11 @@
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["bingeboard", "api", "server"],
+  "keywords": [
+    "bingeboard",
+    "api",
+    "server"
+  ],
   "author": "BingeBoard Team",
   "license": "MIT",
   "dependencies": {
@@ -18,7 +22,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^7.1.5",
-    "helmet": "^7.1.0",
+    "helmet": "^7.2.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.5.0",
     "morgan": "^1.10.0"
