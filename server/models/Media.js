@@ -1,9 +1,10 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const mediaSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
+    trim: true,
   },
 
   type: {
@@ -44,4 +45,4 @@ const mediaSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-module.exports = mongoose.model("Media", mediaSchema);
+export default mongoose.model("Media", mediaSchema);

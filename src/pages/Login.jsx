@@ -2,30 +2,49 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { ToastContainer, useToast } from "../components/Toast";
+import { loginUser } from "../utils/authService";
 import logo from "../images/logo.png";
 
 export default function Login() {
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const { toasts, showToast } = useToast();
   const navigate = useNavigate();
 
-  const handleLogin = (event) => {
+  const clearError = (field) =>
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+
+  const handleLogin = async (event) => {
     event.preventDefault();
     const email = event.target.email.value.trim();
     const password = event.target.password.value;
 
-    if (!email || !password) {
-      setError("Please fill all fields");
+    const newErrors = {};
+
+    // Validation
+    if (!email) {
+      newErrors.email = "Email is required.";
+    }
+    if (!password) {
+      newErrors.password = "Password is required.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser && email === storedUser.email && password === storedUser.password) {
-      setError("");
+    setIsLoading(true);
+    try {
+      await loginUser(email, password);
+      setErrors({});
       showToast("Login successful! Redirecting…", "success");
       setTimeout(() => navigate("/dashboard"), 1200);
-    } else {
-      setError("Invalid email or password");
+    } catch (err) {
+      showToast(err.message, "error");
+      setErrors({ submit: err.message });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -34,36 +53,41 @@ export default function Login() {
       <Navbar />
       <ToastContainer toasts={toasts} />
 
-      <main style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "calc(100vh - 70px)",
-        padding: "24px 16px",
-      }}>
-        <div style={{
+      <main
+        style={{
           display: "flex",
-          flexDirection: "row",
-          backgroundColor: "var(--secondary)",
-          borderRadius: "16px",
-          overflow: "hidden",
-          width: "100%",
-          maxWidth: "780px",
-          /* Responsive: stack on mobile */
-          flexWrap: "wrap",
-        }}>
-          {/* Left Panel — Branding */}
-          <div style={{
-            flex: "1 1 240px",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "calc(100vh - 70px)",
+          padding: "24px 16px",
+        }}
+      >
+        <div
+          style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "40px 24px",
-            borderRight: "1px solid rgba(255,255,255,0.08)",
-            gap: "12px",
-            minWidth: "200px",
-          }}>
+            flexDirection: "row",
+            backgroundColor: "var(--secondary)",
+            borderRadius: "16px",
+            overflow: "hidden",
+            width: "100%",
+            maxWidth: "780px",
+            flexWrap: "wrap",
+          }}
+        >
+          {/* Left Panel — Branding */}
+          <div
+            style={{
+              flex: "1 1 240px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "40px 24px",
+              borderRight: "1px solid rgba(255,255,255,0.08)",
+              gap: "12px",
+              minWidth: "200px",
+            }}
+          >
             <img
               src={logo}
               alt="BingeBoard logo"
@@ -73,7 +97,9 @@ export default function Login() {
               BingeBoard
             </h1>
             <p style={{ fontSize: "12px", textAlign: "center", margin: 0, opacity: 0.65 }}>
-              Welcome back!<br />Log in to continue.
+              Welcome back!
+              <br />
+              Log in to continue.
             </p>
             <div style={{ width: "60%", height: "1px", backgroundColor: "rgba(255,255,255,0.1)", margin: "4px 0" }} />
             <h2 style={{ fontSize: "18px", fontWeight: "bold", margin: 0 }}>Sign In</h2>
@@ -87,49 +113,61 @@ export default function Login() {
           </div>
 
           {/* Right Panel — Form */}
-          <div style={{
-            flex: "1 1 300px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            padding: "40px 36px",
-          }}>
+          <div
+            style={{
+              flex: "1 1 300px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              padding: "40px 36px",
+            }}
+          >
             <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <label style={{ fontSize: "13px", fontWeight: "600" }}>Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="example@email.com"
-                required
-                style={inputStyle}
-              />
+              <div>
+                <label style={{ fontSize: "13px", fontWeight: "600" }}>Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="example@email.com"
+                  required
+                  style={inputStyle(!!errors.email)}
+                  onChange={() => clearError("email")}
+                />
+                {errors.email && <p style={errorStyle}>{errors.email}</p>}
+              </div>
 
-              <label style={{ fontSize: "13px", fontWeight: "600" }}>Password</label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                required
-                style={inputStyle}
-              />
+              <div>
+                <label style={{ fontSize: "13px", fontWeight: "600" }}>Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  required
+                  style={inputStyle(!!errors.password)}
+                  onChange={() => clearError("password")}
+                />
+                {errors.password && <p style={errorStyle}>{errors.password}</p>}
+              </div>
 
-              {error && <p style={{ color: "#ef4444", fontSize: "12px", margin: 0 }}>{error}</p>}
+              {errors.submit && <p style={errorStyle}>{errors.submit}</p>}
 
               <button
                 type="submit"
+                disabled={isLoading}
                 style={{
                   marginTop: "8px",
                   padding: "12px",
-                  backgroundColor: "var(--primary)",
+                  backgroundColor: isLoading ? "var(--primary-dark)" : "var(--primary)",
                   color: "#fff",
                   border: "none",
                   borderRadius: "8px",
                   fontWeight: "bold",
                   fontSize: "15px",
-                  cursor: "pointer",
+                  cursor: isLoading ? "not-allowed" : "pointer",
+                  opacity: isLoading ? 0.7 : 1,
                 }}
               >
-                Login
+                {isLoading ? "Logging in..." : "Login"}
               </button>
             </form>
           </div>
@@ -139,12 +177,24 @@ export default function Login() {
   );
 }
 
-const inputStyle = {
+const inputStyle = (hasError) => ({
   padding: "11px 14px",
   borderRadius: "8px",
-  border: "1px solid rgba(255,255,255,0.2)",
+  border: `1px solid ${hasError ? "#ef4444" : "rgba(255,255,255,0.2)"}`,
   backgroundColor: "rgba(255,255,255,0.07)",
   color: "var(--text)",
   fontSize: "14px",
   outline: "none",
+  width: "100%",
+  boxSizing: "border-box",
+  transition: "border-color 0.2s",
+});
+
+const errorStyle = {
+  color: "#ef4444",
+  fontSize: "12px",
+  margin: "4px 0 0 0",
+  display: "flex",
+  alignItems: "center",
+  gap: "4px",
 };
