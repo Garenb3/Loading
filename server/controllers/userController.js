@@ -1,60 +1,103 @@
-const User = require("../models/User");
+import User from "../models/User.js";
 
-exports.addToWatchlist = async (req, res) => {
-  const userId = req.body.userId;
-  const mediaId = req.params.id;
-
+export const addToWatchlist = async (req, res) => {
   try {
+    const { mediaId } = req.body;
+    const userId = req.params.id;
+
+    if (!mediaId) {
+      return res.status(400).json({ error: "Media ID is required" });
+    }
+
     const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
     if (!user.watchlist.includes(mediaId)) {
       user.watchlist.push(mediaId);
       await user.save();
     }
+
     res.json(user);
-  } catch {
-    res.status(500).json({ msg: "Error updating watchlist" });
+  } catch (err) {
+    console.error("Error updating watchlist:", err);
+    res.status(500).json({ error: "Error updating watchlist" });
   }
 };
 
-exports.addToFavorites = async (req, res) => {
-  const userId = req.body.userId;
-  const mediaId = req.params.id;
-
+export const addToFavorites = async (req, res) => {
   try {
+    const { mediaId } = req.body;
+    const userId = req.params.id;
+
+    if (!mediaId) {
+      return res.status(400).json({ error: "Media ID is required" });
+    }
+
     const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
     if (!user.favorites.includes(mediaId)) {
       user.favorites.push(mediaId);
       await user.save();
     }
+
     res.json(user);
-  } catch {
-    res.status(500).json({ msg: "Error updating favorites" });
+  } catch (err) {
+    console.error("Error updating favorites:", err);
+    res.status(500).json({ error: "Error updating favorites" });
   }
 };
-exports.getUser = async (req, res) => {
+
+export const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
-    if (!user) return res.status(404).json({ msg: "User not found" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     res.json(user);
-  } catch {
-    res.status(500).json({ msg: "Error fetching user" });
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ error: "Error fetching user" });
   }
 };
 
-exports.updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true }).select("-password");
+    // Prevent password changes through this endpoint
+    if (req.body.password) {
+      delete req.body.password;
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
     res.json(user);
-  } catch {
-    res.status(500).json({ msg: "Error updating user" });
+  } catch (err) {
+    console.error("Error updating user:", err);
+    res.status(500).json({ error: "Error updating user" });
   }
 };
 
-exports.deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ msg: "User deleted" });
-  } catch {
-    res.status(500).json({ msg: "Error deleting user" });
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json({ message: "User deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    res.status(500).json({ error: "Error deleting user" });
   }
 };

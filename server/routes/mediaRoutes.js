@@ -1,12 +1,13 @@
-const express = require("express");
+import express from "express";
+import { getAllMedia, getMediaById, createMedia, updateMedia, deleteMedia } from "../controllers/mediaController.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
+
 const router = express.Router();
-const { getAllMedia, getMediaById, createMedia, updateMedia, deleteMedia } = require("../controllers/mediaController");
-const auth = require("../middleware/authMiddleware");
 
 router.get("/", getAllMedia);
 router.get("/:id", getMediaById);
-router.post("/", auth, createMedia);
-router.put("/:id", auth, updateMedia);
-router.delete("/:id", auth, deleteMedia);
+router.post("/", authMiddleware, createMedia);
+router.put("/:id", authMiddleware, updateMedia);
+router.delete("/:id", authMiddleware, deleteMedia);
 
-module.exports = router;
+export default router;
