@@ -1,15 +1,25 @@
 import User from "../models/User.js";
 
+// Helper to enforce the authenticated user is modifying their own resource
+const requireOwnership = (req, res) => {
+  if (req.userId !== req.params.id) {
+    res.status(403).json({ error: "You are not allowed to modify this user's data" });
+    return false;
+  }
+  return true;
+};
+
 export const addToWatchlist = async (req, res) => {
   try {
-    const { mediaId } = req.body;
-    const userId = req.params.id;
+    // Ownership check
+    if (!requireOwnership(req, res)) return;
 
+    const { mediaId } = req.body;
     if (!mediaId) {
       return res.status(400).json({ error: "Media ID is required" });
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -28,14 +38,14 @@ export const addToWatchlist = async (req, res) => {
 
 export const addToFavorites = async (req, res) => {
   try {
-    const { mediaId } = req.body;
-    const userId = req.params.id;
+    if (!requireOwnership(req, res)) return;
 
+    const { mediaId } = req.body;
     if (!mediaId) {
       return res.status(400).json({ error: "Media ID is required" });
     }
 
-    const user = await User.findById(userId);
+    const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -67,6 +77,9 @@ export const getUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
+    // Ownership check
+    if (!requireOwnership(req, res)) return;
+
     // Prevent password changes through this endpoint
     if (req.body.password) {
       delete req.body.password;
@@ -91,6 +104,9 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
+    // Ownership check
+    if (!requireOwnership(req, res)) return;
+
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
