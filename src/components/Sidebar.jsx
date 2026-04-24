@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { setTheme } from "../utils/theme";
 import profileImg from "../images/Profile.jpg";
-import logo from "../images/logo.png";
 import { darkTheme, lightTheme } from "../utils/themes";
 
 /* ── Icons ──────────────────────────────────────────────────── */
@@ -434,7 +433,7 @@ export default function Sidebar() {
             }}
           >
             <img
-              src={logo}
+              src="/images/logo_new.png"
               alt="BingeBoard"
               style={{ height: "100px", width: "auto", objectFit: "contain", justify: "center"}}
             />
