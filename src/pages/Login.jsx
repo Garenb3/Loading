@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 import { ToastContainer, useToast } from "../components/Toast";
 import { loginUser } from "../utils/authService";
 import logo from "../images/logo.png";
@@ -50,52 +50,42 @@ export default function Login() {
 
   return (
     <div style={{ backgroundColor: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
-      <Navbar />
+      <Sidebar />
       <ToastContainer toasts={toasts} />
 
-      <main
-        style={{
+      <main style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        padding: "80px 16px 24px", // top padding for hamburger
+        boxSizing: "border-box",
+      }}>
+        <div style={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "calc(100vh - 70px)",
-          padding: "24px 16px",
-        }}
-      >
-        <div
-          style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          backgroundColor: "var(--secondary)",
+          borderRadius: "16px",
+          overflow: "hidden",
+          width: "100%",
+          maxWidth: "780px",
+          boxShadow: "0 8px 40px rgba(0,0,0,0.2)",
+        }}>
+          {/* Left Panel */}
+          <div style={{
+            flex: "1 1 240px",
             display: "flex",
-            flexDirection: "row",
-            backgroundColor: "var(--secondary)",
-            borderRadius: "16px",
-            overflow: "hidden",
-            width: "100%",
-            maxWidth: "780px",
-            flexWrap: "wrap",
-          }}
-        >
-          {/* Left Panel — Branding */}
-          <div
-            style={{
-              flex: "1 1 240px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "40px 24px",
-              borderRight: "1px solid rgba(255,255,255,0.08)",
-              gap: "12px",
-              minWidth: "200px",
-            }}
-          >
-            <img
-              src={logo}
-              alt="BingeBoard logo"
-              style={{ width: "100px", height: "100px", objectFit: "contain" }}
-            />
-            <h1 style={{ fontSize: "22px", fontWeight: "bold", margin: 0, color: "var(--primary)" }}>
-              BingeBoard
-            </h1>
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "40px 24px",
+            borderRight: "1px solid rgba(255,255,255,0.08)",
+            gap: "12px",
+            minWidth: "200px",
+          }}>
+            <img src={logo} alt="BingeBoard logo" style={{ width: "100px", height: "100px", objectFit: "contain" }} />
+            <h1 style={{ fontSize: "22px", fontWeight: "bold", margin: 0, color: "var(--primary)" }}>BingeBoard</h1>
             <p style={{ fontSize: "12px", textAlign: "center", margin: 0, opacity: 0.65 }}>
               Welcome back!
               <br />
@@ -106,46 +96,42 @@ export default function Login() {
             <p style={{ fontSize: "12px", margin: 0, opacity: 0.65 }}>Access your account</p>
             <p style={{ marginTop: "12px", fontSize: "12px", textAlign: "center" }}>
               Don't have an account?{" "}
-              <Link to="/register" style={{ color: "var(--primary)", textDecoration: "underline" }}>
-                Register here
-              </Link>
+              <Link to="/register" style={{ color: "var(--primary)", textDecoration: "underline" }}>Register here</Link>
             </p>
           </div>
 
-          {/* Right Panel — Form */}
-          <div
-            style={{
-              flex: "1 1 300px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              padding: "40px 36px",
-            }}
-          >
+          {/* Right Panel */}
+          <div style={{
+            flex: "1 1 300px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "40px 36px",
+          }}>
             <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <div>
-                <label style={{ fontSize: "13px", fontWeight: "600" }}>Email</label>
-                <input
+              <label style={{ fontSize: "13px", fontWeight: "600" }}>Email</label>
+              <input
                   type="email"
                   name="email"
                   placeholder="example@email.com"
                   required
                   style={inputStyle(!!errors.email)}
                   onChange={() => clearError("email")}
-                />
+              />
                 {errors.email && <p style={errorStyle}>{errors.email}</p>}
               </div>
 
               <div>
-                <label style={{ fontSize: "13px", fontWeight: "600" }}>Password</label>
-                <input
+              <label style={{ fontSize: "13px", fontWeight: "600" }}>Password</label>
+              <input
                   type="password"
                   name="password"
                   placeholder="Enter your password"
                   required
                   style={inputStyle(!!errors.password)}
                   onChange={() => clearError("password")}
-                />
+              />
                 {errors.password && <p style={errorStyle}>{errors.password}</p>}
               </div>
 
@@ -157,14 +143,14 @@ export default function Login() {
                 style={{
                   marginTop: "8px",
                   padding: "12px",
-                  backgroundColor: isLoading ? "var(--primary-dark)" : "var(--primary)",
+                  backgroundColor: "var(--primary)",
                   color: "#fff",
                   border: "none",
                   borderRadius: "8px",
                   fontWeight: "bold",
                   fontSize: "15px",
                   cursor: isLoading ? "not-allowed" : "pointer",
-                  opacity: isLoading ? 0.7 : 1,
+                  opacity: isLoading ? 0.6 : 1,
                 }}
               >
                 {isLoading ? "Logging in..." : "Login"}

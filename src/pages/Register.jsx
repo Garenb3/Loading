@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 import { ToastContainer, useToast } from "../components/Toast";
 import { registerUser } from "../utils/authService";
 import logo from "../images/logo.png";
 
-// ── Validation helpers ────────────────────────────────────────
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email);
 }
@@ -28,7 +27,6 @@ function FieldError({ msg }) {
   );
 }
 
-// ── Styles ────────────────────────────────────────────────────
 const labelStyle = { fontSize: "13px", fontWeight: "600", opacity: 0.9 };
 
 const inputStyle = (hasError) => ({
@@ -59,8 +57,7 @@ export default function Register() {
   const { toasts, showToast } = useToast();
   const navigate = useNavigate();
 
-  const clearError = (field) =>
-    setErrors((prev) => ({ ...prev, [field]: "" }));
+  const clearError = (field) => setErrors((prev) => ({ ...prev, [field]: "" }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,11 +84,9 @@ export default function Register() {
     // ── Password ──────────────────────────────────────────────
     const pwdError = validatePassword(password);
     if (pwdError) newErrors.password = pwdError;
+    if (password !== confirmPassword) newErrors.confirmPassword = "Passwords do not match.";
 
-    // ── Confirm password ──────────────────────────────────────
-    if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match.";
-    }
+    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -115,21 +110,32 @@ export default function Register() {
 
   return (
     <div style={{ backgroundColor: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
-      <Navbar />
+      <Sidebar />
       <ToastContainer toasts={toasts} />
 
-      <main
-        style={{
+      <main style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        padding: "80px 16px 24px", // top padding for hamburger
+        boxSizing: "border-box",
+      }}>
+        <div style={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "calc(100vh - 70px)",
-          padding: "24px 16px",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          backgroundColor: "var(--secondary)",
+          borderRadius: "16px",
+          overflow: "hidden",
+          width: "100%",
+          maxWidth: "780px",
           boxSizing: "border-box",
-        }}
-      >
-        <div
-          style={{
+          boxShadow: "0 8px 40px rgba(0,0,0,0.2)",
+        }}>
+          {/* Left branding panel */}
+          <div style={{
+            flex: "1 1 220px",
             display: "flex",
             flexDirection: "row",
             flexWrap: "wrap",
@@ -220,7 +226,7 @@ export default function Register() {
                 <input
                   type="password"
                   name="password"
-                  placeholder="Min 12 chars, uppercase, number, special char"
+                  placeholder="password"
                   required
                   style={inputStyle(!!errors.password)}
                   onChange={() => clearError("password")}
@@ -267,6 +273,7 @@ export default function Register() {
             </form>
           </div>
         </div>
+      </div>
       </main>
     </div>
   );
