@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 import { ToastContainer, useToast } from "../components/Toast";
 
 const ALL_GENRES = [
@@ -18,7 +18,7 @@ const EMPTY_FORM = {
   image: "",
   rating: "",
   director: "",
-  cast: "",          // comma-separated → split on save
+  cast: "",
   duration: "",
   studio: "",
   trailer: "",
@@ -82,19 +82,17 @@ export default function AddEditForm() {
 
   // Auth guard
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "null");
-    if (!user || !user.email) {
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+      if (!user || !user.email) navigate("/login");
+    } catch {
       navigate("/login");
     }
   }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-    // Clear field error on change
+    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
@@ -129,44 +127,44 @@ export default function AddEditForm() {
       return;
     }
 
-    // Build full data object matching the data model
-    const existing = JSON.parse(localStorage.getItem("userAddedMovies") || "[]");
-    const newEntry = {
-      ...form,
-      id: Date.now(),
-      rating: form.rating !== "" ? parseFloat(form.rating) : null,
-      duration: form.duration !== "" ? parseInt(form.duration, 10) : null,
-      cast: form.cast ? form.cast.split(",").map((s) => s.trim()).filter(Boolean) : [],
-    };
-
-    localStorage.setItem("userAddedMovies", JSON.stringify([...existing, newEntry]));
-    showToast(`"${form.title}" saved successfully!`, "success");
-    setForm(EMPTY_FORM);
-    setErrors({});
+    try {
+      const existing = JSON.parse(localStorage.getItem("userAddedMovies") || "[]");
+      const newEntry = {
+        ...form,
+        id: Date.now(),
+        rating: form.rating !== "" ? parseFloat(form.rating) : null,
+        duration: form.duration !== "" ? parseInt(form.duration, 10) : null,
+        cast: form.cast ? form.cast.split(",").map((s) => s.trim()).filter(Boolean) : [],
+      };
+      localStorage.setItem("userAddedMovies", JSON.stringify([...existing, newEntry]));
+      showToast(`"${form.title}" saved successfully!`, "success");
+      setForm(EMPTY_FORM);
+      setErrors({});
+    } catch {
+      showToast("Failed to save. Please try again.", "error");
+    }
   };
 
   return (
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh", color: "var(--text)" }}>
-      <Navbar />
+      <Sidebar />
       <ToastContainer toasts={toasts} />
 
-      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "40px 20px" }}>
+      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "80px 20px 48px" }}>
         <h1 style={{ fontSize: "26px", fontWeight: "bold", marginBottom: "6px" }}>Add / Edit Entry</h1>
         <p style={{ opacity: 0.55, fontSize: "14px", marginBottom: "32px" }}>
           Fill in all details to match the full data model.
         </p>
 
         <form onSubmit={handleSubmit}>
-          <div
-            style={{
-              backgroundColor: "var(--secondary)",
-              borderRadius: "16px",
-              padding: "32px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "20px",
-            }}
-          >
+          <div style={{
+            backgroundColor: "var(--secondary)",
+            borderRadius: "16px",
+            padding: "32px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+          }}>
             {/* ── Core Info ── */}
             <Divider title="Core Info" />
 
@@ -218,12 +216,8 @@ export default function AddEditForm() {
             </Field>
 
             <Field label="Genre * (select all that apply)">
-              <div style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "8px",
-              }}>
-                {ALL_GENRES.filter(Boolean).map((g) => (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {ALL_GENRES.map((g) => (
                   <button
                     type="button"
                     key={g}
@@ -266,7 +260,12 @@ export default function AddEditForm() {
             {/* ── Details ── */}
             <Divider title="Details" />
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            {/* Responsive 2-col grid that stacks on mobile */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+              gap: "16px",
+            }}>
               <Field label="Release Date *">
                 <input
                   type="date"
@@ -360,11 +359,16 @@ export default function AddEditForm() {
               {errors.image && <span style={{ color: "#ef4444", fontSize: "12px" }}>{errors.image}</span>}
             </Field>
 
+            {/* Poster preview */}
             {form.image && (
               <img
                 src={form.image}
                 alt="Poster preview"
-                style={{ width: "120px", height: "180px", objectFit: "cover", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.1)" }}
+                style={{
+                  width: "120px", height: "180px",
+                  objectFit: "cover", borderRadius: "8px",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
                 onError={(e) => { e.target.style.display = "none"; }}
               />
             )}
@@ -379,10 +383,10 @@ export default function AddEditForm() {
               />
             </Field>
 
-            {/* ── Flags ── */}
+            {/* ── Visibility ── */}
             <Divider title="Visibility" />
 
-            <div style={{ display: "flex", gap: "24px" }}>
+            <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
               {[
                 { name: "featured", label: "⭐ Featured on Home" },
                 { name: "trending", label: "🔥 Trending on Home" },
@@ -401,11 +405,12 @@ export default function AddEditForm() {
             </div>
 
             {/* ── Actions ── */}
-            <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
+            <div style={{ display: "flex", gap: "12px", marginTop: "8px", flexWrap: "wrap" }}>
               <button
                 type="submit"
                 style={{
                   flex: 1,
+                  minWidth: "140px",
                   padding: "13px",
                   backgroundColor: "var(--primary)",
                   color: "#fff",
