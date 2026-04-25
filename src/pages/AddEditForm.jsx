@@ -2,11 +2,25 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { ToastContainer, useToast } from "../components/Toast";
+import { authFetch } from "../utils/authService";
 
 const ALL_GENRES = [
-  "Action", "Adventure", "Animation", "Biography", "Comedy", "Crime",
-  "Drama", "Family", "Fantasy", "History", "Horror",
-  "Mystery", "Political", "Romance", "Sci-Fi", "Thriller",
+  "Action",
+  "Adventure",
+  "Animation",
+  "Biography",
+  "Comedy",
+  "Crime",
+  "Drama",
+  "Family",
+  "Fantasy",
+  "History",
+  "Horror",
+  "Mystery",
+  "Political",
+  "Romance",
+  "Sci-Fi",
+  "Thriller",
 ];
 
 const EMPTY_FORM = {
@@ -69,7 +83,13 @@ function Divider({ title }) {
   return (
     <div style={{ marginTop: "8px" }}>
       <p style={sectionTitle}>{title}</p>
-      <div style={{ height: "1px", backgroundColor: "rgba(255,255,255,0.08)", marginBottom: "16px" }} />
+      <div
+        style={{
+          height: "1px",
+          backgroundColor: "rgba(255,255,255,0.08)",
+          marginBottom: "16px",
+        }}
+      />
     </div>
   );
 }
@@ -77,10 +97,17 @@ function Divider({ title }) {
 export default function AddEditForm() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+
+  // ── List of media created by this user (from API) ──────────
+  const [userMedia, setUserMedia] = useState([]);
+  const [loadingMedia, setLoadingMedia] = useState(true);
+  const [editingId, setEditingId] = useState(null); // MongoDB _id of item being edited
+
   const { toasts, showToast } = useToast();
   const navigate = useNavigate();
 
-  // Auth guard
+  // ── Auth guard ────────────────────────────────────────────
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -90,9 +117,33 @@ export default function AddEditForm() {
     }
   }, [navigate]);
 
+  // ── Fetch media created by this user ──────────────────────
+  useEffect(() => {
+    async function fetchUserMedia() {
+      try {
+        setLoadingMedia(true);
+        const all = await authFetch("/media");
+        // Filter to only show items this user created
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        const mine = all.filter(
+          (m) => m.createdBy?._id === user?._id || m.createdBy === user?._id,
+        );
+        setUserMedia(mine);
+      } catch {
+        // Silently fail — list just won't show
+      } finally {
+        setLoadingMedia(false);
+      }
+    }
+    fetchUserMedia();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
@@ -110,15 +161,20 @@ export default function AddEditForm() {
     const newErrors = {};
     if (!form.title.trim()) newErrors.title = "Title is required";
     if (form.genre.length === 0) newErrors.genre = "Select at least one genre";
-    if (!form.description.trim()) newErrors.description = "Description is required";
+    if (!form.description.trim())
+      newErrors.description = "Description is required";
     if (!form.releaseDate) newErrors.releaseDate = "Release date is required";
     if (!form.image.trim()) newErrors.image = "Poster URL is required";
-    if (form.rating && (isNaN(form.rating) || form.rating < 0 || form.rating > 10))
+    if (
+      form.rating &&
+      (isNaN(form.rating) || form.rating < 0 || form.rating > 10)
+    )
       newErrors.rating = "Rating must be between 0 and 10";
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  // ── Submit: create or update via API ─────────────────────
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
@@ -127,45 +183,130 @@ export default function AddEditForm() {
       return;
     }
 
+    const payload = {
+      ...form,
+      rating: form.rating !== "" ? parseFloat(form.rating) : null,
+      duration: form.duration !== "" ? parseInt(form.duration, 10) : null,
+      cast: form.cast
+        ? form.cast
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : [],
+    };
+
     try {
-      const existing = JSON.parse(localStorage.getItem("userAddedMovies") || "[]");
-      const newEntry = {
-        ...form,
-        id: Date.now(),
-        rating: form.rating !== "" ? parseFloat(form.rating) : null,
-        duration: form.duration !== "" ? parseInt(form.duration, 10) : null,
-        cast: form.cast ? form.cast.split(",").map((s) => s.trim()).filter(Boolean) : [],
-      };
-      localStorage.setItem("userAddedMovies", JSON.stringify([...existing, newEntry]));
-      showToast(`"${form.title}" saved successfully!`, "success");
+      setSubmitting(true);
+      if (editingId) {
+        // Update existing
+        const updated = await authFetch(`/media/${editingId}`, "PUT", payload);
+        setUserMedia((prev) =>
+          prev.map((m) => (m._id === editingId ? updated : m)),
+        );
+        showToast(`"${form.title}" updated successfully!`, "success");
+        setEditingId(null);
+      } else {
+        // Create new
+        const created = await authFetch("/media", "POST", payload);
+        setUserMedia((prev) => [created, ...prev]);
+        showToast(`"${form.title}" saved successfully!`, "success");
+      }
       setForm(EMPTY_FORM);
       setErrors({});
-    } catch {
-      showToast("Failed to save. Please try again.", "error");
+    } catch (err) {
+      showToast(err.message || "Failed to save. Please try again.", "error");
+    } finally {
+      setSubmitting(false);
     }
   };
 
+  // ── Load item into form for editing ──────────────────────
+  const handleEdit = (item) => {
+    setForm({
+      title: item.title || "",
+      type: item.type || "movie",
+      genre: item.genre || [],
+      description: item.description || "",
+      releaseDate: item.releaseDate ? item.releaseDate.split("T")[0] : "",
+      image: item.image || "",
+      rating: item.rating ?? "",
+      director: item.director || "",
+      cast: Array.isArray(item.cast) ? item.cast.join(", ") : item.cast || "",
+      duration: item.duration ?? "",
+      studio: item.studio || "",
+      trailer: item.trailer || "",
+      featured: item.featured || false,
+      trending: item.trending || false,
+    });
+    setEditingId(item._id);
+    setErrors({});
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // ── Delete item via API ───────────────────────────────────
+  const handleDelete = async (id, title) => {
+    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    try {
+      await authFetch(`/media/${id}`, "DELETE");
+      setUserMedia((prev) => prev.filter((m) => m._id !== id));
+      if (editingId === id) {
+        setForm(EMPTY_FORM);
+        setEditingId(null);
+      }
+      showToast(`"${title}" deleted.`, "info");
+    } catch (err) {
+      showToast(err.message || "Failed to delete.", "error");
+    }
+  };
+
+  const cancelEdit = () => {
+    setForm(EMPTY_FORM);
+    setEditingId(null);
+    setErrors({});
+  };
+
   return (
-    <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh", color: "var(--text)" }}>
+    <div
+      style={{
+        backgroundColor: "var(--bg)",
+        minHeight: "100vh",
+        color: "var(--text)",
+      }}
+    >
       <Sidebar />
       <ToastContainer toasts={toasts} />
 
-      <div style={{ maxWidth: "720px", margin: "0 auto", padding: "80px 20px 48px" }}>
-        <h1 style={{ fontSize: "26px", fontWeight: "bold", marginBottom: "6px" }}>Add / Edit Entry</h1>
+      <div
+        style={{
+          maxWidth: "720px",
+          margin: "0 auto",
+          padding: "80px 20px 48px",
+        }}
+      >
+        {/* ── Header ── */}
+        <h1
+          style={{ fontSize: "26px", fontWeight: "bold", marginBottom: "6px" }}
+        >
+          {editingId ? "Edit Entry" : "Add New Entry"}
+        </h1>
         <p style={{ opacity: 0.55, fontSize: "14px", marginBottom: "32px" }}>
-          Fill in all details to match the full data model.
+          {editingId
+            ? "Update the details below and save your changes."
+            : "Fill in the details to add a new movie or series to the database."}
         </p>
 
+        {/* ── Form ── */}
         <form onSubmit={handleSubmit}>
-          <div style={{
-            backgroundColor: "var(--secondary)",
-            borderRadius: "16px",
-            padding: "32px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-          }}>
-            {/* ── Core Info ── */}
+          <div
+            style={{
+              backgroundColor: "var(--secondary)",
+              borderRadius: "16px",
+              padding: "32px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "20px",
+            }}
+          >
             <Divider title="Core Info" />
 
             <Field label="Title *">
@@ -174,9 +315,18 @@ export default function AddEditForm() {
                 placeholder="e.g. Inception"
                 value={form.title}
                 onChange={handleChange}
-                style={{ ...inputStyle, borderColor: errors.title ? "#ef4444" : "rgba(255,255,255,0.15)" }}
+                style={{
+                  ...inputStyle,
+                  borderColor: errors.title
+                    ? "#ef4444"
+                    : "rgba(255,255,255,0.15)",
+                }}
               />
-              {errors.title && <span style={{ color: "#ef4444", fontSize: "12px" }}>{errors.title}</span>}
+              {errors.title && (
+                <span style={{ color: "#ef4444", fontSize: "12px" }}>
+                  {errors.title}
+                </span>
+              )}
             </Field>
 
             <Field label="Type *">
@@ -194,7 +344,10 @@ export default function AddEditForm() {
                       borderRadius: "8px",
                       border: `2px solid ${form.type === t ? "var(--primary)" : "rgba(255,255,255,0.12)"}`,
                       cursor: "pointer",
-                      backgroundColor: form.type === t ? "rgba(var(--primary-rgb),0.12)" : "transparent",
+                      backgroundColor:
+                        form.type === t
+                          ? "rgba(229,57,53,0.12)"
+                          : "transparent",
                       fontSize: "14px",
                       fontWeight: "600",
                       transition: "all 0.2s",
@@ -209,7 +362,8 @@ export default function AddEditForm() {
                       onChange={handleChange}
                       style={{ display: "none" }}
                     />
-                    {t === "movie" ? "🎬" : "📺"} {t.charAt(0).toUpperCase() + t.slice(1)}
+                    {t === "movie" ? "🎬" : "📺"}{" "}
+                    {t.charAt(0).toUpperCase() + t.slice(1)}
                   </label>
                 ))}
               </div>
@@ -229,7 +383,9 @@ export default function AddEditForm() {
                       fontWeight: "600",
                       cursor: "pointer",
                       border: `1px solid ${form.genre.includes(g) ? "var(--primary)" : "rgba(255,255,255,0.15)"}`,
-                      backgroundColor: form.genre.includes(g) ? "var(--primary)" : "transparent",
+                      backgroundColor: form.genre.includes(g)
+                        ? "var(--primary)"
+                        : "transparent",
                       color: form.genre.includes(g) ? "#fff" : "var(--text)",
                       transition: "all 0.15s",
                     }}
@@ -238,7 +394,11 @@ export default function AddEditForm() {
                   </button>
                 ))}
               </div>
-              {errors.genre && <span style={{ color: "#ef4444", fontSize: "12px" }}>{errors.genre}</span>}
+              {errors.genre && (
+                <span style={{ color: "#ef4444", fontSize: "12px" }}>
+                  {errors.genre}
+                </span>
+              )}
             </Field>
 
             <Field label="Description *">
@@ -251,21 +411,27 @@ export default function AddEditForm() {
                 style={{
                   ...inputStyle,
                   resize: "vertical",
-                  borderColor: errors.description ? "#ef4444" : "rgba(255,255,255,0.15)",
+                  borderColor: errors.description
+                    ? "#ef4444"
+                    : "rgba(255,255,255,0.15)",
                 }}
               />
-              {errors.description && <span style={{ color: "#ef4444", fontSize: "12px" }}>{errors.description}</span>}
+              {errors.description && (
+                <span style={{ color: "#ef4444", fontSize: "12px" }}>
+                  {errors.description}
+                </span>
+              )}
             </Field>
 
-            {/* ── Details ── */}
             <Divider title="Details" />
 
-            {/* Responsive 2-col grid that stacks on mobile */}
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-              gap: "16px",
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+                gap: "16px",
+              }}
+            >
               <Field label="Release Date *">
                 <input
                   type="date"
@@ -274,11 +440,17 @@ export default function AddEditForm() {
                   onChange={handleChange}
                   style={{
                     ...inputStyle,
-                    borderColor: errors.releaseDate ? "#ef4444" : "rgba(255,255,255,0.15)",
+                    borderColor: errors.releaseDate
+                      ? "#ef4444"
+                      : "rgba(255,255,255,0.15)",
                     colorScheme: "dark",
                   }}
                 />
-                {errors.releaseDate && <span style={{ color: "#ef4444", fontSize: "12px" }}>{errors.releaseDate}</span>}
+                {errors.releaseDate && (
+                  <span style={{ color: "#ef4444", fontSize: "12px" }}>
+                    {errors.releaseDate}
+                  </span>
+                )}
               </Field>
 
               <Field label="Rating (0–10)">
@@ -293,13 +465,25 @@ export default function AddEditForm() {
                   onChange={handleChange}
                   style={{
                     ...inputStyle,
-                    borderColor: errors.rating ? "#ef4444" : "rgba(255,255,255,0.15)",
+                    borderColor: errors.rating
+                      ? "#ef4444"
+                      : "rgba(255,255,255,0.15)",
                   }}
                 />
-                {errors.rating && <span style={{ color: "#ef4444", fontSize: "12px" }}>{errors.rating}</span>}
+                {errors.rating && (
+                  <span style={{ color: "#ef4444", fontSize: "12px" }}>
+                    {errors.rating}
+                  </span>
+                )}
               </Field>
 
-              <Field label={form.type === "series" ? "Duration (min/ep)" : "Duration (min)"}>
+              <Field
+                label={
+                  form.type === "series"
+                    ? "Duration (min/ep)"
+                    : "Duration (min)"
+                }
+              >
                 <input
                   type="number"
                   name="duration"
@@ -342,7 +526,6 @@ export default function AddEditForm() {
               />
             </Field>
 
-            {/* ── Media ── */}
             <Divider title="Media" />
 
             <Field label="Poster URL *">
@@ -353,23 +536,32 @@ export default function AddEditForm() {
                 onChange={handleChange}
                 style={{
                   ...inputStyle,
-                  borderColor: errors.image ? "#ef4444" : "rgba(255,255,255,0.15)",
+                  borderColor: errors.image
+                    ? "#ef4444"
+                    : "rgba(255,255,255,0.15)",
                 }}
               />
-              {errors.image && <span style={{ color: "#ef4444", fontSize: "12px" }}>{errors.image}</span>}
+              {errors.image && (
+                <span style={{ color: "#ef4444", fontSize: "12px" }}>
+                  {errors.image}
+                </span>
+              )}
             </Field>
 
-            {/* Poster preview */}
             {form.image && (
               <img
                 src={form.image}
                 alt="Poster preview"
                 style={{
-                  width: "120px", height: "180px",
-                  objectFit: "cover", borderRadius: "8px",
+                  width: "120px",
+                  height: "180px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
                   border: "1px solid rgba(255,255,255,0.1)",
                 }}
-                onError={(e) => { e.target.style.display = "none"; }}
+                onError={(e) => {
+                  e.target.style.display = "none";
+                }}
               />
             )}
 
@@ -383,7 +575,6 @@ export default function AddEditForm() {
               />
             </Field>
 
-            {/* ── Visibility ── */}
             <Divider title="Visibility" />
 
             <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
@@ -391,23 +582,44 @@ export default function AddEditForm() {
                 { name: "featured", label: "⭐ Featured on Home" },
                 { name: "trending", label: "🔥 Trending on Home" },
               ].map(({ name, label }) => (
-                <label key={name} style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "14px" }}>
+                <label
+                  key={name}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
                   <input
                     type="checkbox"
                     name={name}
                     checked={form[name]}
                     onChange={handleChange}
-                    style={{ width: "16px", height: "16px", accentColor: "var(--primary)" }}
+                    style={{
+                      width: "16px",
+                      height: "16px",
+                      accentColor: "var(--primary)",
+                    }}
                   />
                   {label}
                 </label>
               ))}
             </div>
 
-            {/* ── Actions ── */}
-            <div style={{ display: "flex", gap: "12px", marginTop: "8px", flexWrap: "wrap" }}>
+            {/* ── Action buttons ── */}
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                marginTop: "8px",
+                flexWrap: "wrap",
+              }}
+            >
               <button
                 type="submit"
+                disabled={submitting}
                 style={{
                   flex: 1,
                   minWidth: "140px",
@@ -418,14 +630,42 @@ export default function AddEditForm() {
                   borderRadius: "10px",
                   fontWeight: "700",
                   fontSize: "15px",
-                  cursor: "pointer",
+                  cursor: submitting ? "not-allowed" : "pointer",
+                  opacity: submitting ? 0.7 : 1,
                 }}
               >
-                Save Entry
+                {submitting
+                  ? "Saving..."
+                  : editingId
+                    ? "Update Entry"
+                    : "Save Entry"}
               </button>
+
+              {editingId && (
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  style={{
+                    padding: "13px 20px",
+                    backgroundColor: "transparent",
+                    color: "var(--text)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    borderRadius: "10px",
+                    fontWeight: "600",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel Edit
+                </button>
+              )}
+
               <button
                 type="button"
-                onClick={() => { setForm(EMPTY_FORM); setErrors({}); }}
+                onClick={() => {
+                  setForm(EMPTY_FORM);
+                  setErrors({});
+                }}
                 style={{
                   padding: "13px 20px",
                   backgroundColor: "transparent",
@@ -442,6 +682,121 @@ export default function AddEditForm() {
             </div>
           </div>
         </form>
+
+        {/* ── My Submissions ── */}
+        <div style={{ marginTop: "48px" }}>
+          <h2
+            style={{
+              fontSize: "20px",
+              fontWeight: "700",
+              marginBottom: "16px",
+            }}
+          >
+            My Submissions
+          </h2>
+
+          {loadingMedia ? (
+            <p style={{ opacity: 0.5 }}>Loading your entries...</p>
+          ) : userMedia.length === 0 ? (
+            <p style={{ opacity: 0.5 }}>You haven't added any entries yet.</p>
+          ) : (
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+            >
+              {userMedia.map((item) => (
+                <div
+                  key={item._id}
+                  style={{
+                    backgroundColor: "var(--secondary)",
+                    borderRadius: "12px",
+                    padding: "16px 20px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "16px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {/* Poster thumbnail */}
+                  {item.image && (
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      style={{
+                        width: "48px",
+                        height: "72px",
+                        objectFit: "cover",
+                        borderRadius: "6px",
+                        flexShrink: 0,
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                      }}
+                    />
+                  )}
+
+                  {/* Info */}
+                  <div style={{ flex: 1, minWidth: "140px" }}>
+                    <p
+                      style={{ margin: 0, fontWeight: "700", fontSize: "15px" }}
+                    >
+                      {item.title}
+                    </p>
+                    <p
+                      style={{
+                        margin: "3px 0 0",
+                        fontSize: "12px",
+                        opacity: 0.55,
+                      }}
+                    >
+                      {item.type === "movie" ? "🎬 Movie" : "📺 Series"}
+                      {item.releaseDate &&
+                        ` · ${new Date(item.releaseDate).getFullYear()}`}
+                      {item.rating && ` · ⭐ ${item.rating}`}
+                    </p>
+                  </div>
+
+                  {/* Edit / Delete */}
+                  <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
+                    <button
+                      onClick={() => handleEdit(item)}
+                      style={{
+                        padding: "7px 16px",
+                        borderRadius: "8px",
+                        backgroundColor: "rgba(255,255,255,0.08)",
+                        border: "1px solid rgba(255,255,255,0.15)",
+                        color: "var(--text)",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        width: "auto",
+                        marginTop: 0,
+                      }}
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item._id, item.title)}
+                      style={{
+                        padding: "7px 16px",
+                        borderRadius: "8px",
+                        backgroundColor: "rgba(255,77,79,0.1)",
+                        border: "1px solid rgba(255,77,79,0.3)",
+                        color: "#ff4d4f",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                        fontWeight: "600",
+                        width: "auto",
+                        marginTop: 0,
+                      }}
+                    >
+                      🗑 Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

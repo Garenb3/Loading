@@ -68,7 +68,6 @@ function CollapsibleSection({ title, count, children }) {
   );
 }
 
-// ── Remove button on cards ────────────────────────────────────
 const removeBtnStyle = {
   position: "absolute", top: "8px", right: "8px",
   width: "26px", height: "26px", borderRadius: "50%",
@@ -78,7 +77,6 @@ const removeBtnStyle = {
   zIndex: 5, padding: 0,
 };
 
-// ── Helper: resolve media IDs to full objects from Data.js ────
 function resolveMedia(ids) {
   if (!ids || ids.length === 0) return [];
   return ids
@@ -86,7 +84,9 @@ function resolveMedia(ids) {
     .filter(Boolean);
 }
 
-// ── Main Component ────────────────────────────────────────────
+// ── PROFILE_WIDTH must match the width set in Profile.jsx ─────
+const PROFILE_WIDTH = 260;
+
 function Dashboard() {
   const [user, setUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem("user")) || { username: "Guest", email: "" }; }
@@ -96,7 +96,6 @@ function Dashboard() {
   const { toasts, showToast } = useToast();
   const [profileOpen, setProfileOpen] = useState(true);
 
-  // Data from API
   const [watchlist, setWatchlist] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [recentlyViewed, setRecentlyViewed] = useState([]);
@@ -106,52 +105,40 @@ function Dashboard() {
   const userId = user?._id;
   const isGuest = !user?.email;
 
-  // ── Fetch user data from backend ──────────────────────────
+  // ── Fetch from API ────────────────────────────────────────
   const fetchUserData = useCallback(async () => {
-    if (isGuest || !userId) {
-      setLoadingData(false);
-      return;
-    }
+    if (isGuest || !userId) { setLoadingData(false); return; }
     try {
       setLoadingData(true);
       setDataError("");
       const userData = await authFetch(`/user/${userId}`);
-
-      // Resolve IDs → full media objects from Data.js
       setWatchlist(resolveMedia(userData.watchlist));
       setFavorites(resolveMedia(userData.favorites));
       setRecentlyViewed(resolveMedia(userData.recentlyViewed));
-    } catch (err) {
+    } catch {
       setDataError("Failed to load your data. Please refresh.");
     } finally {
       setLoadingData(false);
     }
   }, [userId, isGuest]);
 
-  useEffect(() => {
-    fetchUserData();
-  }, [fetchUserData]);
+  useEffect(() => { fetchUserData(); }, [fetchUserData]);
 
-  // ── Remove from watchlist ─────────────────────────────────
+  // ── Remove handlers ───────────────────────────────────────
   const removeFromWatchlist = async (mediaId) => {
     try {
       await authFetch(`/user/${userId}/watchlist/${mediaId}`, "DELETE");
       setWatchlist((prev) => prev.filter((m) => String(m.id) !== String(mediaId)));
       showToast("Removed from Watchlist", "info");
-    } catch {
-      showToast("Failed to remove item", "error");
-    }
+    } catch { showToast("Failed to remove item", "error"); }
   };
 
-  // ── Remove from favorites ─────────────────────────────────
   const removeFromFavorites = async (mediaId) => {
     try {
       await authFetch(`/user/${userId}/favorites/${mediaId}`, "DELETE");
       setFavorites((prev) => prev.filter((m) => String(m.id) !== String(mediaId)));
       showToast("Removed from Favorites", "info");
-    } catch {
-      showToast("Failed to remove item", "error");
-    }
+    } catch { showToast("Failed to remove item", "error"); }
   };
 
   const browseLink = (
@@ -160,14 +147,11 @@ function Dashboard() {
     </Link>
   );
 
-  const PANEL_WIDTH = 300;
-
-  // ── Loading state ─────────────────────────────────────────
   if (loadingData) {
     return (
       <div style={{ backgroundColor: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
         <Sidebar />
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "80vh" }}>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
           <p style={{ opacity: 0.6 }}>Loading your dashboard...</p>
         </div>
       </div>
@@ -179,142 +163,111 @@ function Dashboard() {
       <Sidebar />
       <ToastContainer toasts={toasts} />
 
-      <div>
-        <div style={{ display: "flex", minHeight: "calc(100vh - 72px)", flexWrap: "wrap" }}>
+      {/* Fixed profile panel — rendered here, positions itself via fixed CSS in Profile.jsx */}
+      {profileOpen && (
+        <Profile user={user} onUserUpdate={setUser} isGuest={isGuest} />
+      )}
 
-          {/* ── Sliding profile panel ── */}
-          <aside style={{
-            width: profileOpen ? `${PANEL_WIDTH}px` : "0px",
-            minWidth: profileOpen ? `${PANEL_WIDTH}px` : "0px",
-            flexShrink: 0,
-            overflow: "hidden",
-            backgroundColor: "var(--secondary)",
-            boxShadow: profileOpen ? "var(--panelShadow, 2px 0 12px rgba(0,0,0,0.2))" : "none",
-            transition: [
-              "width 0.38s cubic-bezier(0.4, 0, 0.2, 1)",
-              "min-width 0.38s cubic-bezier(0.4, 0, 0.2, 1)",
-              "box-shadow 0.38s ease",
-            ].join(", "),
-            position: "relative",
-            zIndex: 10,
+      {/* Main content — offset by profile panel width when open */}
+      <div style={{
+        marginLeft: profileOpen ? `${PROFILE_WIDTH}px` : "0px",
+        transition: "margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+        padding: "clamp(16px, 3vw, 32px)",
+        minHeight: "100vh",
+        boxSizing: "border-box",
+      }}>
+
+        {/* Profile toggle button */}
+        <button
+          onClick={() => setProfileOpen((p) => !p)}
+          title={profileOpen ? "Close profile panel" : "Open profile panel"}
+          style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            gap: "8px", marginBottom: "24px", padding: "9px 16px",
+            borderRadius: "8px", border: "1px solid rgba(255,255,255,0.15)",
+            backgroundColor: "rgba(255,255,255,0.06)", color: "var(--text)",
+            cursor: "pointer", fontSize: "13px", fontWeight: "600",
+            width: "auto", marginTop: 0,
+          }}
+        >
+          {profileOpen ? <CloseIcon /> : <HamburgerIcon />}
+          <span>{profileOpen ? "Hide Profile" : "My Profile"}</span>
+        </button>
+
+        {/* Guest warning */}
+        {isGuest && (
+          <div style={{
+            padding: "16px 20px", borderRadius: "10px", marginBottom: "24px",
+            backgroundColor: "rgba(229,9,20,0.1)", border: "1px solid rgba(229,9,20,0.3)",
+            fontSize: "14px",
           }}>
-            <div style={{ width: `${PANEL_WIDTH}px`, height: "100%" }}>
-              <Profile user={user} onUserUpdate={setUser} isGuest={isGuest} />
-            </div>
-          </aside>
-
-          {/* ── Main content ── */}
-          <div style={{ flex: 1, minWidth: 0, padding: "clamp(16px, 3vw, 32px)" }}>
-
-            {/* Profile toggle button */}
-            <button
-              onClick={() => setProfileOpen((p) => !p)}
-              title={profileOpen ? "Close profile panel" : "Open profile panel"}
-              style={{
-                display: "inline-flex", alignItems: "center", justifyContent: "center",
-                gap: "8px", marginBottom: "24px", padding: "9px 16px",
-                borderRadius: "8px", border: "1px solid rgba(255,255,255,0.15)",
-                backgroundColor: "rgba(255,255,255,0.06)", color: "var(--text)",
-                cursor: "pointer", fontSize: "13px", fontWeight: "600",
-                transition: "background-color 0.2s", width: "auto", marginTop: 0,
-              }}
-            >
-              {profileOpen ? <CloseIcon /> : <HamburgerIcon />}
-              <span>{profileOpen ? "Hide Profile" : "My Profile"}</span>
-            </button>
-
-            {/* Guest message */}
-            {isGuest && (
-              <div style={{
-                padding: "16px 20px", borderRadius: "10px", marginBottom: "24px",
-                backgroundColor: "rgba(229,9,20,0.1)", border: "1px solid rgba(229,9,20,0.3)",
-                fontSize: "14px",
-              }}>
-                You're browsing as a guest.{" "}
-                <Link to="/login" style={{ color: "var(--primary)", fontWeight: "600" }}>
-                  Log in
-                </Link>{" "}
-                to save your watchlist and favorites.
-              </div>
-            )}
-
-            {/* Error banner */}
-            {dataError && (
-              <div style={{
-                padding: "12px 16px", borderRadius: "8px", marginBottom: "20px",
-                backgroundColor: "rgba(255,77,79,0.12)", border: "1px solid rgba(255,77,79,0.35)",
-                color: "#ff4d4f", fontSize: "14px", display: "flex",
-                justifyContent: "space-between", alignItems: "center",
-              }}>
-                <span>⚠️ {dataError}</span>
-                <button
-                  onClick={fetchUserData}
-                  style={{
-                    background: "none", border: "1px solid #ff4d4f", borderRadius: "6px",
-                    color: "#ff4d4f", cursor: "pointer", fontSize: "12px",
-                    padding: "4px 10px", width: "auto", marginTop: 0,
-                  }}
-                >
-                  Retry
-                </button>
-              </div>
-            )}
-
-            {/* ── Watchlist ── */}
-            <CollapsibleSection title="My Watchlist" count={watchlist.length}>
-              {watchlist.length === 0 ? (
-                <p style={{ opacity: 0.7 }}>No watchlist yet. {browseLink}</p>
-              ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "16px" }}>
-                  {watchlist.map((movie) => (
-                    <div key={movie.id} style={{ position: "relative" }}>
-                      <MovieCard movie={movie} />
-                      <button
-                        onClick={() => removeFromWatchlist(movie.id)}
-                        title="Remove"
-                        style={removeBtnStyle}
-                      >✕</button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CollapsibleSection>
-
-            {/* ── Favorites ── */}
-            <CollapsibleSection title="Favorites" count={favorites.length}>
-              {favorites.length === 0 ? (
-                <p style={{ opacity: 0.7 }}>No favorites yet. {browseLink}</p>
-              ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "16px" }}>
-                  {favorites.map((movie) => (
-                    <div key={movie.id} style={{ position: "relative" }}>
-                      <MovieCard movie={movie} />
-                      <button
-                        onClick={() => removeFromFavorites(movie.id)}
-                        title="Remove"
-                        style={removeBtnStyle}
-                      >✕</button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CollapsibleSection>
-
-            {/* ── Recently Viewed ── */}
-            <CollapsibleSection title="Recently Viewed" count={recentlyViewed.length}>
-              {recentlyViewed.length === 0 ? (
-                <p style={{ opacity: 0.7 }}>Nothing viewed yet. {browseLink}</p>
-              ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "16px" }}>
-                  {recentlyViewed.map((movie) => (
-                    <MovieCard key={movie.id} movie={movie} />
-                  ))}
-                </div>
-              )}
-            </CollapsibleSection>
-
+            You're browsing as a guest.{" "}
+            <Link to="/login" style={{ color: "var(--primary)", fontWeight: "600" }}>Log in</Link>
+            {" "}to save your watchlist and favorites.
           </div>
-        </div>
+        )}
+
+        {/* Error banner */}
+        {dataError && (
+          <div style={{
+            padding: "12px 16px", borderRadius: "8px", marginBottom: "20px",
+            backgroundColor: "rgba(255,77,79,0.12)", border: "1px solid rgba(255,77,79,0.35)",
+            color: "#ff4d4f", fontSize: "14px",
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+          }}>
+            <span>⚠️ {dataError}</span>
+            <button onClick={fetchUserData} style={{
+              background: "none", border: "1px solid #ff4d4f", borderRadius: "6px",
+              color: "#ff4d4f", cursor: "pointer", fontSize: "12px",
+              padding: "4px 10px", width: "auto", marginTop: 0,
+            }}>Retry</button>
+          </div>
+        )}
+
+        {/* Watchlist */}
+        <CollapsibleSection title="My Watchlist" count={watchlist.length}>
+          {watchlist.length === 0 ? (
+            <p style={{ opacity: 0.7 }}>No watchlist yet. {browseLink}</p>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "16px" }}>
+              {watchlist.map((movie) => (
+                <div key={movie.id} style={{ position: "relative" }}>
+                  <MovieCard movie={movie} />
+                  <button onClick={() => removeFromWatchlist(movie.id)} title="Remove" style={removeBtnStyle}>✕</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CollapsibleSection>
+
+        {/* Favorites */}
+        <CollapsibleSection title="Favorites" count={favorites.length}>
+          {favorites.length === 0 ? (
+            <p style={{ opacity: 0.7 }}>No favorites yet. {browseLink}</p>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "16px" }}>
+              {favorites.map((movie) => (
+                <div key={movie.id} style={{ position: "relative" }}>
+                  <MovieCard movie={movie} />
+                  <button onClick={() => removeFromFavorites(movie.id)} title="Remove" style={removeBtnStyle}>✕</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </CollapsibleSection>
+
+        {/* Recently Viewed */}
+        <CollapsibleSection title="Recently Viewed" count={recentlyViewed.length}>
+          {recentlyViewed.length === 0 ? (
+            <p style={{ opacity: 0.7 }}>Nothing viewed yet. {browseLink}</p>
+          ) : (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "16px" }}>
+              {recentlyViewed.map((movie) => (
+                <MovieCard key={movie.id} movie={movie} />
+              ))}
+            </div>
+          )}
+        </CollapsibleSection>
       </div>
     </div>
   );
