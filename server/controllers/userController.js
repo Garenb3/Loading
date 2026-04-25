@@ -117,3 +117,49 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({ error: "Error deleting user" });
   }
 };
+
+export const addToRecentlyViewed = async (req, res) => {
+  try {
+    const { mediaId } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Remove if already exists, then add to front
+    user.recentlyViewed = user.recentlyViewed.filter(
+      (id) => id.toString() !== mediaId
+    );
+    user.recentlyViewed.unshift(mediaId);
+
+    // Cap at 5
+    user.recentlyViewed = user.recentlyViewed.slice(0, 5);
+    await user.save();
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Error updating recently viewed" });
+  }
+};
+
+export const removeFromWatchlist = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    user.watchlist = user.watchlist.filter(id => id !== req.params.mediaId);
+    await user.save();
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Error updating watchlist" });
+  }
+};
+
+export const removeFromFavorites = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    user.favorites = user.favorites.filter(id => id !== req.params.mediaId);
+    await user.save();
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Error updating favorites" });
+  }
+};
