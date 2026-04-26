@@ -28,7 +28,7 @@ A full-stack movie and TV show tracker — browse, search, and manage your watch
 
 ## 🚀 Live Demo
 
-> https://loading-sigma-one.vercel.app/
+> https://sunny-alpaca-ca3d90.netlify.app/
 
 ---
 
