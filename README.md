@@ -322,3 +322,13 @@ seasons: {
 | JavaScript (ES6+) | Application logic                                              |
 | localStorage      | Mock data persistence across sessions                          |
 | Git & GitHub      | Version control and collaboration                              |
+| Node.js           | Backend runtime environment                                    |
+| Express.js        | RESTful API development and server-side logic                  |
+| MongoDB           | Database for persisten data storage                            |
+| Mongoose          | Database integration and querying                              |
+| JWT               | Secure authentication and session management                   |
+| bycrypt           | Password hashing and security                                  |
+| API Calls         | Communication between frontend and backend                     |
+| Render            | Backend deployment                                             |
+| Netlify           | Frontend deployment                                            |
+
