@@ -36,8 +36,11 @@ A movie and TV show tracker web application — browse, search, and manage your 
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- npm (comes with Node.js)
+* Node.js (v18 or higher recommended)
+* npm (comes with Node.js)
+* MongoDB (local installation or MongoDB Atlas account)
+
+---
 
 ### Steps
 
@@ -48,16 +51,75 @@ git clone https://github.com/Garenb3/Loading.git
 # 2. Navigate into the project directory
 cd bingeboard
 
-# 3. Install dependencies
+# ========================
+# FRONTEND SETUP
+# ========================
+
+# 3. Install frontend dependencies
 npm install
 
-# 4. Start the development server
+# 4. Start the frontend (React + Vite)
 npm run dev
 ```
 
-Then open your browser and go to `http://localhost:5173`.
+Frontend will run on:
+http://localhost:5173
 
 ---
+
+### 🔙 Backend Setup
+
+```bash
+# 5. Navigate to backend folder (if separate)
+cd backend
+
+# 6. Install backend dependencies
+npm install
+
+# 7. Create a .env file in the backend folder and add:
+```
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secret_key
+```
+
+```bash
+# 8. Start the backend server
+npm start
+```
+
+Backend will run on:
+http://localhost:5000
+
+---
+
+### 🔗 Connecting Frontend to Backend
+
+* Make sure your frontend API calls (Axios / Fetch) point to:
+
+```env
+http://localhost:5000
+```
+
+* If using environment variables in frontend, create a `.env` file:
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+---
+
+### 🧪 Notes
+
+* Ensure MongoDB is running locally or your Atlas cluster is active.
+* Authentication uses JWT, so login is required for protected routes.
+* Passwords are securely hashed using bcrypt before storage.
+* Replace any remaining localStorage usage with backend API calls for full functionality.
+
+---
+
 
 ## 🗂️ Pages & Views
 
