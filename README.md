@@ -104,6 +104,29 @@ Then open your browser and go to `http://localhost:5173`.
 - Includes a Rate Us feature with an interactive star rating widget.
 - Guest access control: non-logged-in users are prompted to sign up before editing their profile.
 
+**Backend Setup**
+
+- Initialized the Node.js project and structured the backend using Express.
+- Installed and configured core dependencies including Express, bcrypt, JWT, and database client.
+- Organized the server into a clean and scalable folder structure.
+  
+**API Development**
+
+- Designed a consistent RESTful API structure for handling all client requests.
+- Implemented core endpoints for authentication and data management.
+
+**Endpoints Implementation**
+
+- Built authentication routes: user registration and login.
+- Developed full CRUD endpoints for main entities including fetching all items, retrieving a single item, creating, updating, and deleting entries.
+- Secured sensitive routes such as create, update, and delete operations.
+
+**Middleware**
+
+- Implemented JSON parsing middleware for request handling.
+- Added logging middleware for tracking API activity.
+- Built centralized error handling middleware to manage server-side errors.
+  
 ---
 
 ### Hamza El Hallak — `TVShowDetail.jsx`, `AddEditForm.jsx`
@@ -127,6 +150,22 @@ Then open your browser and go to `http://localhost:5173`.
 
 - Designed and integrated the BingeBoard logo into the Navbar with homepage navigation on click.
 
+**User Authentication**
+- Developed user registration system with secure password hashing using bcrypt.
+- Implemented login functionality with credential verification and password comparison.
+
+ **JWT Implementation**
+
+- Generated authentication tokens upon successful login.
+- Enabled secure communication between frontend and backend using JWT.
+
+**Protected Routes**
+- Created middleware to verify user tokens before granting access.
+- Restricted access to authenticated users only.
+
+**Authorization**
+- Enforced ownership rules بحيث only the creator of an entity can update or delete it.
+- Ensured data security and proper access control across all protected endpoints.
 ---
 
 ### Garen Garo Baghsarian — `ListView.jsx`, `MovieDetail.jsx`
@@ -148,6 +187,23 @@ Then open your browser and go to `http://localhost:5173`.
 - Integrated "Add to Watchlist" and "Add to Favorites" buttons.
 - "Watch Trailer" button opens the trailer in a modal overlay using a YouTube embed URL.
 
+**API Integration**
+  
+- Replaced mock data with real API calls using fetch or axios.
+- Connected frontend components directly to backend services.
+
+**Feature Connection**
+- Linked registration and login pages with backend authentication.
+- Integrated all CRUD operations with backend endpoints.
+  
+**State Management**
+- Managed application state including user data, authentication tokens, and entities.
+- Handled loading states and error responses efficiently.
+
+**User Experience**
+- Implemented loading indicators during API calls.
+- Displayed success and error messages for user actions.
+- Ensured smooth and responsive interaction between frontend and backend.
 ---
 
 ### Laura Malaeb — `Home.jsx`, `Login.jsx`
@@ -177,6 +233,18 @@ Then open your browser and go to `http://localhost:5173`.
 - Reusable card component for movies and series with dynamic routing to the correct detail page based on `type`.
 - Fallback image handling, hover scale effect, and consistent title/genre display.
 
+**Database Design**
+- Designed the User model including username/email and password fields.
+- Created the main entity model with project-specific attributes such as title and description.
+- Established relationships ensuring each entity belongs to a specific user.
+
+**Database Setup**
+- Selected and configured a database system (MongoDB / MySQL / PostgreSQL).
+- Connected the backend server to a hosted database environment.
+
+**CRUD Operations**
+- Implemented full Create, Read, Update, and Delete operations for both users and main entities.
+- Ensured efficient data retrieval and storage with proper schema structure. 
 ---
 
 ## 🗃️ Mock Data
