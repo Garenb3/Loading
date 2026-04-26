@@ -210,7 +210,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
     borderRadius: "999px",
     border: "1px solid rgba(255,255,255,0.2)",
     backgroundColor: "var(--primary)",
-    color: "var(--text2)",
+    color: "#ffffff",
     cursor: "pointer",
     fontSize: "13px",
     fontWeight: "bold",
@@ -445,7 +445,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
           style={{
             ...ovalBtn,
             backgroundColor: "var(--primary)",
-            color : "var(--text2)"
+            color : "#ffffff"
           }}
         >
           {saving

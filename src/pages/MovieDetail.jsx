@@ -5,8 +5,13 @@ import { authFetch } from "../utils/authService";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-
 const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "");
+
+function resolveImage(image) {
+  if (!image) return "https://via.placeholder.com/300x450?text=No+Image";
+  if (image.startsWith("http://") || image.startsWith("https://")) return image;
+  return `${BASE_URL}/images/${image}`;
+}
 
 function getStoredUser() {
   try {
@@ -16,7 +21,6 @@ function getStoredUser() {
   }
 }
 
-// ── Error / Not Found UI ──────────────────────────────────────
 function ErrorUI() {
   return (
     <div
@@ -39,7 +43,7 @@ function ErrorUI() {
       >
         <p style={{ fontSize: "48px" }}>⚠️</p>
         <p style={{ fontSize: "18px", fontWeight: "bold" }}>
-          Failed to load movie
+          Failed to load title
         </p>
         <Link
           to="/listview"
@@ -73,7 +77,7 @@ function NotFoundUI() {
         }}
       >
         <p style={{ fontSize: "48px" }}>🎬</p>
-        <p style={{ fontSize: "18px", fontWeight: "bold" }}>Movie not found</p>
+        <p style={{ fontSize: "18px", fontWeight: "bold" }}>Title not found</p>
         <Link
           to="/listview"
           style={{ color: "var(--primary)", textDecoration: "underline" }}
@@ -93,7 +97,6 @@ export default function MovieDetail() {
   const isGuest = !storedUser?.email;
   const userId = storedUser?._id;
 
-  // ── State ─────────────────────────────────────────────────
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -108,16 +111,17 @@ export default function MovieDetail() {
   const [showTrailer, setShowTrailer] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  // ── Fetch movie from API by numeric id ───────────────────
+  // ── Fetch single media item by _id directly ───────────────
   useEffect(() => {
+    if (!id) return;
     async function fetchMovie() {
       try {
         setLoading(true);
-        const response = await fetch(`${API_BASE_URL}/media`);
+        setError(false);
+        const response = await fetch(`${API_BASE_URL}/media/${id}`);
         if (!response.ok) throw new Error("Failed to fetch");
-        const allMedia = await response.json();
-        const found = allMedia.find((m) => String(m.id) === String(id));
-        setMovie(found ?? null);
+        const data = await response.json();
+        setMovie(data);
       } catch {
         setError(true);
       } finally {
@@ -127,7 +131,7 @@ export default function MovieDetail() {
     fetchMovie();
   }, [id]);
 
-  // ── Sync watchlist/favorites state from backend ───────────
+  // ── Sync watchlist/favorites state ───────────────────────
   useEffect(() => {
     if (isGuest || !userId || !movie) return;
     async function syncUserState() {
@@ -135,12 +139,12 @@ export default function MovieDetail() {
         const userData = await authFetch(`/user/${userId}`);
         setAdded(
           userData.watchlist?.some(
-            (item) => String(item) === String(movie.id),
+            (item) => String(item) === String(movie._id),
           ) ?? false,
         );
         setAddedFav(
           userData.favorites?.some(
-            (item) => String(item) === String(movie.id),
+            (item) => String(item) === String(movie._id),
           ) ?? false,
         );
       } catch {
@@ -156,7 +160,7 @@ export default function MovieDetail() {
     async function trackRecentlyViewed() {
       try {
         await authFetch(`/user/${userId}/recentlyviewed`, "POST", {
-          mediaId: String(movie.id),
+          mediaId: String(movie._id),
         });
       } catch {
         // Silently fail
@@ -175,11 +179,11 @@ export default function MovieDetail() {
     setActionError("");
     try {
       if (added) {
-        await authFetch(`/user/${userId}/watchlist/${movie.id}`, "DELETE");
+        await authFetch(`/user/${userId}/watchlist/${movie._id}`, "DELETE");
         setAdded(false);
       } else {
         await authFetch(`/user/${userId}/watchlist`, "POST", {
-          mediaId: String(movie.id),
+          mediaId: String(movie._id),
         });
         setAdded(true);
         setShowModal(true);
@@ -201,11 +205,11 @@ export default function MovieDetail() {
     setActionError("");
     try {
       if (addedFav) {
-        await authFetch(`/user/${userId}/favorites/${movie.id}`, "DELETE");
+        await authFetch(`/user/${userId}/favorites/${movie._id}`, "DELETE");
         setAddedFav(false);
       } else {
         await authFetch(`/user/${userId}/favorites`, "POST", {
-          mediaId: String(movie.id),
+          mediaId: String(movie._id),
         });
         setAddedFav(true);
         setShowFavModal(true);
@@ -217,7 +221,6 @@ export default function MovieDetail() {
     }
   };
 
-  // ── Loading / Error states ────────────────────────────────
   if (loading) {
     return (
       <div
@@ -236,7 +239,7 @@ export default function MovieDetail() {
             height: "80vh",
           }}
         >
-          <p>Loading movie...</p>
+          <p>Loading...</p>
         </div>
       </div>
     );
@@ -244,7 +247,6 @@ export default function MovieDetail() {
   if (error) return <ErrorUI />;
   if (!movie) return <NotFoundUI />;
 
-  // ── Shared modal backdrop ─────────────────────────────────
   const modalBackdrop = (onClose, children) => (
     <div
       onClick={onClose}
@@ -456,15 +458,13 @@ export default function MovieDetail() {
         </div>
       )}
 
-      {/* ── Page content ── */}
       <div
         style={{
           maxWidth: "960px",
           margin: "0 auto",
-          padding: "clamp(16px, 4vw, 48px) clamp(16px, 4vw, 32px)",
+          padding: "clamp(16px,4vw,48px) clamp(16px,4vw,32px)",
         }}
       >
-        {/* Back button */}
         <button
           onClick={() => navigate(-1)}
           style={{
@@ -492,7 +492,6 @@ export default function MovieDetail() {
           ← Back
         </button>
 
-        {/* Action error banner */}
         {actionError && (
           <div
             style={{
@@ -509,11 +508,10 @@ export default function MovieDetail() {
           </div>
         )}
 
-        {/* Main layout */}
         <div
           style={{
             display: "flex",
-            gap: "clamp(20px, 4vw, 48px)",
+            gap: "clamp(20px,4vw,48px)",
             flexWrap: "wrap",
             alignItems: "flex-start",
           }}
@@ -521,14 +519,14 @@ export default function MovieDetail() {
           {/* Poster */}
           <div
             style={{
-              width: "clamp(160px, 30%, 280px)",
+              width: "clamp(160px,30%,280px)",
               flexShrink: 0,
               margin: "0 auto",
               alignSelf: "center",
             }}
           >
             <img
-              src={`${BASE_URL}/images/${movie.image}`}
+              src={resolveImage(movie.image)}
               alt={movie.title}
               style={{
                 width: "100%",
@@ -548,7 +546,7 @@ export default function MovieDetail() {
           <div style={{ flex: 1, minWidth: "240px" }}>
             <h1
               style={{
-                fontSize: "clamp(20px, 4vw, 34px)",
+                fontSize: "clamp(20px,4vw,34px)",
                 fontWeight: "800",
                 margin: "0 0 12px",
                 lineHeight: 1.2,
@@ -556,6 +554,22 @@ export default function MovieDetail() {
             >
               {movie.title}
             </h1>
+
+            {/* Type badge */}
+            <span
+              style={{
+                display: "inline-block",
+                marginBottom: "12px",
+                backgroundColor: "var(--primary)",
+                color: "#fff",
+                fontSize: "12px",
+                fontWeight: "700",
+                padding: "3px 12px",
+                borderRadius: "999px",
+              }}
+            >
+              {movie.type === "series" ? "📺 Series" : "🎬 Movie"}
+            </span>
 
             {/* Genres */}
             {movie.genre && (
@@ -572,8 +586,8 @@ export default function MovieDetail() {
                     <span
                       key={i}
                       style={{
-                        backgroundColor: "var(--primary)",
-                        color: "#fff",
+                        backgroundColor: "rgba(255,255,255,0.1)",
+                        color: "var(--text)",
                         padding: "3px 12px",
                         borderRadius: "999px",
                         fontSize: "12px",
@@ -598,9 +612,21 @@ export default function MovieDetail() {
                 opacity: 0.75,
               }}
             >
-              {movie.releaseDate && <span>📅 {movie.releaseDate}</span>}
-              {movie.duration && <span>⏱ {movie.duration} min</span>}
-              {movie.studio && <span>🎬 {movie.studio}</span>}
+              {movie.releaseDate && (
+                <span>📅 {new Date(movie.releaseDate).getFullYear()}</span>
+              )}
+              {movie.type === "movie" && movie.duration && (
+                <span>⏱ {movie.duration} min</span>
+              )}
+              {movie.type === "series" && movie.seasons && (
+                <span>
+                  📺 {movie.seasons} Season{movie.seasons > 1 ? "s" : ""}
+                </span>
+              )}
+              {movie.type === "series" && movie.episodesPerSeason && (
+                <span>🎞 {movie.episodesPerSeason} ep/season</span>
+              )}
+              {movie.studio && <span>🏢 {movie.studio}</span>}
               {movie.rating != null && (
                 <span
                   style={{ color: "#FBBF24", fontWeight: "700", opacity: 1 }}
@@ -616,7 +642,7 @@ export default function MovieDetail() {
                 lineHeight: "1.75",
                 opacity: 0.85,
                 marginBottom: "16px",
-                fontSize: "clamp(13px, 1.5vw, 15px)",
+                fontSize: "clamp(13px,1.5vw,15px)",
               }}
             >
               {movie.description}
@@ -638,22 +664,14 @@ export default function MovieDetail() {
                   <span style={{ opacity: 0.8 }}>{movie.director}</span>
                 </p>
               )}
-              {movie.writer && (
-                <p style={{ margin: 0 }}>
-                  <strong>Writer: </strong>
-                  <span style={{ opacity: 0.8 }}>{movie.writer}</span>
-                </p>
-              )}
-              {movie.producer && (
-                <p style={{ margin: 0 }}>
-                  <strong>Producer: </strong>
-                  <span style={{ opacity: 0.8 }}>{movie.producer}</span>
-                </p>
-              )}
-              {movie.cast && (
+              {movie.cast?.length > 0 && (
                 <p style={{ margin: 0 }}>
                   <strong>Cast: </strong>
-                  <span style={{ opacity: 0.8 }}>{movie.cast.join(", ")}</span>
+                  <span style={{ opacity: 0.8 }}>
+                    {Array.isArray(movie.cast)
+                      ? movie.cast.join(", ")
+                      : movie.cast}
+                  </span>
                 </p>
               )}
             </div>

@@ -5,10 +5,14 @@ import { authFetch } from "../utils/authService";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-
 const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "");
 
-// ── Helper ────────────────────────────────────────────────────
+function resolveImage(image) {
+  if (!image) return "https://via.placeholder.com/300x450?text=No+Image";
+  if (image.startsWith("http://") || image.startsWith("https://")) return image;
+  return `${BASE_URL}/images/${image}`;
+}
+
 function getStoredUser() {
   try {
     return JSON.parse(localStorage.getItem("user") || "null");
@@ -93,32 +97,28 @@ export default function TVShowDetail() {
   const isGuest = !storedUser?.email;
   const userId = storedUser?._id;
 
-  // ── State ─────────────────────────────────────────────────
   const [show, setShow] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
   const [added, setAdded] = useState(false);
   const [addedFav, setAddedFav] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [actionError, setActionError] = useState("");
-
   const [showModal, setShowModal] = useState(false);
   const [showFavModal, setShowFavModal] = useState(false);
   const [showTrailer, setShowTrailer] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  // ── Load show from local data ─────────────────────────────
   useEffect(() => {
+    if (!id) return;
     async function fetchShow() {
       try {
         setLoading(true);
         setError(false);
-        const response = await fetch(`${API_BASE_URL}/media`);
+        const response = await fetch(`${API_BASE_URL}/media/${id}`);
         if (!response.ok) throw new Error("Failed to fetch");
-        const allMedia = await response.json();
-        const found = allMedia.find((m) => String(m.id) === String(id));
-        setShow(found ?? null);
+        const data = await response.json();
+        setShow(data);
       } catch {
         setError(true);
       } finally {
@@ -128,47 +128,42 @@ export default function TVShowDetail() {
     fetchShow();
   }, [id]);
 
-  // ── Sync watchlist/favorites state from backend ───────────
   useEffect(() => {
     if (isGuest || !userId || !show) return;
-
     async function syncUserState() {
       try {
         const userData = await authFetch(`/user/${userId}`);
         setAdded(
           userData.watchlist?.some(
-            (item) => String(item) === String(show.id),
+            (item) => String(item) === String(show._id),
           ) ?? false,
         );
         setAddedFav(
           userData.favorites?.some(
-            (item) => String(item) === String(show.id),
+            (item) => String(item) === String(show._id),
           ) ?? false,
         );
       } catch {
-        // Silently fail
+        /* Silently fail */
       }
     }
     syncUserState();
   }, [userId, show, isGuest]);
 
-  // ── Track recently viewed in backend ─────────────────────
   useEffect(() => {
     if (!show || isGuest || !userId) return;
-
     async function trackRecentlyViewed() {
       try {
         await authFetch(`/user/${userId}/recentlyviewed`, "POST", {
-          mediaId: String(show.id),
+          mediaId: String(show._id),
         });
       } catch {
-        // Silently fail
+        /* Silently fail */
       }
     }
     trackRecentlyViewed();
   }, [show, userId, isGuest]);
 
-  // ── Watchlist handler ─────────────────────────────────────
   const handleAddToWatchlist = async () => {
     if (isGuest) {
       setShowLoginPrompt(true);
@@ -178,11 +173,11 @@ export default function TVShowDetail() {
     setActionError("");
     try {
       if (added) {
-        await authFetch(`/user/${userId}/watchlist/${show.id}`, "DELETE");
+        await authFetch(`/user/${userId}/watchlist/${show._id}`, "DELETE");
         setAdded(false);
       } else {
         await authFetch(`/user/${userId}/watchlist`, "POST", {
-          mediaId: String(show.id),
+          mediaId: String(show._id),
         });
         setAdded(true);
         setShowModal(true);
@@ -194,7 +189,6 @@ export default function TVShowDetail() {
     }
   };
 
-  // ── Favorites handler ─────────────────────────────────────
   const handleAddToFavorites = async () => {
     if (isGuest) {
       setShowLoginPrompt(true);
@@ -204,11 +198,11 @@ export default function TVShowDetail() {
     setActionError("");
     try {
       if (addedFav) {
-        await authFetch(`/user/${userId}/favorites/${show.id}`, "DELETE");
+        await authFetch(`/user/${userId}/favorites/${show._id}`, "DELETE");
         setAddedFav(false);
       } else {
         await authFetch(`/user/${userId}/favorites`, "POST", {
-          mediaId: String(show.id),
+          mediaId: String(show._id),
         });
         setAddedFav(true);
         setShowFavModal(true);
@@ -220,8 +214,7 @@ export default function TVShowDetail() {
     }
   };
 
-  // ── Loading / Error states ────────────────────────────────
-  if (loading) {
+  if (loading)
     return (
       <div
         style={{
@@ -243,11 +236,19 @@ export default function TVShowDetail() {
         </div>
       </div>
     );
-  }
   if (error) return <ErrorUI />;
   if (!show) return <NotFoundUI />;
 
-  // ── Shared modal backdrop helper ──────────────────────────
+  // ── Pull out seasons data from the nested schema ──────────
+  const seasonsTotal = show.seasons?.total ?? 0;
+  const episodesPerSeason = Array.isArray(show.seasons?.episodesPerSeason)
+    ? show.seasons.episodesPerSeason
+    : [];
+  const totalEpisodes = episodesPerSeason.reduce(
+    (sum, n) => sum + (Number(n) || 0),
+    0,
+  );
+
   const modalBackdrop = (onClose, children) => (
     <div
       onClick={onClose}
@@ -287,14 +288,13 @@ export default function TVShowDetail() {
     >
       <Sidebar />
 
-      {/* ── Modals ── */}
       {showLoginPrompt &&
         modalBackdrop(
           () => setShowLoginPrompt(false),
           <div
             style={{ display: "flex", flexDirection: "column", gap: "16px" }}
           >
-            <div style={{ fontSize: "40px" }}>🎬</div>
+            <div style={{ fontSize: "40px" }}>📺</div>
             <h3 style={{ fontWeight: "bold", fontSize: "18px", margin: 0 }}>
               You're not logged in!
             </h3>
@@ -456,15 +456,13 @@ export default function TVShowDetail() {
         </div>
       )}
 
-      {/* ── Page content ── */}
       <div
         style={{
           maxWidth: "960px",
           margin: "0 auto",
-          padding: "clamp(16px, 4vw, 48px) clamp(16px, 4vw, 32px)",
+          padding: "clamp(16px,4vw,48px) clamp(16px,4vw,32px)",
         }}
       >
-        {/* ── Back button ── */}
         <button
           onClick={() => navigate(-1)}
           style={{
@@ -492,7 +490,6 @@ export default function TVShowDetail() {
           ← Back
         </button>
 
-        {/* Action error banner */}
         {actionError && (
           <div
             style={{
@@ -509,26 +506,25 @@ export default function TVShowDetail() {
           </div>
         )}
 
-        {/* ── Main layout ── */}
         <div
           style={{
             display: "flex",
-            gap: "clamp(20px, 4vw, 48px)",
+            gap: "clamp(20px,4vw,48px)",
             flexWrap: "wrap",
             alignItems: "flex-start",
           }}
         >
-          {/* ── Poster ── */}
+          {/* Poster */}
           <div
             style={{
-              width: "clamp(160px, 30%, 280px)",
+              width: "clamp(160px,30%,280px)",
               flexShrink: 0,
               margin: "0 auto",
               alignSelf: "center",
             }}
           >
             <img
-              src={`${BASE_URL}/images/${show.image}`}
+              src={resolveImage(show.image)}
               alt={show.title}
               style={{
                 width: "100%",
@@ -544,11 +540,11 @@ export default function TVShowDetail() {
             />
           </div>
 
-          {/* ── Info panel ── */}
+          {/* Info */}
           <div style={{ flex: 1, minWidth: "240px" }}>
             <h1
               style={{
-                fontSize: "clamp(20px, 4vw, 34px)",
+                fontSize: "clamp(20px,4vw,34px)",
                 fontWeight: "800",
                 margin: "0 0 12px",
                 lineHeight: 1.2,
@@ -557,7 +553,21 @@ export default function TVShowDetail() {
               {show.title}
             </h1>
 
-            {/* Genres */}
+            <span
+              style={{
+                display: "inline-block",
+                marginBottom: "12px",
+                backgroundColor: "var(--primary)",
+                color: "#fff",
+                fontSize: "12px",
+                fontWeight: "700",
+                padding: "3px 12px",
+                borderRadius: "999px",
+              }}
+            >
+              📺 Series
+            </span>
+
             {show.genre && (
               <div
                 style={{
@@ -572,8 +582,8 @@ export default function TVShowDetail() {
                     <span
                       key={i}
                       style={{
-                        backgroundColor: "var(--primary)",
-                        color: "#fff",
+                        backgroundColor: "rgba(255,255,255,0.1)",
+                        color: "var(--text)",
                         padding: "3px 12px",
                         borderRadius: "999px",
                         fontSize: "12px",
@@ -587,7 +597,7 @@ export default function TVShowDetail() {
               </div>
             )}
 
-            {/* Meta */}
+            {/* Meta row */}
             <div
               style={{
                 display: "flex",
@@ -601,8 +611,16 @@ export default function TVShowDetail() {
               {show.releaseDate && (
                 <span>📅 {new Date(show.releaseDate).getFullYear()}</span>
               )}
-              {show.duration && <span>⏱ {show.duration} min / ep</span>}
-              {show.studio && <span>🎬 {show.studio}</span>}
+              {seasonsTotal > 0 && (
+                <span>
+                  📺 {seasonsTotal} Season{seasonsTotal > 1 ? "s" : ""}
+                </span>
+              )}
+              {totalEpisodes > 0 && (
+                <span>🎞 {totalEpisodes} Total Episodes</span>
+              )}
+              {show.duration > 0 && <span>⏱ {show.duration} min/ep</span>}
+              {show.studio && <span>🏢 {show.studio}</span>}
               {show.rating != null && (
                 <span
                   style={{ color: "#FBBF24", fontWeight: "700", opacity: 1 }}
@@ -612,26 +630,24 @@ export default function TVShowDetail() {
               )}
             </div>
 
-            {/* Description */}
             <p
               style={{
                 lineHeight: "1.75",
                 opacity: 0.85,
                 marginBottom: "16px",
-                fontSize: "clamp(13px, 1.5vw, 15px)",
+                fontSize: "clamp(13px,1.5vw,15px)",
               }}
             >
               {show.description}
             </p>
 
-            {/* Crew */}
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "6px",
                 fontSize: "14px",
-                marginBottom: "16px",
+                marginBottom: "24px",
               }}
             >
               {show.director && (
@@ -640,38 +656,33 @@ export default function TVShowDetail() {
                   <span style={{ opacity: 0.8 }}>{show.director}</span>
                 </p>
               )}
-              {show.writer && (
-                <p style={{ margin: 0 }}>
-                  <strong>Writer: </strong>
-                  <span style={{ opacity: 0.8 }}>{show.writer}</span>
-                </p>
-              )}
-              {show.producer && (
-                <p style={{ margin: 0 }}>
-                  <strong>Producer: </strong>
-                  <span style={{ opacity: 0.8 }}>{show.producer}</span>
-                </p>
-              )}
-              {show.cast && (
+              {show.cast?.length > 0 && (
                 <p style={{ margin: 0 }}>
                   <strong>Cast: </strong>
-                  <span style={{ opacity: 0.8 }}>{show.cast.join(", ")}</span>
+                  <span style={{ opacity: 0.8 }}>
+                    {Array.isArray(show.cast)
+                      ? show.cast.join(", ")
+                      : show.cast}
+                  </span>
                 </p>
               )}
             </div>
 
-            {/* Seasons grid */}
-            {show.seasons?.total && (
+            {/* ── Per-season breakdown grid ── */}
+            {seasonsTotal > 0 && episodesPerSeason.length > 0 && (
               <div style={{ marginBottom: "24px" }}>
-                <h2
+                <p
                   style={{
-                    fontSize: "16px",
+                    fontSize: "13px",
                     fontWeight: "700",
+                    letterSpacing: "0.08em",
+                    opacity: 0.5,
+                    textTransform: "uppercase",
                     marginBottom: "10px",
                   }}
                 >
-                  Seasons &amp; Episodes
-                </h2>
+                  Season Breakdown
+                </p>
                 <div
                   style={{
                     display: "grid",
@@ -680,24 +691,48 @@ export default function TVShowDetail() {
                     gap: "8px",
                   }}
                 >
-                  {show.seasons.episodesPerSeason.map((eps, i) => (
+                  {episodesPerSeason.map((eps, i) => (
                     <div
                       key={i}
                       style={{
-                        backgroundColor: "var(--secondary)",
-                        borderRadius: "8px",
-                        padding: "8px 12px",
+                        backgroundColor: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: "10px",
+                        padding: "10px 12px",
                         textAlign: "center",
                       }}
                     >
-                      <div style={{ fontWeight: "bold", fontSize: "13px" }}>
-                        Season {i + 1}
+                      <div style={{ fontWeight: "800", fontSize: "18px" }}>
+                        {Number(eps) || "—"}
                       </div>
-                      <div style={{ opacity: 0.7, fontSize: "12px" }}>
-                        {eps} Episodes
+                      <div
+                        style={{
+                          opacity: 0.55,
+                          fontSize: "11px",
+                          marginTop: "2px",
+                        }}
+                      >
+                        S{i + 1} Episodes
                       </div>
                     </div>
                   ))}
+                </div>
+
+                {/* Summary row */}
+                <div
+                  style={{
+                    marginTop: "10px",
+                    display: "flex",
+                    gap: "16px",
+                    fontSize: "13px",
+                    opacity: 0.65,
+                  }}
+                >
+                  <span>
+                    {seasonsTotal} season{seasonsTotal > 1 ? "s" : ""}
+                  </span>
+                  <span>·</span>
+                  <span>{totalEpisodes} total episodes</span>
                 </div>
               </div>
             )}

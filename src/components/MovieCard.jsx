@@ -1,8 +1,16 @@
 import { Link } from "react-router-dom";
+
 const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "");
+
+function resolveImage(image) {
+  if (!image) return "https://via.placeholder.com/300x400?text=No+Image";
+  if (image.startsWith("http://") || image.startsWith("https://")) return image;
+  return `${BASE_URL}/images/${image}`;
+}
+
 export default function MovieCard({ movie }) {
   const path =
-    movie.type === "series" ? `/tv/${movie.id}` : `/movie/${movie.id}`;
+    movie.type === "series" ? `/tv/${movie._id}` : `/movie/${movie._id}`;
 
   return (
     <Link to={path} style={{ textDecoration: "none" }}>
@@ -17,7 +25,7 @@ export default function MovieCard({ movie }) {
       >
         <div style={{ position: "relative" }}>
           <img
-            src={`${BASE_URL}/images/${movie.image}`}
+            src={resolveImage(movie.image)}
             alt={movie.title}
             style={{
               width: "100%",
@@ -26,11 +34,9 @@ export default function MovieCard({ movie }) {
               display: "block",
             }}
             onError={(e) => {
-              e.target.src =
-                "https://via.placeholder.com/300x400?text=No+Image";
+              e.target.src = "https://via.placeholder.com/300x400?text=No+Image";
             }}
           />
-          {/* Type badge overlay */}
           <span
             style={{
               position: "absolute",
@@ -47,7 +53,6 @@ export default function MovieCard({ movie }) {
           >
             {movie.type === "series" ? "Series" : "Movie"}
           </span>
-          {/* Rating badge */}
           {movie.rating != null && (
             <span
               style={{

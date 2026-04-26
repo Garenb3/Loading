@@ -100,12 +100,12 @@ export default function Home() {
           <p style={{ fontSize: "clamp(11px, 1.5vw, 13px)", letterSpacing: "0.2em", textTransform: "uppercase", opacity: 0.75, marginBottom: "12px" }}>
             Your Personal Cinema
           </p>
-          <h1 style={{ fontSize: "clamp(28px, 6vw, 56px)",color: "var(--text2)", fontWeight: "800", margin: 0, lineHeight: 1.15, letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontSize: "clamp(28px, 6vw, 56px)",color: "#ffffff", fontWeight: "800", margin: 0, lineHeight: 1.15, letterSpacing: "-0.02em" }}>
             Track Your Favorite
             <br />
             Movies &amp; Series
           </h1>
-          <p style={{ marginTop: "16px", fontSize: "clamp(14px, 2vw, 18px)", opacity: 0.85, maxWidth: "400px", marginLeft: "auto", marginRight: "auto", lineHeight: 1.6, color: "var(--text2)" }}>
+          <p style={{ marginTop: "16px", fontSize: "clamp(14px, 2vw, 18px)", opacity: 0.85, maxWidth: "400px", marginLeft: "auto", marginRight: "auto", lineHeight: 1.6, color: "#ffffff" }}>
             Organize, discover, and save everything you love all in one place.
           </p>
 
@@ -128,7 +128,7 @@ export default function Home() {
       {/* ── Featured Section ── */}
       <section style={{ padding: "32px 24px", maxWidth: "1280px", margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "8px" }}>
-          <h2 ref={featuredRef} style={{ fontSize: "22px", fontWeight: "700", margin: 0, padding: "5px 20px",borderRadius: "15px", backgroundColor: "var(--primary)", color: "var(--text2)" }}>
+          <h2 ref={featuredRef} style={{ fontSize: "22px", fontWeight: "700", margin: 0, padding: "5px 20px",borderRadius: "15px", backgroundColor: "var(--primary)", color: "#ffffff" }}>
             ⭐ Featured
           </h2>
           <Link to="/listview" style={{ fontSize: "13px", color: "var(--primary)", textDecoration: "none", fontWeight: "600" }}>
@@ -169,7 +169,7 @@ export default function Home() {
       {/* ── Trending Section ── */}
       <section style={{ padding: "0 24px 48px", maxWidth: "1280px", margin: "0 auto" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px", flexWrap: "wrap", gap: "8px" }}>
-          <h2 ref={trendingRef} style={{ fontSize: "22px", fontWeight: "700", margin: 0, padding: "5px 20px",borderRadius: "15px", backgroundColor: "var(--primary)", color: "var(--text2)" }}>
+          <h2 ref={trendingRef} style={{ fontSize: "22px", fontWeight: "700", margin: 0, padding: "5px 20px",borderRadius: "15px", backgroundColor: "var(--primary)", color: "#ffffff" }}>
             🔥 Trending
           </h2>
           <Link to="/listview" style={{ fontSize: "13px", color: "var(--primary)", textDecoration: "none", fontWeight: "600" }}>

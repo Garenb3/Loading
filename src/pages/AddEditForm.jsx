@@ -38,6 +38,9 @@ const EMPTY_FORM = {
   trailer: "",
   featured: false,
   trending: false,
+  // series-only — seasons.total drives how many ep inputs we show
+  seasonsTotal: "",
+  episodesPerSeason: [], // array of numbers, one per season
 };
 
 const inputStyle = {
@@ -94,20 +97,94 @@ function Divider({ title }) {
   );
 }
 
+// ── Fixed image preview ───────────────────────────────────────
+function ImagePreview({ src }) {
+  const [status, setStatus] = useState("loading");
+
+  useEffect(() => {
+    if (!src) return;
+    setStatus("loading");
+    const img = new Image();
+    img.onload = () => setStatus("loaded");
+    img.onerror = () => setStatus("error");
+    img.src = src;
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [src]);
+
+  if (!src) return null;
+
+  const boxStyle = {
+    width: "120px",
+    height: "180px",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.1)",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.05)",
+    flexShrink: 0,
+  };
+
+  if (status === "loading")
+    return (
+      <div style={boxStyle}>
+        <span
+          style={{
+            fontSize: "11px",
+            opacity: 0.5,
+            textAlign: "center",
+            padding: "8px",
+          }}
+        >
+          Loading preview…
+        </span>
+      </div>
+    );
+  if (status === "error")
+    return (
+      <div style={boxStyle}>
+        <span
+          style={{
+            fontSize: "11px",
+            opacity: 0.5,
+            textAlign: "center",
+            padding: "8px",
+          }}
+        >
+          ⚠️ Cannot preview this URL
+        </span>
+      </div>
+    );
+  return (
+    <img
+      src={src}
+      alt="Poster preview"
+      style={{
+        width: "120px",
+        height: "180px",
+        objectFit: "cover",
+        borderRadius: "8px",
+        border: "1px solid rgba(255,255,255,0.1)",
+      }}
+    />
+  );
+}
+
 export default function AddEditForm() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
-
-  // ── List of media created by this user (from API) ──────────
   const [userMedia, setUserMedia] = useState([]);
   const [loadingMedia, setLoadingMedia] = useState(true);
-  const [editingId, setEditingId] = useState(null); // MongoDB _id of item being edited
+  const [editingId, setEditingId] = useState(null);
 
   const { toasts, showToast } = useToast();
   const navigate = useNavigate();
 
-  // ── Auth guard ────────────────────────────────────────────
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -117,20 +194,18 @@ export default function AddEditForm() {
     }
   }, [navigate]);
 
-  // ── Fetch media created by this user ──────────────────────
   useEffect(() => {
     async function fetchUserMedia() {
       try {
         setLoadingMedia(true);
         const all = await authFetch("/media");
-        // Filter to only show items this user created
         const user = JSON.parse(localStorage.getItem("user") || "null");
         const mine = all.filter(
           (m) => m.createdBy?._id === user?._id || m.createdBy === user?._id,
         );
         setUserMedia(mine);
       } catch {
-        // Silently fail — list just won't show
+        // Silently fail
       } finally {
         setLoadingMedia(false);
       }
@@ -145,6 +220,32 @@ export default function AddEditForm() {
       [name]: type === "checkbox" ? checked : value,
     }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  // ── When seasonsTotal changes, resize the episodesPerSeason array ──
+  const handleSeasonsTotal = (e) => {
+    const val = e.target.value;
+    const n = parseInt(val, 10);
+    setForm((prev) => ({
+      ...prev,
+      seasonsTotal: val,
+      episodesPerSeason:
+        isNaN(n) || n < 1
+          ? []
+          : Array.from(
+              { length: n },
+              (_, i) => prev.episodesPerSeason[i] ?? "",
+            ),
+    }));
+  };
+
+  // ── Update episodes count for a specific season ───────────
+  const handleEpisodesChange = (index, value) => {
+    setForm((prev) => {
+      const updated = [...prev.episodesPerSeason];
+      updated[index] = value;
+      return { ...prev, episodesPerSeason: updated };
+    });
   };
 
   const toggleGenre = (genre) => {
@@ -173,7 +274,6 @@ export default function AddEditForm() {
     return newErrors;
   };
 
-  // ── Submit: create or update via API ─────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validate();
@@ -182,6 +282,17 @@ export default function AddEditForm() {
       showToast("Please fix the errors before saving.", "error");
       return;
     }
+
+    // Build the nested seasons object that matches the schema
+    const seasonsPayload =
+      form.type === "series" && form.seasonsTotal
+        ? {
+            total: parseInt(form.seasonsTotal, 10),
+            episodesPerSeason: form.episodesPerSeason.map(
+              (v) => parseInt(v, 10) || 0,
+            ),
+          }
+        : undefined;
 
     const payload = {
       ...form,
@@ -193,12 +304,15 @@ export default function AddEditForm() {
             .map((s) => s.trim())
             .filter(Boolean)
         : [],
+      seasons: seasonsPayload,
+      // Remove flat form-only fields so they don't pollute the DB doc
+      seasonsTotal: undefined,
+      episodesPerSeason: undefined,
     };
 
     try {
       setSubmitting(true);
       if (editingId) {
-        // Update existing
         const updated = await authFetch(`/media/${editingId}`, "PUT", payload);
         setUserMedia((prev) =>
           prev.map((m) => (m._id === editingId ? updated : m)),
@@ -206,7 +320,6 @@ export default function AddEditForm() {
         showToast(`"${form.title}" updated successfully!`, "success");
         setEditingId(null);
       } else {
-        // Create new
         const created = await authFetch("/media", "POST", payload);
         setUserMedia((prev) => [created, ...prev]);
         showToast(`"${form.title}" saved successfully!`, "success");
@@ -220,8 +333,11 @@ export default function AddEditForm() {
     }
   };
 
-  // ── Load item into form for editing ──────────────────────
   const handleEdit = (item) => {
+    // Unpack the nested seasons object back into flat form fields
+    const seasonsTotal = item.seasons?.total ?? "";
+    const episodesPerSeason = item.seasons?.episodesPerSeason ?? [];
+
     setForm({
       title: item.title || "",
       type: item.type || "movie",
@@ -237,13 +353,14 @@ export default function AddEditForm() {
       trailer: item.trailer || "",
       featured: item.featured || false,
       trending: item.trending || false,
+      seasonsTotal: seasonsTotal !== "" ? String(seasonsTotal) : "",
+      episodesPerSeason: episodesPerSeason.map(String),
     });
     setEditingId(item._id);
     setErrors({});
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ── Delete item via API ───────────────────────────────────
   const handleDelete = async (id, title) => {
     if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return;
     try {
@@ -283,7 +400,6 @@ export default function AddEditForm() {
           padding: "80px 20px 48px",
         }}
       >
-        {/* ── Header ── */}
         <h1
           style={{ fontSize: "26px", fontWeight: "bold", marginBottom: "6px" }}
         >
@@ -295,7 +411,6 @@ export default function AddEditForm() {
             : "Fill in the details to add a new movie or series to the database."}
         </p>
 
-        {/* ── Form ── */}
         <form onSubmit={handleSubmit}>
           <div
             style={{
@@ -370,7 +485,13 @@ export default function AddEditForm() {
             </Field>
 
             <Field label="Genre * (select all that apply)">
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  gap: "8px",
+                }}
+              >
                 {ALL_GENRES.map((g) => (
                   <button
                     type="button"
@@ -526,6 +647,52 @@ export default function AddEditForm() {
               />
             </Field>
 
+            {/* ── Series-only: Seasons & Episodes ── */}
+            {form.type === "series" && (
+              <>
+                <Divider title="Seasons & Episodes" />
+
+                <Field label="Number of Seasons">
+                  <input
+                    type="number"
+                    min="1"
+                    max="50"
+                    placeholder="e.g. 3"
+                    value={form.seasonsTotal}
+                    onChange={handleSeasonsTotal}
+                    style={inputStyle}
+                  />
+                </Field>
+
+                {/* One input per season, rendered dynamically */}
+                {form.episodesPerSeason.length > 0 && (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fill, minmax(160px, 1fr))",
+                      gap: "12px",
+                    }}
+                  >
+                    {form.episodesPerSeason.map((eps, i) => (
+                      <Field key={i} label={`Season ${i + 1} — Episodes`}>
+                        <input
+                          type="number"
+                          min="1"
+                          placeholder="e.g. 10"
+                          value={eps}
+                          onChange={(e) =>
+                            handleEpisodesChange(i, e.target.value)
+                          }
+                          style={inputStyle}
+                        />
+                      </Field>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
             <Divider title="Media" />
 
             <Field label="Poster URL *">
@@ -548,22 +715,7 @@ export default function AddEditForm() {
               )}
             </Field>
 
-            {form.image && (
-              <img
-                src={form.image}
-                alt="Poster preview"
-                style={{
-                  width: "120px",
-                  height: "180px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                }}
-                onError={(e) => {
-                  e.target.style.display = "none";
-                }}
-              />
-            )}
+            <ImagePreview src={form.image} />
 
             <Field label="Trailer URL (YouTube embed)">
               <input
@@ -608,7 +760,6 @@ export default function AddEditForm() {
               ))}
             </div>
 
-            {/* ── Action buttons ── */}
             <div
               style={{
                 display: "flex",
@@ -640,7 +791,6 @@ export default function AddEditForm() {
                     ? "Update Entry"
                     : "Save Entry"}
               </button>
-
               {editingId && (
                 <button
                   type="button"
@@ -659,7 +809,6 @@ export default function AddEditForm() {
                   Cancel Edit
                 </button>
               )}
-
               <button
                 type="button"
                 onClick={() => {
@@ -694,7 +843,6 @@ export default function AddEditForm() {
           >
             My Submissions
           </h2>
-
           {loadingMedia ? (
             <p style={{ opacity: 0.5 }}>Loading your entries...</p>
           ) : userMedia.length === 0 ? (
@@ -716,10 +864,13 @@ export default function AddEditForm() {
                     flexWrap: "wrap",
                   }}
                 >
-                  {/* Poster thumbnail */}
                   {item.image && (
                     <img
-                      src={item.image}
+                      src={
+                        item.image.startsWith("http")
+                          ? item.image
+                          : `${import.meta.env.VITE_API_URL?.replace("/api", "")}/images/${item.image}`
+                      }
                       alt={item.title}
                       style={{
                         width: "48px",
@@ -733,8 +884,6 @@ export default function AddEditForm() {
                       }}
                     />
                   )}
-
-                  {/* Info */}
                   <div style={{ flex: 1, minWidth: "140px" }}>
                     <p
                       style={{ margin: 0, fontWeight: "700", fontSize: "15px" }}
@@ -752,10 +901,11 @@ export default function AddEditForm() {
                       {item.releaseDate &&
                         ` · ${new Date(item.releaseDate).getFullYear()}`}
                       {item.rating && ` · ⭐ ${item.rating}`}
+                      {item.type === "series" &&
+                        item.seasons?.total &&
+                        ` · ${item.seasons.total} season${item.seasons.total > 1 ? "s" : ""}`}
                     </p>
                   </div>
-
-                  {/* Edit / Delete */}
                   <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
                     <button
                       onClick={() => handleEdit(item)}
