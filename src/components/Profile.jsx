@@ -157,7 +157,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
   const modalOverlay = {
     position: "fixed",
     inset: 0,
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: "var(--secondary)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -210,7 +210,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
     borderRadius: "999px",
     border: "1px solid rgba(255,255,255,0.2)",
     backgroundColor: "var(--primary)",
-    color: "var(--text)",
+    color: "var(--text2)",
     cursor: "pointer",
     fontSize: "13px",
     fontWeight: "bold",
@@ -444,9 +444,8 @@ function Profile({ user, onUserUpdate, isGuest }) {
           disabled={saving}
           style={{
             ...ovalBtn,
-            backgroundColor: editing
-              ? "var(--primary)"
-              : "rgba(255,255,255,0.08)",
+            backgroundColor: "var(--primary)",
+            color : "var(--text2)"
           }}
         >
           {saving
@@ -489,7 +488,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
             <div
               style={{
                 width: "100%",
-                backgroundColor: "rgba(255,255,255,0.05)",
+                backgroundColor: "var(--bg)",
                 borderRadius: "8px",
                 padding: "10px 12px",
                 marginTop: "8px",
@@ -519,7 +518,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
             <div
               style={{
                 width: "100%",
-                backgroundColor: "rgba(255,255,255,0.05)",
+                backgroundColor: "var(--bg)",
                 borderRadius: "8px",
                 padding: "10px 12px",
               }}
@@ -593,7 +592,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
                   color:
                     star <= (hoverRating || rating)
                       ? "#f5c518"
-                      : "var(--starEmpty, rgba(255,255,255,0.2))",
+                      : "var(--starEmpty, rgba(255,255,255,))",
                   transition: "color 0.15s, transform 0.15s",
                   transform:
                     star <= (hoverRating || rating)
@@ -615,7 +614,7 @@ function Profile({ user, onUserUpdate, isGuest }) {
               backgroundColor:
                 rating > 0
                   ? "var(--primary)"
-                  : "var(--surfaceSubtle, rgba(255,255,255,0.06))",
+                  : "var(--surfaceSubtle, rgba(255,255,255,))",
               borderColor:
                 rating > 0 ? "var(--primary)" : "rgba(255,255,255,0.15)",
               color: rating > 0 ? "#fff" : "var(--text)",

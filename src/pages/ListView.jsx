@@ -212,7 +212,7 @@ export default function ListView() {
             <p style={{ fontSize: "12px", fontWeight: "700", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px 0" }}>
               Type
             </p>
-            <div style={{ display: "flex", gap: "10px", marginBottom: "16px", flexWrap: "wrap" }}>
+            <div style={{ display: "grid", gap: "10px", marginBottom: "16px", gridTemplateColumns: "repeat(3, 1fr)" }}>
               {[
                 { label: "All", value: "all" },
                 { label: "🎬 Movies", value: "movie" },
@@ -234,7 +234,7 @@ export default function ListView() {
             <p style={{ fontSize: "12px", fontWeight: "700", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px 0" }}>
               Genre
             </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "16px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px", marginBottom: "16px" }}>
               {ALL_GENRES.map((genre) => (
                 <button
                   type="button" key={genre} onClick={() => toggleGenre(genre)}

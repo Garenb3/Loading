@@ -278,7 +278,7 @@ export default function AddEditForm() {
 
       <div
         style={{
-          maxWidth: "720px",
+          maxWidth: "900px",
           margin: "0 auto",
           padding: "80px 20px 48px",
         }}
@@ -370,7 +370,7 @@ export default function AddEditForm() {
             </Field>
 
             <Field label="Genre * (select all that apply)">
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
                 {ALL_GENRES.map((g) => (
                   <button
                     type="button"

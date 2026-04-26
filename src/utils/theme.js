@@ -4,5 +4,5 @@ export const setTheme = (theme) => {
   });
 };
 
-export const darkTheme = { bg:"#121212", text:"#ffffff", primary:"#e50914", secondary:"#1f1f1f" };
-export const lightTheme = { bg:"#ffffff", text:"#000000", primary:"#007bff", secondary:"#f5f5f5" };
+export const darkTheme = { bg:"#121212", text:"#ffffff", primary:"#e50914", secondary:"#1f1f1f", tertiary: "#8B0000" };
+export const lightTheme = { bg:"#ffffff", text:"#000000", primary:"#007bff", secondary:"#f5f5f5", tertiary: "#00008B"};

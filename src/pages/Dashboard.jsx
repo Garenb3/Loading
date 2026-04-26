@@ -206,13 +206,13 @@ function Dashboard() {
             display: "inline-flex", alignItems: "center", justifyContent: "center",
             gap: "8px", marginBottom: "24px", padding: "9px 16px",
             borderRadius: "8px", border: "1px solid rgba(255,255,255,0.15)",
-            backgroundColor: "rgba(255,255,255,0.06)", color: "var(--text)",
+            backgroundColor: "var(--secondary)", color: "var(--text)",
             cursor: "pointer", fontSize: "13px", fontWeight: "600",
             width: "auto", marginTop: 0,
           }}
         >
           {profileOpen ? <CloseIcon /> : <HamburgerIcon />}
-          <span>{profileOpen ? "Hide Profile" : "My Profile"}</span>
+          <span>{profileOpen ? "Hide Profile" : "Show Profile"}</span>
         </button>
 
         {/* Guest warning */}
