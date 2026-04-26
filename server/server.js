@@ -32,17 +32,23 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 // ── Security Middleware ────────────────────────────────────────
-app.use(helmet()); // Set HTTP security headers
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  }),
+); // Set HTTP security headers
 
 // CORS configuration (allow frontend origin)
-const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || ["http://localhost:5173"];
+const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || [
+  "http://localhost:5173",
+];
 app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 // Rate limiting
@@ -60,6 +66,16 @@ app.use("/api/", limiter);
 // ── Body Parser Middleware ────────────────────────────────────
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
+
+// ── Static Files ──────────────────────────────────────────
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static images
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 // ── Request Logging ───────────────────────────────────────────
 app.use(morgan("dev"));

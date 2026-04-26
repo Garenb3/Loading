@@ -2,6 +2,8 @@ import { useState, useMemo, useEffect } from "react";
 import MovieCard from "../components/MovieCard";
 import Sidebar from "../components/Sidebar";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 const ALL_GENRES = [
   "Action", "Adventure", "Animation", "Biography", "Comedy", "Crime",
   "Drama", "Family", "Fantasy", "History", "Horror", "Mystery",
@@ -25,15 +27,18 @@ export default function ListView() {
     );
   }
 
+  // ── Fetch from API ────────────────────────────────────────
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
-        await new Promise((res) => setTimeout(res, 800));
-        const response = await import("../data/Data");
-        setMovies(response.data);
-      } catch {
-        setError("Failed to load data");
+        setError(null);
+        const response = await fetch(`${API_BASE_URL}/media`);
+        if (!response.ok) throw new Error("Failed to fetch media");
+        const data = await response.json();
+        setMovies(data);
+      } catch (err) {
+        setError(err.message || "Failed to load data");
       } finally {
         setLoading(false);
       }
@@ -85,8 +90,18 @@ export default function ListView() {
     return (
       <div style={{ backgroundColor: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
         <Sidebar />
-        <div style={{ textAlign: "center", padding: "100px", color: "red" }}>
-          <p>{error}</p>
+        <div style={{ textAlign: "center", padding: "100px" }}>
+          <p style={{ color: "#ef4444", marginBottom: "16px" }}>⚠️ {error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              padding: "10px 24px", borderRadius: "8px",
+              backgroundColor: "var(--primary)", color: "#fff",
+              border: "none", cursor: "pointer", fontWeight: "600",
+            }}
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -96,13 +111,14 @@ export default function ListView() {
     <div style={{ backgroundColor: "var(--bg)", minHeight: "100vh", color: "var(--text)" }}>
       <Sidebar />
 
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "80px 20px 32px" }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "30px 30px" }}>
         <h1 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "24px" }}>
           Movies &amp; Series
         </h1>
 
-        {/* Search + Sort + Filter row */}
+        {/* ── Search + Sort + Filter row ── */}
         <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "16px", alignItems: "center" }}>
+
           {/* Search */}
           <div style={{ flex: 1, minWidth: "220px", position: "relative" }}>
             <span style={{
@@ -181,7 +197,7 @@ export default function ListView() {
           </button>
         </div>
 
-        {/* Filter panel */}
+        {/* ── Filter panel ── */}
         <div style={{
           overflow: "hidden",
           maxHeight: showFilter ? "600px" : "0px",
@@ -197,11 +213,16 @@ export default function ListView() {
               Type
             </p>
             <div style={{ display: "flex", gap: "10px", marginBottom: "16px", flexWrap: "wrap" }}>
-              {[{ label: "All", value: "all" }, { label: "🎬 Movies", value: "movie" }, { label: "📺 Series", value: "series" }].map(({ label, value }) => (
+              {[
+                { label: "All", value: "all" },
+                { label: "🎬 Movies", value: "movie" },
+                { label: "📺 Series", value: "series" },
+              ].map(({ label, value }) => (
                 <button
                   type="button" key={value} onClick={() => setTypeFilter(value)}
                   style={{
-                    padding: "7px 18px", borderRadius: "999px", fontSize: "13px", fontWeight: "600", cursor: "pointer",
+                    padding: "7px 18px", borderRadius: "999px", fontSize: "13px",
+                    fontWeight: "600", cursor: "pointer",
                     border: `2px solid ${typeFilter === value ? "var(--primary)" : "rgba(128,128,128,0.3)"}`,
                     backgroundColor: typeFilter === value ? "var(--primary)" : "transparent",
                     color: typeFilter === value ? "#fff" : "var(--text)", transition: "all 0.15s",
@@ -209,6 +230,7 @@ export default function ListView() {
                 >{label}</button>
               ))}
             </div>
+
             <p style={{ fontSize: "12px", fontWeight: "700", opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 10px 0" }}>
               Genre
             </p>
@@ -217,7 +239,8 @@ export default function ListView() {
                 <button
                   type="button" key={genre} onClick={() => toggleGenre(genre)}
                   style={{
-                    padding: "5px 14px", borderRadius: "999px", fontSize: "12px", fontWeight: "600", cursor: "pointer",
+                    padding: "5px 14px", borderRadius: "999px", fontSize: "12px",
+                    fontWeight: "600", cursor: "pointer",
                     border: `1px solid ${selectedGenres.includes(genre) ? "var(--primary)" : "rgba(128,128,128,0.3)"}`,
                     backgroundColor: selectedGenres.includes(genre) ? "var(--primary)" : "transparent",
                     color: selectedGenres.includes(genre) ? "#fff" : "var(--text)", transition: "all 0.15s",
@@ -225,6 +248,7 @@ export default function ListView() {
                 >{genre}</button>
               ))}
             </div>
+
             {activeFilterCount > 0 && (
               <button
                 onClick={() => { setTypeFilter("all"); setSelectedGenres([]); }}
@@ -239,14 +263,16 @@ export default function ListView() {
           </div>
         </div>
 
+        {/* Result count */}
         <p style={{ fontSize: "13px", opacity: 0.5, marginBottom: "20px" }}>
           {filtered.length} title{filtered.length !== 1 ? "s" : ""} found
         </p>
 
+        {/* ── Grid ── */}
         {filtered.length > 0 ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: "20px" }}>
             {filtered.map((item) => (
-              <MovieCard key={item.id} movie={item} />
+              <MovieCard key={item._id} movie={item} />
             ))}
           </div>
         ) : (

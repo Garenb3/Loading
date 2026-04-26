@@ -5,7 +5,8 @@ import Profile from "../components/Profile";
 import MovieCard from "../components/MovieCard";
 import { ToastContainer, useToast } from "../components/Toast";
 import { authFetch } from "../utils/authService";
-import { data as allMedia } from "../data/Data";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 // ── Icons ─────────────────────────────────────────────────────
 function HamburgerIcon() {
@@ -77,14 +78,21 @@ const removeBtnStyle = {
   zIndex: 5, padding: 0,
 };
 
-function resolveMedia(ids) {
+// ── Helper: fetch full media objects from API by numeric IDs ──
+async function resolveMediaFromAPI(ids) {
   if (!ids || ids.length === 0) return [];
-  return ids
-    .map((id) => allMedia.find((m) => String(m.id) === String(id)))
-    .filter(Boolean);
+  try {
+    const response = await fetch(`${API_BASE_URL}/media`);
+    if (!response.ok) return [];
+    const allMedia = await response.json();
+    return ids
+      .map((id) => allMedia.find((m) => String(m.id) === String(id)))
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
 }
 
-// ── PROFILE_WIDTH must match the width set in Profile.jsx ─────
 const PROFILE_WIDTH = 260;
 
 function Dashboard() {
@@ -105,16 +113,26 @@ function Dashboard() {
   const userId = user?._id;
   const isGuest = !user?.email;
 
-  // ── Fetch from API ────────────────────────────────────────
+  // ── Fetch user data + resolve media from API ──────────────
   const fetchUserData = useCallback(async () => {
     if (isGuest || !userId) { setLoadingData(false); return; }
     try {
       setLoadingData(true);
       setDataError("");
+
+      // Get user's lists of IDs
       const userData = await authFetch(`/user/${userId}`);
-      setWatchlist(resolveMedia(userData.watchlist));
-      setFavorites(resolveMedia(userData.favorites));
-      setRecentlyViewed(resolveMedia(userData.recentlyViewed));
+
+      // Resolve IDs → full media objects via API (no Data.js)
+      const [resolvedWatchlist, resolvedFavorites, resolvedRecent] = await Promise.all([
+        resolveMediaFromAPI(userData.watchlist),
+        resolveMediaFromAPI(userData.favorites),
+        resolveMediaFromAPI(userData.recentlyViewed),
+      ]);
+
+      setWatchlist(resolvedWatchlist);
+      setFavorites(resolvedFavorites);
+      setRecentlyViewed(resolvedRecent);
     } catch {
       setDataError("Failed to load your data. Please refresh.");
     } finally {
@@ -124,21 +142,26 @@ function Dashboard() {
 
   useEffect(() => { fetchUserData(); }, [fetchUserData]);
 
-  // ── Remove handlers ───────────────────────────────────────
+  // ── Remove from watchlist ─────────────────────────────────
   const removeFromWatchlist = async (mediaId) => {
     try {
       await authFetch(`/user/${userId}/watchlist/${mediaId}`, "DELETE");
       setWatchlist((prev) => prev.filter((m) => String(m.id) !== String(mediaId)));
       showToast("Removed from Watchlist", "info");
-    } catch { showToast("Failed to remove item", "error"); }
+    } catch {
+      showToast("Failed to remove item", "error");
+    }
   };
 
+  // ── Remove from favorites ─────────────────────────────────
   const removeFromFavorites = async (mediaId) => {
     try {
       await authFetch(`/user/${userId}/favorites/${mediaId}`, "DELETE");
       setFavorites((prev) => prev.filter((m) => String(m.id) !== String(mediaId)));
       showToast("Removed from Favorites", "info");
-    } catch { showToast("Failed to remove item", "error"); }
+    } catch {
+      showToast("Failed to remove item", "error");
+    }
   };
 
   const browseLink = (
@@ -163,12 +186,10 @@ function Dashboard() {
       <Sidebar />
       <ToastContainer toasts={toasts} />
 
-      {/* Fixed profile panel — rendered here, positions itself via fixed CSS in Profile.jsx */}
       {profileOpen && (
         <Profile user={user} onUserUpdate={setUser} isGuest={isGuest} />
       )}
 
-      {/* Main content — offset by profile panel width when open */}
       <div style={{
         marginLeft: profileOpen ? `${PROFILE_WIDTH}px` : "0px",
         transition: "margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -231,7 +252,7 @@ function Dashboard() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "16px" }}>
               {watchlist.map((movie) => (
-                <div key={movie.id} style={{ position: "relative" }}>
+                <div key={movie._id || movie.id} style={{ position: "relative" }}>
                   <MovieCard movie={movie} />
                   <button onClick={() => removeFromWatchlist(movie.id)} title="Remove" style={removeBtnStyle}>✕</button>
                 </div>
@@ -247,7 +268,7 @@ function Dashboard() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "16px" }}>
               {favorites.map((movie) => (
-                <div key={movie.id} style={{ position: "relative" }}>
+                <div key={movie._id || movie.id} style={{ position: "relative" }}>
                   <MovieCard movie={movie} />
                   <button onClick={() => removeFromFavorites(movie.id)} title="Remove" style={removeBtnStyle}>✕</button>
                 </div>
@@ -263,11 +284,12 @@ function Dashboard() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "16px" }}>
               {recentlyViewed.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
+                <MovieCard key={movie._id || movie.id} movie={movie} />
               ))}
             </div>
           )}
         </CollapsibleSection>
+
       </div>
     </div>
   );

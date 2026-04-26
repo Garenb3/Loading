@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { setTheme } from "../utils/theme";
 import profileImg from "../images/Profile.jpg";
+import logo from "../images/logo-new.png";
 import { darkTheme, lightTheme } from "../utils/themes";
 import { authFetch } from "../utils/authService";
 
@@ -268,7 +269,7 @@ export default function Sidebar() {
         }}>
           <Link to="/" style={{ display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", flex: 1 }}>
             <img
-              src="/images/logo_new.png"
+              src={logo}
               alt="BingeBoard"
               style={{ height: "100px", width: "auto", objectFit: "contain" }}
             />

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { ToastContainer, useToast } from "../components/Toast";
 import { loginUser } from "../utils/authService";
-import logo from "../images/logo.png";
+import logo from "../images/logo-new.png";
 
 export default function Login() {
   const [errors, setErrors] = useState({});
@@ -84,7 +84,7 @@ export default function Login() {
             gap: "12px",
             minWidth: "200px",
           }}>
-            <img src={logo} alt="BingeBoard logo" style={{ width: "100px", height: "100px", objectFit: "contain" }} />
+            <img src={logo} alt="BingeBoard logo" style={{ width: "175px", height: "175px", objectFit: "contain" }} />
             <h1 style={{ fontSize: "22px", fontWeight: "bold", margin: 0, color: "var(--primary)" }}>BingeBoard</h1>
             <p style={{ fontSize: "12px", textAlign: "center", margin: 0, opacity: 0.65 }}>
               Welcome back!

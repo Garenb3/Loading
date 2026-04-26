@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { ToastContainer, useToast } from "../components/Toast";
 import { registerUser } from "../utils/authService";
-import logo from "../images/logo.png";
+import logo from "../images/logo-new.png";
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email);

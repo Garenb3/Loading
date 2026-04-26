@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-
+const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "");
 export default function MovieCard({ movie }) {
-  const path = movie.type === "series" ? `/tv/${movie.id}` : `/movie/${movie.id}`;
+  const path =
+    movie.type === "series" ? `/tv/${movie.id}` : `/movie/${movie.id}`;
 
   return (
     <Link to={path} style={{ textDecoration: "none" }}>
@@ -16,11 +17,17 @@ export default function MovieCard({ movie }) {
       >
         <div style={{ position: "relative" }}>
           <img
-            src={movie.image}
+            src={`${BASE_URL}/images/${movie.image}`}
             alt={movie.title}
-            style={{ width: "100%", height: "280px", objectFit: "cover", display: "block" }}
+            style={{
+              width: "100%",
+              height: "280px",
+              objectFit: "cover",
+              display: "block",
+            }}
             onError={(e) => {
-              e.target.src = "https://via.placeholder.com/300x400?text=No+Image";
+              e.target.src =
+                "https://via.placeholder.com/300x400?text=No+Image";
             }}
           />
           {/* Type badge overlay */}
@@ -75,7 +82,9 @@ export default function MovieCard({ movie }) {
           </h3>
           {movie.genre && (
             <p style={{ fontSize: "12px", opacity: 0.65, margin: 0 }}>
-              {Array.isArray(movie.genre) ? movie.genre.slice(0, 2).join(", ") : movie.genre}
+              {Array.isArray(movie.genre)
+                ? movie.genre.slice(0, 2).join(", ")
+                : movie.genre}
             </p>
           )}
           {movie.releaseDate && (

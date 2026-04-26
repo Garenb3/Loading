@@ -3,6 +3,11 @@ import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { authFetch } from "../utils/authService";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "");
+
 // ── Helper ────────────────────────────────────────────────────
 function getStoredUser() {
   try {
@@ -108,8 +113,11 @@ export default function TVShowDetail() {
     async function fetchShow() {
       try {
         setLoading(true);
-        const res = await import("../data/Data");
-        const found = res.data.find((m) => m.id === parseInt(id));
+        setError(false);
+        const response = await fetch(`${API_BASE_URL}/media`);
+        if (!response.ok) throw new Error("Failed to fetch");
+        const allMedia = await response.json();
+        const found = allMedia.find((m) => String(m.id) === String(id));
         setShow(found ?? null);
       } catch {
         setError(true);
@@ -520,7 +528,7 @@ export default function TVShowDetail() {
             }}
           >
             <img
-              src={show.image}
+              src={`${BASE_URL}/images/${show.image}`}
               alt={show.title}
               style={{
                 width: "100%",

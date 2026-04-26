@@ -1,9 +1,13 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { authFetch, getUser } from "../utils/authService";
+import { authFetch } from "../utils/authService";
 
-// ── Helper: get logged-in user from localStorage ──────────────
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+const BASE_URL = import.meta.env.VITE_API_URL?.replace("/api", "");
+
 function getStoredUser() {
   try {
     return JSON.parse(localStorage.getItem("user") || "null");
@@ -81,7 +85,6 @@ function NotFoundUI() {
   );
 }
 
-// ── Main Component ────────────────────────────────────────────
 export default function MovieDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -105,13 +108,15 @@ export default function MovieDetail() {
   const [showTrailer, setShowTrailer] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  // ── Load movie from local data ────────────────────────────
+  // ── Fetch movie from API by numeric id ───────────────────
   useEffect(() => {
     async function fetchMovie() {
       try {
         setLoading(true);
-        const res = await import("../data/Data");
-        const found = res.data.find((m) => m.id === parseInt(id));
+        const response = await fetch(`${API_BASE_URL}/media`);
+        if (!response.ok) throw new Error("Failed to fetch");
+        const allMedia = await response.json();
+        const found = allMedia.find((m) => String(m.id) === String(id));
         setMovie(found ?? null);
       } catch {
         setError(true);
@@ -123,14 +128,11 @@ export default function MovieDetail() {
   }, [id]);
 
   // ── Sync watchlist/favorites state from backend ───────────
-  // Once we know the user and movie, check if already added
   useEffect(() => {
     if (isGuest || !userId || !movie) return;
-
     async function syncUserState() {
       try {
         const userData = await authFetch(`/user/${userId}`);
-        // userData.watchlist and userData.favorites are arrays of mediaIds
         setAdded(
           userData.watchlist?.some(
             (item) => String(item) === String(movie.id),
@@ -142,16 +144,15 @@ export default function MovieDetail() {
           ) ?? false,
         );
       } catch {
-        // Silently fail — don't block the page
+        // Silently fail
       }
     }
     syncUserState();
   }, [userId, movie, isGuest]);
 
-  // ── Track recently viewed in backend ─────────────────────
+  // ── Track recently viewed ─────────────────────────────────
   useEffect(() => {
     if (!movie || isGuest || !userId) return;
-
     async function trackRecentlyViewed() {
       try {
         await authFetch(`/user/${userId}/recentlyviewed`, "POST", {
@@ -190,6 +191,7 @@ export default function MovieDetail() {
     }
   };
 
+  // ── Favorites handler ─────────────────────────────────────
   const handleAddToFavorites = async () => {
     if (isGuest) {
       setShowLoginPrompt(true);
@@ -242,7 +244,7 @@ export default function MovieDetail() {
   if (error) return <ErrorUI />;
   if (!movie) return <NotFoundUI />;
 
-  // ── Shared modal backdrop helper ──────────────────────────
+  // ── Shared modal backdrop ─────────────────────────────────
   const modalBackdrop = (onClose, children) => (
     <div
       onClick={onClose}
@@ -272,7 +274,6 @@ export default function MovieDetail() {
     </div>
   );
 
-  // ── Render ────────────────────────────────────────────────
   return (
     <div
       style={{
@@ -527,7 +528,7 @@ export default function MovieDetail() {
             }}
           >
             <img
-              src={movie.image}
+              src={`${BASE_URL}/images/${movie.image}`}
               alt={movie.title}
               style={{
                 width: "100%",
@@ -586,7 +587,7 @@ export default function MovieDetail() {
               </div>
             )}
 
-            {/* Meta */}
+            {/* Meta row */}
             <div
               style={{
                 display: "flex",
@@ -597,9 +598,7 @@ export default function MovieDetail() {
                 opacity: 0.75,
               }}
             >
-              {movie.releaseDate && (
-                <span>📅 {new Date(movie.releaseDate).getFullYear()}</span>
-              )}
+              {movie.releaseDate && <span>📅 {movie.releaseDate}</span>}
               {movie.duration && <span>⏱ {movie.duration} min</span>}
               {movie.studio && <span>🎬 {movie.studio}</span>}
               {movie.rating != null && (
