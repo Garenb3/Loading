@@ -144,7 +144,7 @@ export const removeFromWatchlist = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: "User not found" });
-    user.watchlist = user.watchlist.filter(id => id !== req.params.mediaId);
+    user.watchlist = user.watchlist.filter(id => String(id) !== String(req.params.mediaId));
     await user.save();
     res.json(user);
   } catch (err) {
@@ -156,7 +156,7 @@ export const removeFromFavorites = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ error: "User not found" });
-    user.favorites = user.favorites.filter(id => id !== req.params.mediaId);
+    user.favorites = user.favorites.filter(id => String(id) !== String(req.params.mediaId));
     await user.save();
     res.json(user);
   } catch (err) {

@@ -133,14 +133,15 @@ export default function TVShowDetail() {
     async function syncUserState() {
       try {
         const userData = await authFetch(`/user/${userId}`);
+        const mediaKey = String(show.id ?? show._id);
         setAdded(
           userData.watchlist?.some(
-            (item) => String(item) === String(show._id),
+            (item) => String(item) === mediaKey,
           ) ?? false,
         );
         setAddedFav(
           userData.favorites?.some(
-            (item) => String(item) === String(show._id),
+            (item) => String(item) === mediaKey,
           ) ?? false,
         );
       } catch {
@@ -155,7 +156,7 @@ export default function TVShowDetail() {
     async function trackRecentlyViewed() {
       try {
         await authFetch(`/user/${userId}/recentlyviewed`, "POST", {
-          mediaId: String(show._id),
+          mediaId: String(show.id ?? show._id),
         });
       } catch {
         /* Silently fail */
@@ -171,17 +172,19 @@ export default function TVShowDetail() {
     }
     setActionLoading(true);
     setActionError("");
+    const mediaKey = String(show.id ?? show._id);
     try {
       if (added) {
-        await authFetch(`/user/${userId}/watchlist/${show._id}`, "DELETE");
+        await authFetch(`/user/${userId}/watchlist/${mediaKey}`, "DELETE");
         setAdded(false);
       } else {
         await authFetch(`/user/${userId}/watchlist`, "POST", {
-          mediaId: String(show._id),
+          mediaId: mediaKey,
         });
         setAdded(true);
         setShowModal(true);
       }
+      window.dispatchEvent(new Event("bingeboard:lists-updated"));
     } catch (err) {
       setActionError(err.message || "Failed to update watchlist");
     } finally {
@@ -196,17 +199,19 @@ export default function TVShowDetail() {
     }
     setActionLoading(true);
     setActionError("");
+    const mediaKey = String(show.id ?? show._id);
     try {
       if (addedFav) {
-        await authFetch(`/user/${userId}/favorites/${show._id}`, "DELETE");
+        await authFetch(`/user/${userId}/favorites/${mediaKey}`, "DELETE");
         setAddedFav(false);
       } else {
         await authFetch(`/user/${userId}/favorites`, "POST", {
-          mediaId: String(show._id),
+          mediaId: mediaKey,
         });
         setAddedFav(true);
         setShowFavModal(true);
       }
+      window.dispatchEvent(new Event("bingeboard:lists-updated"));
     } catch (err) {
       setActionError(err.message || "Failed to update favorites");
     } finally {

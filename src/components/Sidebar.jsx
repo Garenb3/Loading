@@ -4,7 +4,6 @@ import { setTheme } from "../utils/theme";
 import profileImg from "../images/Profile.jpg";
 import logo from "../images/logo-new.png";
 import { darkTheme, lightTheme } from "../utils/themes";
-import { authFetch } from "../utils/authService";
 
 /* ── Icons ──────────────────────────────────────────────────── */
 function SunIcon() {
@@ -116,32 +115,12 @@ export default function Sidebar() {
     try { return JSON.parse(localStorage.getItem("user") || "null"); } catch { return null; }
   });
 
-  // ── API-sourced counts ──────────────────────────────────
-  const [watchlistCount, setWatchlistCount] = useState(0);
-  const [favoritesCount, setFavoritesCount] = useState(0);
-
   const sidebarRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
   const isLoggedIn = !!(user && user.email);
   const userId = user?._id;
-
-  // ── Fetch counts from API ───────────────────────────────
-  useEffect(() => {
-    if (!isLoggedIn || !userId) return;
-
-    async function fetchCounts() {
-      try {
-        const userData = await authFetch(`/user/${userId}`);
-        setWatchlistCount(userData.watchlist?.length ?? 0);
-        setFavoritesCount(userData.favorites?.length ?? 0);
-      } catch {
-        // Silently fail — counts will just show 0
-      }
-    }
-    fetchCounts();
-  }, [isLoggedIn, userId, location.pathname]); // Re-fetch on route change to stay in sync
 
   // Close on route change
   useEffect(() => { setOpen(false); }, [location.pathname]);
@@ -183,8 +162,6 @@ export default function Sidebar() {
     ["user", "watchlist", "favorites", "recentlyViewed", "profilePhoto", "authToken"]
       .forEach((k) => localStorage.removeItem(k));
     setUser(null);
-    setWatchlistCount(0);
-    setFavoritesCount(0);
     setOpen(false);
     navigate("/login");
   };
@@ -312,27 +289,6 @@ export default function Sidebar() {
             )}
           </div>
         </div>
-
-        {/* Stats — from API ── */}
-        {isLoggedIn && (
-          <div style={{
-            display: "flex", gap: "8px", padding: "12px 20px",
-            borderBottom: "1px solid rgba(128,128,128,0.12)", flexShrink: 0,
-          }}>
-            {[
-              { label: "Watchlist", count: watchlistCount, emoji: "📺" },
-              { label: "Favorites", count: favoritesCount, emoji: "🎬" },
-            ].map(({ label, count, emoji }) => (
-              <div key={label} style={{
-                flex: 1, backgroundColor: "rgba(128,128,128,0.08)",
-                borderRadius: "10px", padding: "10px", textAlign: "center",
-              }}>
-                <p style={{ margin: 0, fontSize: "18px", fontWeight: "800", color: "var(--primary)" }}>{count}</p>
-                <p style={{ margin: 0, fontSize: "11px", opacity: 0.6, marginTop: "2px" }}>{emoji} {label}</p>
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* Nav links */}
         <nav style={{ padding: "12px", flex: 1, display: "flex", flexDirection: "column", gap: "4px" }}>
